@@ -1,82 +1,71 @@
 # 07_verification/software: README
 
 ## Status
-**Pass 1 is complete (23 Nov 2026).** It was triggered by M1 (backend smoke test).
-
-What was tested:
-- software `b3cb4fe`
-- firmware `54eea6c`
-- INTERFACES **v0.2.2**
+**Pass 2 is complete (23 Nov 2026).** It covered milestones M2–M4 and was tested at HEAD `345ec07` (software `1ad0560`) against INTERFACES **v0.2.6**. It used the existing `03_software/.venv` and local D2 images only (D43/D44).
 
 Results:
-- Owner's suite: 22/22 `pytest` pass, and the smoke test passes.
-- Independent contract and firmware script: 154 checks, giving **132 pass · 3 fail · 13 pass (obs) · 6 blocked**.
-- The model tests are blocked: M1 is still training and `/infer/ripeness` returns 503.
-
-HW defects D-04, D-12 and D-09 were retested and are **fixed**.
+- **Pass 1:** all 15 defects (S-01…S-15) are **closed**.
+- **Owner suite:** 33/33 `pytest` pass, and the asserted smoke test passes.
+- **`contract_test.py`:** 164 checks, giving **156 pass · 0 fail · 8 pass (obs) · 0 blocked**. This includes the ripeness endpoint with the provisional model: p95 0.08 s on CPU, heat-map served.
+- **`eval_m1.py`:** the class mapping is correct. The reported 0.9326 reproduces only on the training pipeline; the **serving path gives 0.8989**. 6/89 D2-test images duplicate D2-train images.
+- **M6:** retrained from a scratch copy and reproduces exactly (0.88375, identical tree).
+- **Docs 01–05:** D32 residency and RAI scoping are correct. Build/demo/cost wording appears in 02/03.
+- **Run guides:** Kaggle OK. Azure has 3 issues. Earth Engine is OK, with 2 minor issues.
 
 ## Latest pass
-`PASS_1_REPORT.md`: backend and contract, firmware↔backend payloads, dashboard, and datasets as documented so far.
+`PASS_2_REPORT.md`. The previous pass is in `PASS_1_REPORT.md`.
 
 ## Open defects
-**15 open: 2 major, 13 minor, 0 blockers.**
+**10 open: 4 major, 6 minor, 0 blockers.** All are owned by Software.
 
-| ID | Sev | Owner | One line |
-|---|---|---|---|
-| S-01 | major | Software | Cloud/token mode: the dashboard's calibration GET sends no token → 403, so the TDS panel is blank |
-| S-02 | major | Software (+HW) | Laptop fallback only accepts demo keys unless `SAWIT_DEVICE_KEYS` is exported; nodes have one key for both bases → LAN answers 401 |
-| S-03 | minor | Software | `ts` not validated; a bad string becomes `captured_at` and sorts as the newest chart point |
-| S-04 | minor | Software | `override_action` accepts any string (pollutes the audit trail and retraining queue) |
-| S-05 | minor | Lead/SW/HW | Cloud and LAN are separate DBs and command queues; demo needs a single-backend rule |
-| S-06 | minor | Software | No `(device_id, seq)` idempotency, so retries duplicate evidence |
-| S-07 | minor | Software | Command queue has no de-dup or expiry |
-| S-08 | minor | Software | Read endpoints are unauthenticated in cloud mode |
-| S-09 | minor | Software | `smoke_test.sh` prints PASSED without assertions |
-| S-10 | minor | Software | Hash chain has no external head anchor (tail truncation is undetectable) |
-| S-11 | minor | Software | Copernicus notice has no year and names Planetary Computer instead of Earth Engine |
-| S-12 | minor | Hardware | LOCAL vs CLOUD: rounding at edges, all-null shown as green OK, 1-dp pH on the OLED (coordination with HW verification) |
-| S-13 | minor | Software | Cascade is fetched only once; harvester page has no offline handling; EC tile label |
-| S-14 | minor | Software | Chart.js MIT banner stripped from the vendored file |
-| S-15 | minor | Software | `train_m1.py` cache names use the randomised `hash()`, so the cache is never reused |
+| ID | Sev | One line |
+|---|---|---|
+| S-16 | major | Mismatch between training and serving preprocessing: reported D2-test 0.93 vs **0.90** on the deployed inference path |
+| S-17 | major | D2 split leakage: 6/89 test images are the same photos as train images (pair list in `tests/pass2_eval_m1.md`) |
+| S-18 | major | DEPLOY_AZURE: user-delegation SAS asked for 60 days, but the limit is 7 days, so step 3 fails |
+| S-19 | major (risk) | SQLite WAL on App Service `/home` (SMB share) risks "database is locked"; use `journal_mode=DELETE` in cloud |
+| S-20 | minor | `--startup-file "startup.sh"` relies on a bare file name and the exec bit; use `bash startup.sh` |
+| S-21 | minor | `05_api_spec` says cloud reads are open and omits `SAWIT_MODEL_URL`/`_META_URL` |
+| S-22 | minor | Report-facing 02/03 contain build/demo/cost wording (03 §9 provisional/Kaggle, 02 §4 demo, "cheapest") |
+| S-23 | minor | Guides post D2 originals that are > 5 MB (413); printed photos should come from FFBtest minus the leaked ones |
+| S-24 | minor | GEE block IDs `B01–B16` don't match the estate/drone IDs used by the cascade and demo story |
+| S-25 | minor | `RUN_EARTH_ENGINE.md` has no Windows `.venv\Scripts` note |
 
 ## Outputs
 | File | Content |
 |---|---|
-| `TEST_PLAN.md` | Every test case with ID, method, expected result, status and evidence, plus the **presentation-day rehearsal checklist** (§H) |
-| `PASS_1_REPORT.md` | Pass 1 results, defects table, retests, what Pass 2 needs |
-| `tests/contract_test.py` | Independent black-box tests: v0.2.2 endpoints, §4 edges, auth, cloud fail-closed, tamper detection, firmware payloads and parser emulation, dashboard offline checks |
-| `tests/pass1_results.md` | Per-check output of the Pass 1 run |
+| `TEST_PLAN.md` | All test cases with status and evidence, plus the presentation-day rehearsal checklist (§H, now with R-03b cloud DB check) |
+| `PASS_1_REPORT.md`, `PASS_2_REPORT.md` | Pass results, defects, retests, what the next pass needs |
+| `tests/contract_test.py` | Black-box v0.2.6 tests: endpoints, §4 edges, auth/cloud mode, idempotency, commands, tamper, firmware payload/parser emulation (v0.2.3 rounding), ripeness endpoint with the model, dashboard offline checks |
+| `tests/eval_m1.py` | Independent M1 re-evaluation on local D2 (serving vs training preprocessing, deduplicated test), class-mapping cross-check, MD5/dHash leakage scan |
+| `tests/pass1_results.md`, `tests/pass2_results.md`, `tests/pass2_eval_m1.md` | Raw outputs of each run |
 
 ## How to rerun
 ```bash
 cd /home/zhen/Documents/taylors/CCA
-S=<your scratch dir>                     # never inside the repo; don't commit venvs
-python3 -m venv $S/venv && $S/venv/bin/pip install -r 03_software/src/requirements.txt
-# independent suite: starts and stops its own servers (3 instances, one after another) on the given port
-TMPDIR=$S PYTHONDONTWRITEBYTECODE=1 $S/venv/bin/python 07_verification/software/tests/contract_test.py --port 8833 --out $S/results.md
-# owner suite (writes runtime files to $S only)
-cd 03_software/src && PYTHONDONTWRITEBYTECODE=1 SAWIT_RUNTIME_DIR=$S/rt TMPDIR=$S $S/venv/bin/python -m pytest -q -p no:cacheprovider
-PY=$S/venv/bin/python PORT=8833 TMPDIR=$S ./smoke_test.sh
+S=<your scratch dir>                      # never inside the repo
+PY=03_software/.venv/bin/python           # use the existing venv; do not create new ones (D43/D44)
+TMPDIR=$S PYTHONDONTWRITEBYTECODE=1 $PY 07_verification/software/tests/contract_test.py --port 8833 --out $S/results.md
+PYTHONDONTWRITEBYTECODE=1 $PY 07_verification/software/tests/eval_m1.py --out $S/eval_m1.md        # ~2 min, local D2 only
+cd 03_software/src && PYTHONDONTWRITEBYTECODE=1 SAWIT_RUNTIME_DIR=$S/rt TMPDIR=$S ../.venv/bin/python -m pytest -q -p no:cacheprovider
+PY=../.venv/bin/python PORT=8833 TMPDIR=$S ./smoke_test.sh
 ```
-- Use a free port. Do not use 8765 or 8791, which other members use.
-- Exit code 0 means no FAIL.
-- When the M1 model exists (`03_software/models/m1_ripeness.onnx` + `.json`), RI-04 reports OBS. The RI-05…09 model checks are added in Pass 2.
+- Use a free port. Do not use 8765 or 8791.
+- `contract_test.py` starts and stops its own servers (3 instances, one after another) and exits with 0 when there is no FAIL.
+- Never download datasets or packages for these tests (D43).
 
 ## Inputs used
-- 00_lead: SPEC, PROJECT_PLAN, DECISIONS (D16, D20, D23, D28, D29, D31–D33), INTERFACES v0.2.1 → v0.2.2
-- 01_research: `03_datasets.md`, `00_baseline_brief.md` §Verification
-- 03_software: README, PLAN, `src/`, `training/`, `scripts/`
-- 02_hardware: `firmware/*.ino`, `secrets.h.example`
-- 07_verification/hardware: README and PASS_1_REPORT, read for coordination; HW firmware internals were not duplicated
+- 00_lead: SPEC, DECISIONS (D16, D20, D23, D31–D33, D39–D47), INTERFACES v0.2.6
+- 01_research: `03_datasets.md`
+- 03_software: README, docs 01–07, `src/`, `training/` (incl. `kaggle/`), `deploy/`, `gee/`, `models/` (provisional), `data/raw/d2`
+- 02_hardware: `firmware/*.ino`
+- 07_verification/hardware: PASS_2 (coordination only; firmware internals not duplicated)
 
 ## Next pass
-**Pass 2** is triggered by M2 (M1 model trained). It needs:
-- the ONNX model, its meta and `m1_metrics.json`
-- D1 fully extracted and D2 FFBtrain present
-- fixes for S-01…S-04
-
-Passes 3 and 4 follow M3 (design docs 01–05) and M4 (Kaggle/Azure/GEE run guides).
+It is triggered by either of these:
+- fixes for S-16…S-19
+- the stakeholder's Kaggle D1→D2 model, Azure URL or EE export (MD-07, R-03/R-03b, S-24)
 
 ## Open issues for Lead
-1. S-02 and S-05 affect the demo's fallback story. Please add "same `SAWIT_DEVICE_KEYS` on the laptop" and "one backend at a time" to the demo plan and run guide, or rule otherwise.
-2. INTERFACES §2 could state that `ts` must be ISO-8601 UTC (`…Z`) (S-03) and that `(device_id, seq)` is unique (S-06).
+1. **S-16/S-17:** any M1 number that reaches the report or slides should be the serving-path, deduplicated figure. D40 already keeps prototype results out of the report, but the presentation may quote them.
+2. **S-18/S-19:** fix these before the stakeholder runs the Azure guide (D31), so the first account-bound attempt does not fail.
