@@ -33,14 +33,16 @@ Deliverables: Markdown report (Parts 1–3 + progress report), interactive prese
 If using Claude Code: start a session in this repo and say *"You are the project lead. Read 00_lead/HANDOFF.md and continue from the current phase."*
 
 ## 4. Current state
-- Running: baseline Research wave 1 only (D12). Hardware/Software were briefly started then stopped (no output) so they begin from the baseline brief.
-- After the baseline gate + stakeholder check-in: launch Hardware ∥ Software, then rolling verification. The full Hardware/Software briefs used are reproducible from PROJECT_PLAN.md + SPEC.md.
+- Research wave 1 done and gated (D14–D18); stakeholder rulings D19–D22.
+- Running: Hardware ∥ Software, PLAN.md step (briefs in `00_lead/briefs/`). They pause after PLAN.md for Lead rulings, then build.
+- Next: rule on HW/SW proposals → build → rolling verification passes (briefs to be written to `00_lead/briefs/`).
 - Research requests from any team go in `01_research/REQUESTS.md`; Lead dispatches waves.
 - Next: stakeholder check-in on datasets, training platform, extra parts → Software adopts them → rolling verification passes.
 
 ## 5. Phase log
 | Date | Event |
 |---|---|
+| 2026-11-23 | Research gate passed; D14–D22; Hardware + Software launched (PLAN step) |
 | 2026-11-23 | Member briefs saved to `00_lead/briefs/` for cross-session relaunch |
 | 2026-11-23 | Team PLAN.md + proposal/ruling process added (D13) |
 | 2026-11-23 | Baseline research must finish before other teams start (D12) |

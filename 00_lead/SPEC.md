@@ -21,13 +21,13 @@
 - The PDF's Figure 6 structure (Short/Medium/Long roadmap; Technical/Operational/Vendor & cost risk boxes each with mitigation) must be followed.
 
 ## 3. Problems, outcomes, inputs (from stakeholder brief — validate with evidence, do not assume)
-**Problems:** P1 yield pressure from labour shortages · P2 ageing trees · P3 MSPO sustainability requirements. (Ganoderma basal stem rot is a core yield threat expected to sit under P1/P2 — Research to confirm framing and priority order with evidence.)
+**Problems (re-framed & prioritised, D19):** P1 Labour shortage & harvest losses > P2 Declining stand productivity: Ganoderma BSR (primary) + ageing trees > P3 MSPO sustainability & fertiliser compliance.
 **Outcomes:** O1 predict ripe FFB harvest windows · O2 detect Ganoderma early · O3 optimise fertiliser use · O4 improve yield and meet sustainability (MSPO) requirements.
 **Inputs:** satellite imagery · drone (UAV) data · IoT soil sensors.
 
 ## 4. Scope rules
 - The system design (cloud AI, data, models, platform evaluation, integration) is the **main deliverable**. The hardware is a **small live demo** representing the IoT soil-sensor layer only — it must never dominate the report or presentation.
-- Train on a cloud platform if credits allow (Research decides which); fallback = train locally and deploy a simple cloud endpoint/dashboard.
+- **Two layers of truth (D20):** the *report/presentation* describe a professional, fully Azure-native deployment (Azure ML training/MLOps, IoT Hub, etc.). The *actual build* trains on Kaggle (Colab backup), deploys API/dashboard/ingestion on Azure for Students, pre-computes NDVI in Earth Engine. Internal docs record the actual build; report-facing docs don't foreground the workaround.
 - Prefer real, downloadable, properly licensed datasets. If a dataset doesn't exist for an outcome, say so and use a documented proxy or simulated data, clearly labelled.
 - Conserve tokens/credits: Markdown outputs, concise but complete; Mermaid for diagrams (renders on GitHub).
 
@@ -37,7 +37,7 @@
 - **ESP32-CAM:** captures an image (e.g. printed FFB photo / leaf) → model returns ripeness / disease class live.
 - Satellite + drone analytics shown in dashboard as pre-computed results from real datasets.
 - Presenting laptop has WiFi; presentation runs from the laptop.
-- Extra components: **propose only, with price in MYR and justification; stakeholder chooses within budget.**
+- Extra components: **propose only, with price in MYR and justification; stakeholder chooses within budget.** pH buffer sachets 4.01/6.86 will be bought (D21).
 
 ## 6. Available hardware (`components.md`)
 NodeMCU ESP32 ×1 · ESP32-CAM + USB base ×1 · capacitive soil moisture ×1 · pH electrode E-201-C (+ signal board) ×1 · TDS module ×1 · 0.96" OLED ×1 · DS18B20 ×1 · DHT22 ×1 · resistor kit · 2–3 breadboards · jumpers M-M, F-M · ~4 LEDs · ~2 push buttons · power bank ×1.
@@ -53,4 +53,4 @@ Members: `[Member 1 – Leader]`, `[Member 2]`, `[Member 3]`, `[Member 4]`, `[Me
 - Enterprise platform: **Azure** (D15). Datasets: D16. Thresholds: D17. Part 3 anchor: D18.
 - No public data for harvest-window prediction, soil-sensor fertiliser models, or multispectral Ganoderma → simulated/proxy, labelled.
 - Retired services (never propose): Google Cloud IoT Core (Aug 2023), IBM Watson IoT (Dec 2023). SageMaker Studio Lab closed to new users.
-- PENDING stakeholder: problem framing (R-P1), training platform (R-P2), pH buffer purchase (R-P6), lecturer credits (R-P7).
+- Stakeholder rulings: D19 problems, D20 training/deployment framing, D21 pH buffers bought, D22 no lecturer credits.

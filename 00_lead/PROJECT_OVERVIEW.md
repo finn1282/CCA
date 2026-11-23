@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | 0 Setup | Lead | 23 Nov | ✅ Done | Lead files pushed |
 | 1 Baseline research wave (then on demand) | Research | 26 Nov | ✅ Wave 1 done 23 Nov | ✅ Passed (D14) — 4 proposals awaiting stakeholder |
-| 2 Build (HW ∥ SW, parallel with on-demand research) | Hardware, Software | 3 Dec | ⚪ Starts after baseline gate | — |
+| 2 Build (HW ∥ SW, parallel with on-demand research) | Hardware, Software | 3 Dec | 🟡 PLAN step running (23 Nov) | — |
 | 3 Verify (rolling passes per milestone) | HW/SW testers | 6 Dec | ⚪ Starts at first build milestone | — |
 | 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | ⚪ Not started | — |
 | 5 Rubric audit & fixes | Compliance | 12 Dec | ⚪ Not started | — |
@@ -35,17 +35,17 @@
 ## Team proposals (D13)
 | ID | Team | Proposal | Lead ruling |
 |---|---|---|---|
-| R-P1 | Research | Re-frame P2 as Ganoderma (primary) + ageing; rank P1 > P2 > P3 | ⏳ Stakeholder |
-| R-P2 | Research | Train on Kaggle/Colab; deploy on Azure for Students; Earth Engine for satellite | ⏳ Stakeholder |
+| R-P1 | Research | Re-frame P2 as Ganoderma (primary) + ageing; rank P1 > P2 > P3 | ✅ D19 |
+| R-P2 | Research | Train on Kaggle/Colab; deploy on Azure for Students; Earth Engine for satellite | ✅ D20 (report shows full Azure) |
 | R-P3 | Research | Azure as enterprise recommendation | ✅ D15 |
 | R-P4 | Research | Primary datasets D1+D2, D4, Sentinel-2, simulated fertiliser | ✅ D16 |
 | R-P5 | Research | Shared demo thresholds | ✅ D17 |
-| R-P6 | Research | Buy pH buffer sachets (~RM5–10) | ⏳ Stakeholder |
-| R-P7 | Research | Ask lecturer about GCP edu credits / IBM SkillsBuild | ⏳ Stakeholder |
+| R-P6 | Research | Buy pH buffer sachets (~RM5–10) | ✅ D21 |
+| R-P7 | Research | Ask lecturer about GCP edu credits / IBM SkillsBuild | ❌ D22 skipped |
 | R-P8 | Research | "Explain-to-audit" MSPO evidence log as Part 3 anchor | ✅ D18 |
 
 ## Open decisions for stakeholder
-R-P1, R-P2, R-P6, R-P7 (above) — asked 23 Nov.
+_None open._ Next: extra hardware purchases list from Hardware.
 
 ## Risks
 | Risk | Impact | Mitigation |
