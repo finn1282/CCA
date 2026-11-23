@@ -16,7 +16,7 @@ Sub-tasks: 1a 1.7/2 · 1b 3.5/4 · 1c 3.3/4 · 2a 1.8/2 · 2b 2.4/3 · 2c 3.8/5 
 | C-01 | major | 2.3, Exec, Concl | "Azure is the only platform… in-country region + first-party IoT/offline edge + native SAP" contradicted by Table 3 (AWS 5/5/4); AWS C7=3 "not assessed" | Research AWS IoT Core/Greengrass/SageMaker vision/SAP integration; rescore AWS with citations; recommend on evidenced differentiators; "best fits" not "uniquely" (+~1.5) |
 | C-02 | major | 2.3 | "AWS was researched in less depth" admits incomplete evaluation | Delete; replace with evidenced AWS limitation; add AWS citations (+0.5) |
 | C-03 | major | 2.4, 2.3 C7, Exec | SAP use by FELDA/FGV/SDG/IOI unverified, yet C7=5 relies on it | Find citable ERP evidence, else "the estate ERP (e.g. SAP S/4HANA or ECC)" (+0.5–1) |
-| C-04 | major (rule) | whole | Body ≈4,240 words OK, but body+tables+figure ≈13 pp, refs 2.5–3 pp, App. A ≈0.7 pp → ≈16–17 pp total vs D35 "10–15 total" | Stakeholder to rule whether refs/appendix count; if yes cut 400–600 words (1.2 +57 over; trim Table 5 mitigations; compress Fig. 1) |
+| C-04 | resolved (D49: refs/appendix excluded) | whole | Body ≈4,240 words OK, but body+tables+figure ≈13 pp, refs 2.5–3 pp, App. A ≈0.7 pp → ≈16–17 pp total vs D35 "10–15 total" | Stakeholder to rule whether refs/appendix count; if yes cut 400–600 words (1.2 +57 over; trim Table 5 mitigations; compress Fig. 1) |
 | C-05 | major (req.) | App. A | Member contributions placeholders (PDF requires) | Stakeholder fills (placeholders per D8/D40) |
 | C-06 | minor | 2.4, 3.1 | Azure confidential ledger uncited | Cite AZ-ACL-RES |
 | C-07 | minor | 1.2 | 43 % and 860,610 ha are secondary | "(Olaniyi and Szulczyk, 2020, cited in Khoo and Chong, 2023)" |
