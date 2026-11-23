@@ -3,6 +3,7 @@
 ## Changelog (D37)
 | Ver | Date | What changed | Trigger |
 |---|---|---|---|
+| v2 | 2026-11-23 | 2.4 and 2.5 rebuilt from Software design docs 01–05 (integration table, Fig. 6 roadmap with KPIs, nine risks condensed to six); only the M1 metrics remain pending | 03_software docs 01–05 pushed and Lead-checked |
 | v1 | 2026-11-23 | First full outline within the D35 budget (≈4,300 body words, 6 tables/figures, 20 references) | D35, D36, D37 |
 
 Keys refer to `01_research/sources.md`. "(pending: …)" marks points that may change when that team's output arrives. Rules applied throughout: D20 (Azure-native target design only), D23 (capability-only justification; cost only as a risk), D32 (residency split, explainability scope, Ganoderma = screening).
@@ -97,27 +98,35 @@ Keys refer to `01_research/sources.md`. "(pending: …)" marks points that may c
 - **Table 3: Weighted capability matrix.** Columns: Criterion (weight) · Azure · AWS · Google · IBM, plus a totals row and a sensitivity row.
 
 ### 2.4 Integration with existing IT + phased plan (400) — *2d [3]*
-- **Integration:**
-  - Logic Apps SAP connector (IDoc/BAPI/RFC) reads blocks and HR data and writes back approved fertiliser actions as work orders [AZ-SAP];
-  - LoRaWAN network server → IoT Hub; edge cluster on the estate network [AZ-IOTOPS].
-- **Residency split:**
-  - personal data stays in Malaysia West;
-  - Azure OpenAI and Confidential Ledger run in Southeast Asia with only non-personal or hashed data, under s129 safeguards (Transfer Impact Assessment, transfer record) [AZ-REGIONS] [AZ-AOAI-MODELS] [MAYER-PDPA2025].
-- **Roadmap:**
-  - **Short term (0–6 months):** pilot on 2–3 estates: soil nodes, M1 ripeness, evidence log, SAP read-only.
-  - **Medium term (6–18 months):** drone/satellite cascade, crew allocation, retraining with humans in the loop, ERP write-back, M6 retrained on estate data, yield forecasting.
-  - **Long term (18–36 months):** group-wide edge rollout, smallholder/co-operative app, EUDR due-diligence export, other crops.
-- (pending: `03_software/04_cloud_design.md`, phase durations and integration detail)
-- **Table 4: Phased roadmap (PDF Fig. 6).** Columns: Phase · Scope / functions · Integration step · Exit KPI.
+Source: `03_software/04_cloud_design.md` §3, §5, §6.
+- **Integration with the estate IT already in place:**
+  - **SAP ERP (S/4HANA or ECC)**, via the Logic Apps SAP connector (IDoc/BAPI/RFC) behind API Management [AZ-SAP]. Block master and planting dates seed the MSPO block reference (4.1.3.4). Approved fertiliser and lime actions become work orders. Harvest tickets close the yield loop.
+  - **Mill weighbridge and grading** feeds come in for ripeness feedback and OER KPIs.
+  - **Outbound:** the MSPO evidence pack, and N quantities into the GHG calculation (4.5.4) [MPOCC-P31].
+  - **Microsoft 365:** Power BI and Teams alerts.
+  - **Field data:** the drone vendor uploads into the data lake; LoRaWAN network server → IoT Hub; an edge cluster runs on the estate network [AZ-IOTOPS].
+- **Residency split (D32), the only place PDPA appears:**
+  - personal data stays in Malaysia West [AZ-REGIONS];
+  - Azure OpenAI and the Confidential Ledger run in Southeast Asia and receive only non-personal or hashed data [AZ-AOAI-MODELS];
+  - s129 safeguards apply: a Transfer Impact Assessment and transfer records [MAYER-PDPA2025].
+- **Roadmap (PDF Fig. 6 structure):**
+  - **Short term (0–6 months), pilot.** One estate, 2–3 blocks including one with a BSR history. Models M1, M5, M6, M7, with M3 as a screening trial. ERP read-only. Human approval of every action. Baseline KPIs first.
+  - **Medium term (6–18 months), scale and integrate.** One region of estates, with LoRaWAN plus edge processing on each estate. Models retrained on estate data, which replaces the simulated M6 labels. M2 learns time-to-ripe from logged grades. SAP work-order write-back, drift monitoring and ledger anchoring go live.
+  - **Long term (18–36 months), optimise and extend.** Group-wide rollout plus smallholder co-operatives. Yield forecasting from logged history. Multispectral BSR detection. EUDR geolocation package.
+- **Table 4: Phased roadmap.** Columns: Phase · Scope · Models / functions · Integration · Success measure. Three rows, with KPIs per phase:
+  - short term: agronomist agreement ≥80 %, and the audit pack accepted by an internal auditor;
+  - medium term: harvest rounds back within 10–15 days;
+  - long term: a measurable OER gain and MSPO audits with zero record findings.
 
 ### 2.5 Risks and mitigations, prioritised (350) — *2e [2]*
-Ranked by likelihood × impact (pending: `03_software/05_…` risk list):
-1. **Technical — model generalisation and data gaps.** M6 is trained on simulated data, there is no harvest-time data, and estates differ. *Mitigation:* cross-country validation, human review, drift alerts that trigger retraining.
-2. **Operational — adoption by a multilingual, mostly foreign crew, and Ganoderma false positives.** *Mitigation:* plain-language multilingual explanations, a "screening, not diagnosis" label, ground confirmation, mandore champions.
-3. **Technical — connectivity under the canopy.** *Mitigation:* offline edge processing [AZ-IOTOPS] and LoRaWAN gateway planning.
-4. **Vendor & cost — lock-in and consumption cost at group scale** (GPU training, message volumes). *Mitigation:* open formats (ONNX, COCO, STAC, Kafka-compatible streaming), FinOps budgets, phased scaling, AWS as a documented fallback [AWS-MYREGION].
-5. **Compliance constraint — PDPA cross-border transfer.** *Mitigation:* the residency split [MAYER-PDPA2025].
-- **Table 5: Risk register.** Columns: # · Category · Risk · Likelihood/Impact · Mitigation · Owner.
+Source: `04_cloud_design.md` §4, §7. The nine risks there, scored likelihood × impact on 1–3 scales, are condensed to six rows in Fig. 6 categories, highest first:
+1. **Technical: model accuracy and data gaps (3×3).** Early BSR detection is only moderate; there is no public soil or harvest-timing data; and the Indonesia → Malaysia domain shift affects M1 [KHOO2023]. *Mitigation:* screening, not diagnosis, with ground confirmation of every positive; report cross-country accuracy (pending: 03_software M1); drift-triggered retraining.
+2. **Operational: adoption and trust (3×2).** The field workforce is largely foreign, with mixed literacy [EDGE-LAB2026]. *Mitigation:* multilingual counterfactual explanations, one-tap approve or override, mandore champions, and a paper fallback during the pilot.
+3. **Technical: legacy ERP and connectivity (2×3).** Customised SAP ECC with inconsistent block codes, and blocks with poor coverage. *Mitigation:* the SAP connector with read-only first and write-back later, a block-master clean-up [AZ-SAP], and edge buffering with local rules [AZ-IOTOPS].
+4. **Vendor & cost: lock-in (2×2).** *Mitigation:* open formats (ONNX, STAC, Kafka protocol, MLflow), a containerised API, and AWS as a documented fallback because it also has a Malaysian region [AWS-MYREGION].
+5. **Vendor & cost: enterprise spend growth (2×2).** Drivers are GPU training, always-on endpoints and message volume. *Mitigation:* budgets and alerts, edge aggregation, autoscale schedules, drift-triggered rather than calendar retraining, and a quarterly FinOps review.
+6. **Vendor / compliance: service residency and PDPA transfer (2×2, 1×3).** *Mitigation:* the residency split, a template fallback if the LLM is unavailable, and DPO sign-off before phase 2 [AZ-AOAI-MODELS] [MAYER-PDPA2025].
+- **Table 5: Risk register.** Columns: # · Category · Risk · L×I · Mitigation · Owner.
 
 ## Part 3 — Creative Thinking & Innovation (~600)
 
@@ -125,7 +134,7 @@ Ranked by likelihood × impact (pending: `03_software/05_…` risk list):
 - **Explain-to-audit evidence log (anchor, D18/D28).** Each decision is stored with its inputs, model version, explanation, counterfactual, human approval or override, geolocation and MSPO clause. Records are hash-chained into Azure Confidential Ledger, and a one-click audit pack is produced [MPOCC-P31] [MSPO-EFI2025]. Compliance becomes a by-product of operations.
 - **Counterfactual explanations** a supervisor can read, e.g. "if pH ≥ 4.2 → fertilise" [AZ-RAI].
 - The **satellite → drone → ground cascade** with neighbour-risk reasoning [KHOO2023], and **crew allocation** that turns ripeness grades into decisions [HASSAN2026].
-- **Cross-country validation:** trained on Indonesian data, tested on Malaysian data, and the drop is reported honestly (pending: `03_software/03_ai_models.md` §9, M1 metrics). The human-review queue feeds retraining.
+- **Cross-country validation:** trained on Indonesian data, tested on Malaysian data, and the drop is reported honestly (pending: 03_software M1). The human-review queue feeds retraining.
 - No table; a contrast sentence against single-function tools.
 
 ### 3.2 Future extension (200) — *3b [2]*
