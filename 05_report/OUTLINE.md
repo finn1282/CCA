@@ -3,7 +3,7 @@
 ## Changelog (D37)
 | Ver | Date | What changed | Trigger |
 |---|---|---|---|
-| v3 | 2026-11-23 | Stakeholder changes applied: validation is a planned step (no prototype results); risk 1 is now cold start / data gap; roadmap wording changed; references raised to 26 (+KWANG2025, IOI2026, NST-FELDA2019, STAR-LAB2026, EDGE-RUBBER2026, AZ-ACL-RES); FELDA 112,635 families; no cover page or TOC; rubric map moved to RUBRIC_MAP.md | D40 (outline v2 approved with changes) |
+| v3 | 2026-11-23 | Stakeholder changes applied: validation is a planned step (no prototype results); risk 1 is now cold start / data gap; roadmap wording changed; references raised to 26 (+KWANG2025, IOI2026, NST-FELDA2019, STAR-LAB2026, GCP-REGIONS, GEE-S2 — the last two evidence Google's residency and geospatial scores in 2.3; EDGE-RUBBER2026 and AZ-ACL-RES left out to stay at 26); FELDA 112,635 families; no cover page or TOC; rubric map moved to RUBRIC_MAP.md | D40 (outline v2 approved with changes) |
 | v2 | 2026-11-23 | 2.4 and 2.5 rebuilt from Software design docs 01–05 (integration table, Fig. 6 roadmap with KPIs, nine risks condensed to six); only the M1 metrics remain pending | 03_software docs 01–05 pushed and Lead-checked |
 | v1 | 2026-11-23 | First full outline within the D35 budget (≈4,300 body words, 6 tables/figures, 20 references) | D35, D36, D37 |
 
@@ -142,7 +142,7 @@ Source: `04_cloud_design.md` §4, §7. The nine risks there, scored likelihood �
 
 ### 3.2 Future extension (200) — *3b [2]*
 - **Organisation:** FELDA settler co-operatives get a simplified advisory app and evidence log [EDGE-FELDA]; yield forecasting comes from logged data; N₂O/GHG accounting comes from the fertiliser log [MPOCC-P31].
-- **Other sectors:** the EUDR also covers rubber and cocoa [EC-EUDR], so plot geolocation and the evidence log transfer directly. Malaysian rubber is about 90 % smallholder-grown, which raises the same traceability problem (optional reference; see open question 1).
+- **Other sectors:** the EUDR also covers rubber and cocoa [EC-EUDR], so plot geolocation and the evidence log transfer directly. Rubber shares the smallholder geolocation and traceability problem (the 90 % smallholder figure was dropped with EDGE-RUBBER2026), which raises the same traceability problem (optional reference; see open question 1).
 
 ## Conclusion (150)
 - Restates the ranked problems, how SawitSense answers each, why Azure fits, and how the solution evolves.
@@ -153,12 +153,12 @@ Source: `04_cloud_design.md` §4, §7. The nine risks there, scored likelihood �
 Table 1 prioritisation · Table 2 conventional vs cognitive · Figure 1 architecture · Table 3 platform matrix · Table 4 roadmap · Table 5 risk register.
 
 ## Core reference list (26)
-The 20 entries of v2 plus six added under D40. Full entries are in the REPORT.md reference list. Letters changed with the additions: The Edge Malaysia (2026a) = [EDGE-LAB2026], (2026b) = [EDGE-RUBBER2026]; Microsoft (n.d.a) = [AZ-SAP], (n.d.b) = [AZ-ACL-RES].
+The 20 entries of v2 plus six added under D40. Full entries are in the REPORT.md reference list. Added: Kwang et al. (2025), IOI Corporation Berhad (2026), New Straits Times (2019), Ramendran (2026), Google Cloud (2026) [GCP-REGIONS], Google Earth Engine (n.d.) [GEE-S2]. Letters: Microsoft (2026a/b/c) = AOAI models / regions / IoT Operations; The Edge Malaysia 2025 / 2026 / n.d. need no letters.
 
 - **Industry and government:** MPOB (2026) · MPOCC (2023) · MSPO and EFI (2025) · Ma (n.d.) · IOI Corporation Berhad (2026) · European Commission (2026) · Mayer Brown (2025)
-- **News and trade press:** Chong (2026) · Ramendran (2026) · The Edge Malaysia (2025; 2026a; 2026b; n.d.) · New Straits Times (2019) · Clark (2022)
+- **News and trade press:** Chong (2026) · Ramendran (2026) · The Edge Malaysia (2025; 2026; n.d.) · New Straits Times (2019) · Clark (2022)
 - **Academic:** Khoo and Chong (2023) · Che Hassan et al. (2026) · Kwang et al. (2025)
-- **Vendor:** Amazon (2024) · Google Cloud (n.d.) · Microsoft (2025; 2026a; 2026b; 2026c; n.d.a; n.d.b)
+- **Vendor:** Amazon (2024) · Google Cloud (n.d.) · Google Cloud (2026) · Google Earth Engine (n.d.) · Microsoft (2025; 2026a; 2026b; 2026c; n.d.)
 
 ## Appendix A — Progress report (≤1 page)
 - **Table A1: Timeline.** Columns: Date · Milestone · Owner (6–8 rows, 23 Nov – 14 Dec; from git history and PROJECT_PLAN phases).

@@ -1,44 +1,76 @@
 # 05_report — README
 
-## Status (23 Nov 2026)
-| Section | Status |
-|---|---|
-| Cover page, TOC | Drafted (placeholders `[GroupNo]`, `[Member n]`, `[ID]`, `[Lecturer name]`) |
-| Executive summary | Placeholder; to be written last |
-| 1 Introduction | **Drafted** (~520 words) |
-| 1.1 Case | **Drafted**, fully cited (Tables 1–2). One `[CITE NEEDED]` on FELDA scale (R-REP1) |
-| 1.2 Problems | **Drafted**, fully cited (Table 3, prioritisation criteria; RM2.2 bn labelled as authors' calculation; RM7.5–20 bn labelled as employer estimate) |
-| 1.3 Capabilities | **Drafted**, fully cited (Figure 1, Tables 4–5) |
-| Part 2 (2.1–2.5) | Headings + one-line notes; waits on `03_software/` design docs 01–05 and `04_technical/` |
-| Part 3 (3.1–3.2) | Headings + one-line notes; waits on Software docs; 3.2 also on R-REP1(b) |
-| Conclusion | Placeholder |
-| References | 37 Harvard entries, cited-only, alphabetical (built from `01_research/sources.md`) |
-| Appendix A | Placeholder |
-| Appendix B | **Drafted** (Table B1); Part 2/3 rows marked *Pending* |
+## Status (23 Nov 2026, after D40)
+**Full draft of REPORT.md complete**, following OUTLINE v3 (approved v2 + D40 changes). No cover page, TOC or formatting (the stakeholder adds them).
 
-Report body word count so far: about 5,500 words (Introduction + Part 1).
+| Section | Prose words | Table words | Status |
+|---|---|---|---|
+| Executive summary | 153 | — | Drafted |
+| 1 Introduction | 147 | — | Drafted |
+| 1.1 Case | 288 | — | Drafted |
+| 1.2 Problems (Table 1) | 515 | 96 | Drafted |
+| 1.3 Capabilities (Table 2) | 460 | 98 | Drafted |
+| 2.1 SawitSense | 238 | — | Drafted |
+| 2.2 Technologies (Figure 1) | 399 (incl. ~75 in Mermaid) | — | Drafted |
+| 2.3 Platforms (Table 3) | 454 | 104 | Drafted |
+| 2.4 Integration and roadmap (Table 4) | 212 | 148 | Drafted |
+| 2.5 Risks (Table 5) | 59 | 242 | Drafted |
+| 3.1 Novelty | 349 | — | Drafted |
+| 3.2 Extension | 158 | — | Drafted |
+| Conclusion | 152 | — | Drafted |
+| **Total body** | **≈3,580** | **≈690** | **≈4,270 words, inside the D35 budget (≈4,300)** |
+| References | 26 Harvard entries, cited only | | |
+| Appendix A | Timeline + contribution tables, placeholders | | ≤1 page |
+
+Six captioned tables and figures: Tables 1–5 and Figure 1.
 
 ## Inputs used
-`CCA Group Assignment.pdf` (pp.1–9), `00_lead/SPEC.md`, `DECISIONS.md` (D1–D32), `PROJECT_PLAN.md`; `01_research/` 00, 01, 02 (v2), 06, 07, 08, `sources.md` (95 entries), `REQUESTS.md`; `03_software/README.md`, `PLAN.md` (for model names only).
+Assignment PDF; `00_lead/` SPEC, DECISIONS D1–D40, PROJECT_PLAN, `briefs/report.md`; `01_research/` 00, 01, 02, 06, 07, 08, 09 and `sources.md`; `03_software/` docs 01–05.
 
 ## Outputs
 | File | Content |
 |---|---|
-| `PLAN.md` | Approach, section-by-section evidence plan, ideas, conflicts, proposals REP-P1–P3 |
-| `REPORT.md` | The submission report (Markdown) |
-| `README.md` | This file |
+| `REPORT.md` | Submission report (Markdown) |
+| `OUTLINE.md` | Living outline (v3), with changelog (D36/D37) |
+| `RUBRIC_MAP.md` | Sub-task → section cross-reference (internal, moved out of the report per D40) |
+| `PLAN.md` | Original plan and proposals REP-P1–P3 (P1 and P2 accepted in D34) |
 
-## Citation conventions (keep consistent in later sections)
-- In-text: (Author, Year); organisations abbreviated after first full use: MPOB (2026) = [MPOB2025]; MPOCC (2023a) = [MPOCC-P21], MPOCC (2023b) = [MPOCC-P31]; MSPO and EFI (2025) = [MSPO-EFI2025]; The Edge Malaysia (2025) = [EDGE-SDG2025], (2026) = [EDGE-LAB2026]; Ramendran (2026) = [STAR-LAB2026]; Chong (2026) = [STAR-FERT2026]; The Star (2025) = [STAR-EUDR2025]; The Malaysian Reserve (2020) = [MPOB-NEWS2020]; Business Today (2025) = [MPOB-APPS2025]; Ritz et al. (2026) = [HL-EUDR2026]; Applied Agricultural Resources (n.d.) = [AAR-SOIL]; Microsoft Planetary Computer (n.d.) = [MPC-S2].
-- **Microsoft (2025) letters, fixed by alphabetical title:** 2025a = [AZ-RAI], 2025b = [AZ-ENDPOINTS], 2025c = [AZ-DPS]. Microsoft (2026) and (n.d.) entries get letters when Part 2 is written (alphabetical by title).
-- Google Earth Engine (n.d.) will need letters if both [GEE-S2] and [GEE-L9] are cited.
+## Core reference list (26). Reuse only these
+In-text form → `sources.md` key:
+- Amazon (2024) → AWS-MYREGION
+- Che Hassan et al. (2026) → HASSAN2026
+- Chong (2026) → STAR-FERT2026
+- Clark (2022) → REG-WIOT
+- European Commission (2026) → EC-EUDR
+- Google Cloud (2026) → GCP-REGIONS
+- Google Cloud (n.d.) → GCP-IOTCORE
+- Google Earth Engine (n.d.) → GEE-S2
+- IOI Corporation Berhad (2026) → IOI2026
+- Khoo and Chong (2023) → KHOO2023
+- Kwang et al. (2025) → KWANG2025
+- Ma (n.d.) → MA-POEB
+- MPOB (2026) → MPOB2025
+- MPOCC (2023) → MPOCC-P31
+- MSPO and EFI (2025) → MSPO-EFI2025
+- Mayer Brown (2025) → MAYER-PDPA2025
+- Microsoft (2025) → AZ-RAI
+- Microsoft (2026a) → AZ-AOAI-MODELS
+- Microsoft (2026b) → AZ-REGIONS
+- Microsoft (2026c) → AZ-IOTOPS
+- Microsoft (n.d.) → AZ-SAP
+- New Straits Times (2019) → NST-FELDA2019
+- Ramendran (2026) → STAR-LAB2026
+- The Edge Malaysia (2025) → EDGE-SDG2025
+- The Edge Malaysia (2026) → EDGE-LAB2026
+- The Edge Malaysia (n.d.) → EDGE-FELDA
 
-## Assumptions
-- Submission date on the cover is shown as 14 Dec 2026 (deadline 15 Dec 00:00, SPEC §1).
-- "Sawit is Malay for oil palm" is stated without citation as common knowledge.
+## Compliance notes
+- D20/D40: no Kaggle, Colab, student, prototype or "simulated" wording. Validation is described as a planned step.
+- D23: platforms are compared on capability only; cost appears only as risk 5.
+- D32: residency split in 2.4 and risk 6; Responsible AI dashboard for the tabular model only and Grad-CAM for the image models; *Ganoderma* is described as screening.
+- RM2.2 bn is labelled as the authors' calculation and RM7.5–20 bn as an employer estimate.
 
 ## Open issues for Lead
-1. **REP-P1–P3** in `PLAN.md` await ruling (P1/P2 already applied in the draft because they do not change scope; easy to remove if rejected).
-2. **R-REP1** (in `01_research/REQUESTS.md`): FELDA scale source (blocks one `[CITE NEEDED]` in 1.1) and EUDR commodity scope for 3.2.
-3. Part 2/3 need `03_software/` docs 01–05 (functions, users, architecture, integration, roadmap, risks) and confirmation of the D32 matrix figures for 2.3.
-4. SPEC §8 still says `sources.md` has 64 entries; it has 95 (cosmetic).
+1. Placeholders remain: [GroupNo], [Lecturer name], [Member n], [ID], and the roles and contributions in Table A2. Timeline owners in Table A1 are illustrative and need the stakeholder's real allocation.
+2. Azure confidential ledger is named in 2.4 and 3.1 without its own citation, because AZ-ACL-RES was left out to stay at 26. Swap it in for one reference if you want the "replicates to a paired region" point cited.
+3. The 2.3 AWS caveat (C7 researched in less depth) is stated openly, as research file 08 recommends.

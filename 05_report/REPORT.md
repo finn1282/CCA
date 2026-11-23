@@ -220,13 +220,39 @@ The two highest risks are about data and people, not technology. This is why the
 
 # Part 3 — Creative Thinking & Innovation
 
-*[In progress.]*
+## 3.1 Novelty Compared with an Off-the-Shelf Implementation
+
+An off-the-shelf implementation would deploy one or two separate tools: a ripeness classifier, an NDVI dashboard and perhaps a sensor portal. Each would produce a prediction, and the decision and its compliance record would still be left to people. Published ripeness systems, for example, stop at the grade (Che Hassan et al., 2026). SawitSense differs in five ways.
+
+1. **Explain-to-audit evidence log.** Every decision is stored as one record containing:
+   - the input data and model version;
+   - the explanation and counterfactual;
+   - the human approval or override;
+   - the block geolocation;
+   - the MS 2530:2022 criterion the decision supports (MPOCC, 2023).
+
+   Each record is hashed, and the digests are anchored in Azure confidential ledger, an append-only and tamper-evident store. Any later edit is therefore detectable. One click produces an audit pack per block and period. This turns MSPO compliance from parallel paperwork into a by-product of operations. It also helps close the gaps that the EUDR gap assessment found in MSPO data, namely plot geolocation and plot-level traceability (MSPO and EFI, 2025). The log joins AI explainability to regulatory audit and so creates new knowledge: the rate at which agronomists agree with or override the system becomes measurable evidence of human oversight and of model quality.
+2. **Counterfactual, plain-language explanations.** "Lime now: pH 3.8 is below 4.0; at pH 4.2 or above the advice would be to fertilise." A supervisor can read and challenge this in their own language, whereas standard feature-importance charts are written for data scientists (Microsoft, 2025).
+3. **A multiscale screening cascade.** Satellite, drone and ground evidence are linked by spatial reasoning about root-contact spread (Khoo and Chong, 2023). The cascade directs scarce experts to the right palms despite moderate model accuracy (Kwang et al., 2025).
+4. **Decisions, not just detections.** Ripeness grades become crew allocations, which act on the labour constraint directly.
+5. **Planned cross-country validation and a learning loop.** Before go-live, models trained on public data from another producing country will be tested on Malaysian estate images, and any drop in accuracy will be reported. Afterwards, every human override becomes a training label.
+
+## 3.2 Future Extension to the Organisation and Other Sectors
+
+**For the organisation.** The same platform can scale down to FELDA's 112,635 settler families (New Straits Times, 2019) through a simplified co-operative app. Settlers would receive advice and an evidence log that support group MSPO certification. As pilot data accumulate, the harvest and fertiliser logs enable yield forecasting. They also enable automatic nitrous-oxide accounting for the MSPO GHG criterion (MPOCC, 2023).
+
+**For other sectors.** The EUDR covers seven commodities: cattle, cocoa, coffee, oil palm, rubber, soya and wood (European Commission, 2026). Malaysia also exports rubber, cocoa and timber, so the satellite plot verification and the evidence log transfer directly. Rubber faces the same problem of smallholder geolocation and traceability, which makes it the natural second sector.
+
+**How it could evolve.** SawitSense would move in three steps:
+1. estate decision support;
+2. a shared traceability layer in which buyers verify ledger digests instead of re-auditing;
+3. a reusable "explained, auditable decision" pattern for any regulated agricultural supply chain.
 
 ---
 
 ## Conclusion
 
-*[In progress.]*
+Malaysia's record palm oil output rests on fragile foundations: scarce harvesters, a hidden soil-borne disease and tightening sustainability rules (MPOB, 2026; Khoo and Chong, 2023; MSPO and EFI, 2025). This report ranked these problems by evidence and showed that each is limited by judgement at scale, which cognitive computing can supply better than conventional systems. SawitSense applies three capabilities. Computer vision plans harvests, multisource anomaly detection screens for *Ganoderma*, and knowledge-based reasoning gives explained fertiliser advice. All three feed an explain-to-audit evidence log. Microsoft Azure is recommended because it uniquely combines a Malaysian region, first-party IoT with an offline edge, and SAP integration. AWS is noted as a credible alternative. A phased plan that starts with human review and a rule-based baseline limits the main risks of cold-start data and user trust. Beyond palm oil, the same design offers a route to EUDR-ready traceability for rubber and cocoa (European Commission, 2026).
 
 ---
 
