@@ -334,8 +334,6 @@ The common thread is that each problem is constrained by **judgement over unstru
 
 ## References
 
-
-
 Ahmad, M.R., Jamaludin, N., Jelani, A.R., Bakri, A. and Shuib, A.R. (2020) 'The effect of design parameters on the force and energy requirement for cutting oil palm fronds using magnetic force', *Jurnal Teknologi (Sciences & Engineering)*, 82(4), pp. 141–150. doi:10.11113/jt.v82.14236 (Accessed: 23 November 2026).
 
 Ahmadi, P., Mansor, S.B., Ahmadzadeh Araji, H. and Lu, B. (2023) 'Convolutional SVM networks for detection of *Ganoderma boninense* at early stage in oil palm using UAV and multispectral Pleiades images', *ISPRS Annals of the Photogrammetry, Remote Sensing and Spatial Information Sciences*, X-4/W1-2022, pp. 25–30. doi:10.5194/isprs-annals-X-4-W1-2022-25-2023 (Accessed: 23 November 2026).
