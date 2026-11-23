@@ -3,6 +3,7 @@
 ## Changelog (D37)
 | Ver | Date | What changed | Trigger |
 |---|---|---|---|
+| v4 | 2026-11-24 | Audit 1 fixes C-01…C-23 (except C-05, which is for the stakeholder); 2.3 shows the rescored matrix (AWS 89 / Azure 85 / Google 67 / IBM 49) and recommends Azure on case fit (SAP estates, weeks offline, audit-ready explanations); residency split corrected; MSPO Parts 3-2 / 4-1; references 33; body limit excludes references and appendix | REPORT_AUDIT_1, research file 10, D49, D50, D51 |
 | v3 | 2026-11-23 | Stakeholder changes applied: validation is a planned step (no prototype results); risk 1 is now cold start / data gap; roadmap wording changed; references raised to 26 (+KWANG2025, IOI2026, NST-FELDA2019, STAR-LAB2026, GCP-REGIONS, GEE-S2 — the last two evidence Google's residency and geospatial scores in 2.3; EDGE-RUBBER2026 and AZ-ACL-RES left out to stay at 26); FELDA 112,635 families; no cover page or TOC; rubric map moved to RUBRIC_MAP.md | D40 (outline v2 approved with changes) |
 | v2 | 2026-11-23 | 2.4 and 2.5 rebuilt from Software design docs 01–05 (integration table, Fig. 6 roadmap with KPIs, nine risks condensed to six); only the M1 metrics remain pending | 03_software docs 01–05 pushed and Lead-checked |
 | v1 | 2026-11-23 | First full outline within the D35 budget (≈4,300 body words, 6 tables/figures, 20 references) | D35, D36, D37 |
@@ -87,18 +88,16 @@ Keys refer to `01_research/sources.md`. "(pending: …)" would mark points await
 - **Figure 1: SawitSense layered architecture (adapted from PDF Fig. 4).** A compact Mermaid diagram with 5 layers and a cross-cutting bar (from `03_software/02_architecture.md` §1).
 
 ### 2.3 Platform evaluation and recommendation (650) — *2c [5]*
-- **Four platforms:** Azure, AWS, Google "Gemini platform (formerly Vertex AI)", IBM watsonx. Seven capability criteria (weights): C1 IoT 15, C2 residency 15, C3 vision 15, C4 geospatial 15, C5 edge/offline 10, C6 MLOps/XAI 15, C7 enterprise integration 15.
-- **Totals: Azure 88 · AWS 79 · Google 67 · IBM 49** (D32). Azure stays first under the equal-weight and geospatial-heavy sensitivity checks.
-- **Evidence:**
-  - Malaysia West region [AZ-REGIONS]; AWS Malaysia region [AWS-MYREGION];
-  - Google IoT Core retired [GCP-IOTCORE]; IBM Watson IoT retired [REG-WIOT];
-  - SAP connector [AZ-SAP]; IoT Operations [AZ-IOTOPS].
-- **Balanced reasoning:**
-  - Google leads on geospatial and AWS is a credible runner-up.
-  - Azure's caveats: RAI is tabular-only, and Azure OpenAI is not offered in Malaysia West [AZ-AOAI-MODELS].
-  - Research depth on AWS was uneven, so the lead is framed as best fit for an estate already running SAP/Microsoft.
-- **Recommendation:** Azure, linked to each problem. P1 and P2 are served by vision plus IoT/edge; P3 by residency, explainability and ERP integration.
-- **Table 3: Weighted capability matrix.** Columns: Criterion (weight) · Azure · AWS · Google · IBM, plus a totals row and a sensitivity row.
+- **Matrix (Table 3):** the same seven capability criteria, rescored from the AWS docs (research file 10). **Base: AWS 89 · Azure 85 · Google 67 · IBM 49.** Equal weights: 89 / 86 / 66 / 49. Geospatial-heavy (C4 = 30; C1, C2, C5, C7 = 10; C3, C6 = 15): 84 / 80 / 75 / 50.
+- **AWS is the strong runner-up and its strengths are stated:**
+  - in-country IoT Core, Greengrass, SageMaker and Rekognition [AWS-REGTABLE];
+  - image explainability through Clarify [AWS-CLARIFY].
+- **Recommendation: Azure, on case fit.** Three case-critical constraints from Part 1 decide it:
+  1. **SAP-run estates.** IOI runs SAP S/4HANA [IOI-S4HANA2020] and SD Guthrie runs SAP [BSI-SDG-RSPO2023]. Azure's Logic Apps connector offers IDoc, BAPI and RFC on both ECC and S/4HANA [AZ-SAP]; AWS AppFlow is OData-only [AWS-APPFLOW-SAP] and is not offered in AWS Malaysia [AWS-REGTABLE].
+  2. **Weeks offline under the canopy.** IoT Operations is validated for 45 days offline [AZ-IOTOPS]; the Greengrass docs state no validated duration [AWS-GG].
+  3. **MSPO-audit-ready explanations.** Azure offers counterfactuals and a PDF scorecard [AZ-RAI].
+- **Wording:** never "uniquely"; the "researched in less depth" sentence is deleted.
+- **Trade-offs Azure accepts:** Azure ML runs in Southeast Asia, and image explanations use Grad-CAM.
 
 ### 2.4 Integration with existing IT + phased plan (400) — *2d [3]*
 Source: `03_software/04_cloud_design.md` §3, §5, §6.
@@ -152,13 +151,10 @@ Source: `04_cloud_design.md` §4, §7. The nine risks there, scored likelihood �
 ## Tables and figures (6)
 Table 1 prioritisation · Table 2 conventional vs cognitive · Figure 1 architecture · Table 3 platform matrix · Table 4 roadmap · Table 5 risk register.
 
-## Core reference list (26)
-The 20 entries of v2 plus six added under D40. Full entries are in the REPORT.md reference list. Added: Kwang et al. (2025), IOI Corporation Berhad (2026), New Straits Times (2019), Ramendran (2026), Google Cloud (2026) [GCP-REGIONS], Google Earth Engine (n.d.) [GEE-S2]. Letters: Microsoft (2026a/b/c) = AOAI models / regions / IoT Operations; The Edge Malaysia 2025 / 2026 / n.d. need no letters.
-
-- **Industry and government:** MPOB (2026) · MPOCC (2023) · MSPO and EFI (2025) · Ma (n.d.) · IOI Corporation Berhad (2026) · European Commission (2026) · Mayer Brown (2025)
-- **News and trade press:** Chong (2026) · Ramendran (2026) · The Edge Malaysia (2025; 2026; n.d.) · New Straits Times (2019) · Clark (2022)
-- **Academic:** Khoo and Chong (2023) · Che Hassan et al. (2026) · Kwang et al. (2025)
-- **Vendor:** Amazon (2024) · Google Cloud (n.d.) · Google Cloud (2026) · Google Earth Engine (n.d.) · Microsoft (2025; 2026a; 2026b; 2026c; n.d.)
+## Core reference list (33)
+- **Dropped:** Ma (n.d.), IOI2026, Amazon (2024), AZ-REGIONS, AZ-AOAI-MODELS, MPOCC-P31.
+- **Added:** AHMAD2020, MPOB-TT698, MPOCC-P32, MPOCC-P41, IOI-S4HANA2020, BSI-SDG-RSPO2023, AZ-ACL-RES, AZ-PRICES-API, AWS-REGTABLE, AWS-APPFLOW-SAP, AWS-GG, AWS-CLARIFY.
+- **Full list:** in the README.
 
 ## Appendix A — Progress report (≤1 page)
 - **Table A1: Timeline.** Columns: Date · Milestone · Owner (6–8 rows, 23 Nov – 14 Dec; from git history and PROJECT_PLAN phases).
