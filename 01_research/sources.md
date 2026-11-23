@@ -35,6 +35,25 @@
 | [AFANDI2023] | Afandi, A.M., Zulkifli, H., Nur Zuhaili, H.A.Z.A., Norliyana, Z.Z., Hisham, H., Saharul, A.M., Dzulhelmi, M.N. and Vu Thanh, T.A. (2023) 'Oil palm water requirement and the need for irrigation in dry Malaysian areas', *Journal of Oil Palm Research*, 35(3), pp. 391–405. doi:10.21894/jopr.2022.0052 (Accessed: 23 November 2026). |
 | [KANANG2026] | Kanang, K.D. and Mohidin, H. (2026) 'Liming and soil acidity management in tropical peatlands under oil palm: a review', *Journal of Smart Science and Technology*, 6(1), pp. 55–74. doi:10.24191/jsst.v6i1.116 (Accessed: 23 November 2026). |
 
+| [OMAR2024] | Omar, Z., P P Abdul Majeed, A., Rosbi, M., Ghazalli, S.A. and Selamat, H. (2024) 'Outdoor oil palm fruit ripeness dataset', *Data in Brief*, 55, 110667. doi:10.1016/j.dib.2024.110667 (Accessed: 23 November 2026). |
+| [RAMLI2026] | Ramli, M.R., Abdul Hammid, A.N. and Yaakub, Z. (2026) 'Processing of under and overripe oil palm fruits and its effects on yield and oil quality', *Journal of Oil Palm Research*, 38(2), pp. 384–390. doi:10.21894/jopr.2025.0033 (Accessed: 23 November 2026). |
+
+## Datasets
+| Key | Harvard entry |
+|---|---|
+| [D1-KAMAL2024] | Kamal, I.M., Mochammad, S., Nurahmi, L., Natawijaya, A. and Kalili, M. (2024) *An ordinal dataset for ripeness level classification in oil palm fruit quality grading* [Dataset], Mendeley Data, V1. doi:10.17632/424y96m6sw.1 (Accessed: 23 November 2026). |
+| [D2-ROSBI2024] | Rosbi, M. (2024) *Outdoor-Tenera-Oil-Palm-Fruit-Image: FFB dataset* [Dataset], Zenodo. Available at: https://zenodo.org/records/11114885 (Accessed: 23 November 2026). |
+| [D3-NURUL2024] | Nurul, N. (2024) *Palm ripeness dataset* [Dataset], Mendeley Data, V1. doi:10.17632/zrcf6v69y8.1 (Accessed: 23 November 2026). |
+| [D4-MIMBORO2026] | Mimboro, P., Soeparno, H., Soewito, B. and Budiharto, W. (2026) *UAV RGB image dataset for object detection of Ganoderma-affected oil palm trees* [Dataset], Mendeley Data, V2. doi:10.17632/s23jvbpnr3.2 (Accessed: 23 November 2026). |
+| [D5-DOMINGUEZ2025] | Dominguez Meza, A. and Rituay, P. (2025) *Oil palm tree detection for anomaly identification* [Dataset], Mendeley Data, V1. doi:10.17632/nh7d23dgnw.1 (Accessed: 23 November 2026). |
+| [D6-RAHMANTO2025] | Rahmanto, O., Julianto, V. and Arrahimi, A.R. (2025) *Image dataset of oil palm leaf diseases* [Dataset], Mendeley Data, V1. doi:10.17632/cp65skff89.1 (Accessed: 23 November 2026). |
+| [GEE-S2] | Google Earth Engine (n.d.) *Harmonized Sentinel-2 MSI: MultiSpectral Instrument, Level-2A (COPERNICUS/S2_SR_HARMONIZED)*. Available at: https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED (Accessed: 23 November 2026). |
+| [COPERNICUS-LEGAL] | European Commission (n.d.) *Legal notice on the use of Copernicus Sentinel Data and Service Information*. Available at: https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice (Accessed: 23 November 2026). |
+| [GEE-L9] | Google Earth Engine (n.d.) *USGS Landsat 9 Level 2, Collection 2, Tier 1 (LANDSAT/LC09/C02/T1_L2)*. Available at: https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC09_C02_T1_L2 (Accessed: 23 November 2026). |
+| [GEE-OILPALM] | Descals, A. et al. (2021) *High resolution global industrial and smallholder oil palm map for 2019* (v1) [Dataset], Zenodo. doi:10.5281/zenodo.4473715. GEE catalog entry: https://developers.google.com/earth-engine/datasets/catalog/BIOPAMA_GlobalOilPalm_v1 (Accessed: 23 November 2026). |
+| [D10-INGLE2020] | Ingle, A. (2020) *Crop recommendation dataset* [Dataset], Kaggle. Available at: https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset (Accessed: 23 November 2026). |
+| [ISRIC-SG] | ISRIC – World Soil Information (n.d.) *SoilGrids FAQ*. Available at: https://docs.isric.org/globaldata/soilgrids/SoilGrids_faqs.html (Accessed: 23 November 2026). |
+
 ## Vendor / technical documentation
 | Key | Harvard entry |
 |---|---|
