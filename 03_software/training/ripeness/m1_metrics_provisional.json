@@ -1,0 +1,74 @@
+{
+  "model_version": "m1-effb0-0.1-provisional",
+  "provisional": true,
+  "split": "PROVISIONAL: D2 train (85/15 train/val) -> D2 test; D1 not used",
+  "val_accuracy": 0.9697,
+  "d2_malaysia_test": {
+    "n": 89,
+    "accuracy": 0.9326,
+    "macro_f1_present_classes": 0.9371,
+    "within_one_class_accuracy": 0.9326,
+    "per_class": {
+      "unripe": {
+        "precision": 1.0,
+        "recall": 0.824,
+        "f1": 0.903,
+        "n": 34
+      },
+      "ripe": {
+        "precision": 0.891,
+        "recall": 1.0,
+        "f1": 0.943,
+        "n": 41
+      },
+      "overripe": {
+        "precision": 0.933,
+        "recall": 1.0,
+        "f1": 0.966,
+        "n": 14
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "unripe",
+        "underripe",
+        "ripe",
+        "overripe"
+      ],
+      "rows_true_cols_pred": [
+        [
+          28,
+          0,
+          5,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          41,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          14
+        ]
+      ]
+    }
+  },
+  "train_seconds": 63,
+  "device": "cpu",
+  "finetune_epochs": 4,
+  "train_counts": {
+    "overripe": 51,
+    "ripe": 105,
+    "unripe": 34
+  }
+}

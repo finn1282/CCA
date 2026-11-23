@@ -21,7 +21,10 @@ def req(method, path, body=None, headers=None, raw=False):
     r = urllib.request.Request(BASE + path, data=data, headers=h, method=method)
     try:
         with urllib.request.urlopen(r, timeout=30) as resp:
-            txt = resp.read().decode()
+            body = resp.read()
+            if not resp.headers.get_content_type().startswith(("application/json", "text/")):
+                return resp.status, body          # binary (PNG/JPEG/JS)
+            txt = body.decode()
             return resp.status, (json.loads(txt) if txt[:1] in "{[" else txt)
     except urllib.error.HTTPError as e:
         return e.code, e.read().decode()
@@ -87,8 +90,8 @@ if IMAGE and model_ok:
     check("ripeness inference", st == 200 and rp["label"] in rp["probs"] and abs(sum(rp["probs"].values()) - 1) < 0.01, rp)
     if st == 200:
         print(f"     camera: {rp['label']} {rp['confidence']} | {rp['harvest_advice']} | {rp['evidence_id']}")
-        hs, _ = req("GET", rp["heatmap_url"].replace("/static", "/static", 1))
-        check("heat-map served", hs == 200)
+        hs, png = req("GET", rp["heatmap_url"])
+        check("heat-map PNG served", hs == 200 and png[:4] == b"\x89PNG")
 else:
     st, rp = req("POST", "/api/v1/infer/ripeness", b"\xff\xd8\xff", CAM, raw=True)
     check("ripeness without model → 503 (or 400 bad image)", st in (503, 400) if not model_ok else st == 400, (st, rp))

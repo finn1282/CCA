@@ -12,10 +12,12 @@ PASS null pH → OK (partial), no fabricated value
 PASS repeat (device_id, seq) idempotent
 PASS calibration GET as device
 PASS command delivered once
-PASS ripeness without model → 503 (or 400 bad image)
+PASS ripeness inference
+     camera: ripe 0.995 | Harvest this round | ev_000024
+PASS heat-map PNG served
 PASS latest shows sim-01
 PASS evidence chain verified
-     All 22 records intact (SHA-256 chain)
+     All 24 records intact (SHA-256 chain)
 PASS audit pack VERIFIED + head hash + clauses
 PASS harvest plan
      harvest: 375 bunches at risk; A2:2, C1:3, A3:2, C2:1, B3:2, DEMO-A1:6, B1:14, B2:0

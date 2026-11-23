@@ -149,7 +149,8 @@
 
 | Model | Test set | Metric | Result |
 |---|---|---|---|
-| M1 | D2 Malaysia | accuracy / macro-F1 / within-one-class | *pending: filled from `training/ripeness/m1_metrics.json`* |
+| M1 (provisional, CPU) | D2 Malaysia test, n = 89 (unripe 34, ripe 41, overripe 14); trained on a 190-image D2-train subset | accuracy / macro-F1 | **0.93 / 0.94**. Recall: unripe 0.82, ripe 1.00, overripe 1.00. Errors: 5 unripe→ripe, 1 unripe→overripe. Same-country test, and no *underripe* class in D2, so this is an upper-bound sanity check, **not** the cross-country result |
+| M1 (final) | D1 test (Indonesia) and D2 (Malaysia, cross-country) | accuracy / macro-F1 / within-one-class | From the GPU notebook run (`training/RUN_ON_KAGGLE.md`). Insert the values from `m1_metrics.json` before the report is frozen |
 | M6 | Simulated hold-out (n = 4,000) | accuracy vs noisy labels | **0.88** (irrigate F1 0.94, lime 0.88, drain 0.92, fertilise 0.82, watch 0.58: the narrow 4.0–4.2 band is where sensor noise matters most) |
 | M3 | D4 disjoint test blocks | Ganoderma recall, mAP@0.5 | Roadmap (stretch, SW-P6) |
 | M5 | Sentinel-2 over a Malaysian estate AOI | flagged blocks | Pre-computed export (`gee/`) |

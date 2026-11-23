@@ -1,0 +1,28 @@
+{
+ "model_version": "m1-effb0-0.1-provisional",
+ "provisional": true,
+ "classes": [
+  "unripe",
+  "underripe",
+  "ripe",
+  "overripe"
+ ],
+ "input_size": 224,
+ "resize": 256,
+ "mean": [
+  0.485,
+  0.456,
+  0.406
+ ],
+ "std": [
+  0.229,
+  0.224,
+  0.225
+ ],
+ "architecture": "EfficientNet-B0 (ImageNet) transfer learning",
+ "explainability": "CAM from final linear layer (= Grad-CAM for GAP-linear head)",
+ "data": "PROVISIONAL: train/test D2 Rosbi 2024 Malaysia (CC BY 4.0); no underripe class in D2",
+ "metrics_summary": {
+  "d2_malaysia_test": 0.9326
+ }
+}

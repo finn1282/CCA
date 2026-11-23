@@ -99,7 +99,12 @@ class ImgDS(Dataset):
             cp = self.cache / (hashlib.md5(str(p).encode()).hexdigest() + ".jpg")
             if cp.exists():
                 return Image.open(cp).convert("RGB")
-        img = ImageOps.exif_transpose(Image.open(p)).convert("RGB")
+        img = Image.open(p)
+        try:
+            img = ImageOps.exif_transpose(img)
+        except Exception:  # noqa: BLE001 — some phone JPEGs carry malformed EXIF; keep original orientation
+            pass
+        img = img.convert("RGB")
         img.thumbnail((288 * 4, 288 * 4))
         w, h = img.size; s = 288 / min(w, h)
         img = img.resize((max(1, round(w * s)), max(1, round(h * s))), Image.BILINEAR)
@@ -242,7 +247,10 @@ def main():
     Xtr, ytr = torch.cat([Xtr, Xtr_c]), torch.cat([ytr, ytr_c])
     Xv, yv = extract(net, sp["val"], tfs(False), a.device, a.bs, a.workers, cache)
     counts = torch.bincount(ytr, minlength=len(CLASSES)).float()
-    cw = (counts.sum() / (len(CLASSES) * counts.clamp(min=1)))
+    present = counts > 0
+    cw = torch.where(present, counts.sum() / (present.sum() * counts.clamp(min=1)), torch.zeros_like(counts))
+    # classes absent from training (e.g. underripe in D2-only mode) get weight 0, otherwise label smoothing
+    # would push probability mass toward them
     val_acc = train_head(head, Xtr, ytr, Xv, yv, class_weight=cw)
     print(f"stage1 val acc {val_acc:.4f}  ({time.time() - t0:.0f}s)", flush=True)
     net.classifier[1] = head.to(a.device)
@@ -253,11 +261,16 @@ def main():
             p.requires_grad = False
         opt = torch.optim.AdamW([p for p in net.parameters() if p.requires_grad], lr=3e-4, weight_decay=1e-4)
         sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, a.finetune_epochs)
-        lossf = nn.CrossEntropyLoss(weight=cw.to(a.device), label_smoothing=0.05)
+        lossf = nn.CrossEntropyLoss(weight=cw.to(a.device), label_smoothing=0.05 if bool(present.all()) else 0.0)
         dl = DataLoader(ImgDS(sp["train"], tfs(True), cache), batch_size=a.bs, shuffle=True, num_workers=a.workers)
         best, best_state = val_acc, {k: v.clone() for k, v in net.state_dict().items()}
-        for ep in range(a.finetune_epochs):
+        def train_mode():
             net.train()
+            for m in net.features[:-3].modules():   # frozen blocks: keep BatchNorm statistics fixed
+                if isinstance(m, nn.BatchNorm2d):
+                    m.eval()
+        for ep in range(a.finetune_epochs):
+            train_mode()
             for x, y in dl:
                 opt.zero_grad(); lossf(net(x.to(a.device)), y.to(a.device)).backward(); opt.step()
             sched.step()
