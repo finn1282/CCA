@@ -1,4 +1,4 @@
-# Interface Contract (HW ↔ SW) — v0.2.1 (agreed)
+# Interface Contract (HW ↔ SW) — v0.2.2 (agreed)
 
 > Owner: Lead. v0.2 reconciles HW-P1–P5/P7 and SW-P2/P3 (D25). Hardware and Software MUST both conform.
 > Change requests → your PLAN.md Proposals table; the Lead bumps the version here.
@@ -33,6 +33,7 @@ Interval 10 s in demo mode (configurable); short button press = send now.
 }
 ```
 - `ts` optional/null (no NTP) → server stamps `received_at`. `seq` monotonic; buffered replays send `buffered: true`.
+- **v0.2.2:** optional `age_s` (int, seconds between capture and send; 0 for fresh readings). Server sets `captured_at = received_at − age_s` when `ts` is null. Firmware **replays the buffer before posting the fresh reading**; backend `/latest` uses the non-buffered reading with the highest `seq` (never a buffered replay).
 - **Failed sensor → `null`, never a fabricated value.** `ec_us_cm` optional; backend derives EC ≈ TDS/0.5 and labels it approximate.
 - `cal_id` = date of last calibration (feeds the evidence log audit trail, D18).
 
@@ -55,7 +56,9 @@ Interval 10 s in demo mode (configurable); short button press = send now.
 ```
 - `action` = highest-priority entry of `actions[]`. `simulated: true` whenever the decision uses simulated agronomy (fertiliser).
 - `oled`: 2 lines, ≤16 chars each. `led`: `green|amber|red`.
-- Node shows the result tagged **CLOUD**. If the request fails, the node computes its own result from §4 thresholds and shows it tagged **LOCAL** (HW-P1).
+- Node tags the result by who answered: **CLOUD** (`API_BASE`), **LAN** (`API_BASE_LOCAL`, the laptop), or **LOCAL** (on-device §4 thresholds when both fail) (HW-P1, v0.2.2).
+- Cloud-first: while on LAN, the node retries `API_BASE` every 5 min and switches back on success.
+- A 4xx-rejected buffered reading is dropped and logged; it must not block the replay queue.
 
 ## 3. Camera → `POST /api/v1/infer/ripeness`
 - Body: raw `image/jpeg`; headers as §1.
