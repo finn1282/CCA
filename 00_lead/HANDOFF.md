@@ -42,12 +42,14 @@ All members below were resumed from their stop points (table = where each stoppe
 | SW Verification pass 1 | Interrupted — check `07_verification/software/` | `briefs/verification_software.md`, Pass 1 (M1 milestone) |
 | Report | Interrupted — scope: PLAN, README, REPORT.md skeleton + cover + Intro + full Part 1 + Appendix B | `briefs/report.md` |
 | Research | Waves 1–2 complete (D14, D32); idle until new REQUESTS rows | `briefs/research.md` |
+Report resume note: fill the 1.1 CITE NEEDED (FELDA) from `01_research/09_report_requests.md`; use its EUDR scope + rubber evidence in §3.2.
 Not yet started: Technical summary (04_technical), Presentation (06_presentation), Compliance audit — briefs to be written by the Lead.
 Stakeholder pending: regenerate Kaggle token (was pasted in chat), Earth Engine project ID → `EE_PROJECT` env var, Azure for Students sign-up issue (fallback = laptop local; report unaffected).
 
 ## 5. Phase log
 | Date | Event |
 |---|---|
+| 2026-11-23 | HW verification pass 1 (D33), report Part 1 gate (D34), research wave 3 (101 sources) |
 | 2026-11-23 | Research wave 2 (D32), SW smoke test, verification + report started; all paused at usage limit |
 | 2026-11-23 | HW/SW plans ruled, INTERFACES v0.2, Step 2 + research wave 2 started |
 | 2026-11-23 | Research gate passed; D14–D22; Hardware + Software launched (PLAN step) |

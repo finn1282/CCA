@@ -28,7 +28,7 @@
 | P2 Risks + mitigation (2) | Software/Verification → Report §2 | ⚪ |
 | P3 Novelty (3) | All → Report §3 | ⚪ |
 | P3 Future extension (2) | All → Report §3 | ⚪ |
-| ≥10 Harvard sources | Research | ✅ 95 collected |
+| ≥10 Harvard sources | Research | ✅ 101 collected; 37 cited in report so far |
 | Progress report (member contributions) | Report | ⚪ |
 | 15-min presentation, 5 speakers, demo | Presentation + Hardware | ⚪ |
 
