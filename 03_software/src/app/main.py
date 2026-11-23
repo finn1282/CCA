@@ -1,7 +1,7 @@
 """SawitSense backend (FastAPI) — actual build of the ingestion, cognitive and application layers.
 
 Run locally:  uvicorn app.main:app --host 0.0.0.0 --port 8000   (from 03_software/src)
-Contract:     00_lead/INTERFACES.md v0.2.5, full spec in 03_software/05_api_spec.md
+Contract:     00_lead/INTERFACES.md v0.2.6, full spec in 03_software/05_api_spec.md
 """
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from . import analytics, config as C, db, evidence, inference, recommender
 
-APP_VERSION = "0.2.5"
+APP_VERSION = "0.2.6"
 log = logging.getLogger("sawitsense")
 app = FastAPI(title="SawitSense API", version=APP_VERSION,
               description="Smart palm oil plantation decision support — explain-to-audit build")
@@ -157,7 +157,7 @@ def _ingest(r: SoilReading, device: str) -> dict:
         "input": payload, "received_at": received, "captured_at": captured,
         "calibration": {"device_cal_id": r.cal_id, "tds_baseline_ppm": dev.get("tds_baseline"),
                         "tds_margin": dev.get("tds_margin"), "tds_cal_id": dev.get("cal_id")},
-        "output": rec, "rules_version": "INTERFACES-v0.2.5",
+        "output": rec, "rules_version": "INTERFACES-v0.2.6",
     }
     ev = evidence.append("soil_recommendation", record, device, r.block_id)
     out = {k: rec[k] for k in ("action", "reason", "confidence", "actions", "counterfactual", "simulated")}
@@ -282,13 +282,13 @@ def _latest_ripeness() -> dict | None:
 
 @app.get("/api/v1/latest")
 def latest(_=Depends(read_auth)) -> dict:
-    # D-04 / v0.2.2: "latest" = the NON-buffered reading with the highest seq per device, so a
-    # buffered replay arriving after a fresh reading never replaces it. Devices that have sent only
-    # buffered rows fall back to their newest row.
+    # D-04 / D-16 (v0.2.6): "latest" = the most recently CAPTURED non-buffered reading per device, so a
+    # buffered replay arriving after a fresh reading never replaces it, and a seq reset after a reboot
+    # cannot pin an old reading. Devices that have sent only buffered rows fall back to their newest row.
     rows = db.q("""SELECT r.* FROM readings r JOIN (
                      SELECT d.device_id, COALESCE(
                        (SELECT f.id FROM readings f WHERE f.device_id=d.device_id AND f.buffered=0
-                        ORDER BY f.seq IS NULL, f.seq DESC, f.id DESC LIMIT 1),
+                        ORDER BY f.captured_at IS NULL, f.captured_at DESC, f.id DESC LIMIT 1),
                        (SELECT MAX(g.id) FROM readings g WHERE g.device_id=d.device_id)) AS pick
                      FROM (SELECT DISTINCT device_id FROM readings) d) p ON r.id = p.pick
                    ORDER BY r.id DESC""")

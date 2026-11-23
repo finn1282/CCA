@@ -37,7 +37,7 @@ py -m venv .venv
 ```
 On Windows, replace `.venv/bin/python` with `.venv\Scripts\python` in every later command.
 
-Check that everything works. You should see `32 passed`, then a list of `PASS …` lines ending in `SMOKE TEST PASSED (all assertions)`:
+Check that everything works. You should see `33 passed`, then a list of `PASS …` lines ending in `SMOKE TEST PASSED (all assertions)`:
 ```bash
 cd src
 ../.venv/bin/python -m pytest -q

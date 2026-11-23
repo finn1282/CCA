@@ -7,7 +7,7 @@
 
 | Function | Actual build (demo) | Production target (report) | Gap / why |
 |---|---|---|---|
-| Soil sensing | One Wi-Fi ESP32 node posting HTTPS JSON to the API (INTERFACES v0.2.5) | LoRaWAN (AS923) soil nodes → gateway → network server → **IoT Hub Standard** via the TTS integration (TTS-AZURE); **IoT Operations** edge | Demo scale; same payload semantics (seq, buffered, capture time, nulls) |
+| Soil sensing | One Wi-Fi ESP32 node posting HTTPS JSON to the API (INTERFACES v0.2.6) | LoRaWAN (AS923) soil nodes → gateway → network server → **IoT Hub Standard** via the TTS integration (TTS-AZURE); **IoT Operations** edge | Demo scale; same payload semantics (seq, buffered, capture time, nulls) |
 | Device identity | `X-Device-Id` + `X-Device-Key` from `SAWIT_DEVICE_KEYS` (fail-closed in cloud mode) | **DPS** X.509 provisioning (SEA single-region + private endpoint) + IoT Hub per-device identity | Shared-secret keys are adequate for a demo |
 | Command to device | `POST/GET /devices/{id}/commands` (poll every 2–3 s, coalesced, 60 s expiry) | IoT Hub **cloud-to-device** / **device twin** desired properties | Polling avoids broker setup |
 | Recommendation back to node | Synchronous in the POST response (`oled`, `led`) | Twin reported/desired properties or C2D | Same content |

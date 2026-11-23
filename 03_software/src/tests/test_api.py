@@ -274,3 +274,14 @@ def test_audit_pack_has_head_hash(client):
     client.post("/api/v1/readings", json=reading(soil_ph=3.8), headers=SOIL)
     head = client.get("/api/v1/evidence/verify").json()["head"]
     assert head in client.get("/api/v1/evidence/export").text
+
+
+def test_latest_survives_seq_reset(client):
+    """D-16 (v0.2.6): after a reboot the seq restarts; /latest must follow capture time, not seq."""
+    client.post("/api/v1/readings", json=reading(seq=500, ts="2026-11-20T08:00:00Z", soil_moisture_pct=20), headers=SOIL)
+    client.post("/api/v1/readings", json=reading(seq=1, ts=None, soil_moisture_pct=55), headers=SOIL)   # after reboot
+    soil = client.get("/api/v1/latest").json()["soil"][0]
+    assert soil["seq"] == 1 and soil["recommendation"]["action"] == "ok"
+    # a fresh-but-older capture (device clock) must not override a newer one
+    client.post("/api/v1/readings", json=reading(seq=2, ts="2026-11-19T00:00:00Z", soil_moisture_pct=20), headers=SOIL)
+    assert client.get("/api/v1/latest").json()["soil"][0]["seq"] == 1

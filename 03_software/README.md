@@ -4,7 +4,7 @@
 | Milestone | State |
 |---|---|
 | Plan (SW-P1…P8) | All accepted (D24–D29) |
-| M1 milestone: backend + simulator + rules + dashboard | **Done.** INTERFACES **v0.2.5** implemented. 32/32 pytest pass. Asserted smoke test passes (`src/tests/smoke_output.txt`) |
+| M1 milestone: backend + simulator + rules + dashboard | **Done.** INTERFACES **v0.2.6** implemented. 33/33 pytest pass. Asserted smoke test passes (`src/tests/smoke_output.txt`) |
 | HW verification pass 1 defects (D-04, D-12) | **Fixed** (b3cb4fe) with tests |
 | SW verification pass 1 defects (S-01…S-15) | **Fixed** (9bd2e04), see table below |
 | M2 milestone: M1 ripeness model | **Provisional model trained on CPU** (D2-only, see Training results). The full D1→D2 run is the stakeholder's Kaggle step (D31) |
@@ -14,7 +14,7 @@
 | Open stretch | M3/M4 drone YOLO not trained (SW-P6) |
 
 ## Inputs used
-`00_lead/SPEC.md`, `PROJECT_PLAN.md`, `DECISIONS.md` (D1–D39), `INTERFACES.md` v0.2.5, assignment PDF pp.5–8, `01_research/00`–`08`, `sources.md`, `07_verification/hardware/PASS_1_REPORT.md`, `07_verification/software/PASS_1_REPORT.md`.
+`00_lead/SPEC.md`, `PROJECT_PLAN.md`, `DECISIONS.md` (D1–D39), `INTERFACES.md` v0.2.6, assignment PDF pp.5–8, `01_research/00`–`08`, `sources.md`, `07_verification/hardware/PASS_1_REPORT.md`, `07_verification/software/PASS_1_REPORT.md`.
 
 ## Outputs
 | Path | Content |
@@ -24,14 +24,14 @@
 | `02_architecture.md` | Adapted Fig. 4 layers, components, data flow, demo sequence, deployment + PDPA residency, explainability per model — report-facing |
 | `03_ai_models.md` | M1–M7 + NLP: inputs, algorithm vs alternatives, data, metrics, explainability, MLOps; measured results — report-facing |
 | `04_cloud_design.md` | Why Azure, services per layer, residency, cost drivers (as risk), ERP integration, short/medium/long roadmap, prioritised risks — report-facing |
-| `05_api_spec.md` | API v0.2.5 (devices, dashboard, evidence, config) |
+| `05_api_spec.md` | API v0.2.6 (devices, dashboard, evidence, config) |
 | `06_implementation_guide_beginner.md` | Install, run, connect devices, calibrate, train, deploy, demo-day checklist |
 | `07_actual_build_vs_target.md` | **Internal**: demo component → production Azure equivalent; Q&A lines |
 | `src/app/` | FastAPI backend: `main.py` (endpoints), `rules.py`, `recommender.py` (rules + M6), `evidence.py` (hash chain, audit pack), `compliance.py` (M7, MS 2530 clauses), `inference.py` (M1 ONNX + CAM, M2), `analytics.py` (allocation, cascade), `db.py`, `config.py` |
 | `src/static/` | Dashboard (`index.html`, `app.js`, `style.css`, vendored Chart.js + licence), `harvester.html`, `precomputed/estate_blocks.json` (SIMULATED) |
 | `src/simulator.py` | Soil-node simulator (stdlib), 7 scenarios + cycle, optional camera image |
 | `src/smoke_test.sh` + `src/tests/smoke_e2e.py` | Asserted end-to-end smoke test (own server, temp DB, port 8791) |
-| `src/tests/test_api.py` | 32 tests (rules, contract, auth, calibration, commands, evidence tamper, v0.2.2/0.2.3, defects) |
+| `src/tests/test_api.py` | 33 tests (rules, contract, auth, calibration, commands, evidence tamper, v0.2.2/0.2.3, defects) |
 | `training/ripeness/train_m1.py` | M1 training (CPU or GPU; provisional D2-only mode), ONNX export + parity check |
 | `training/ripeness/m1_metrics_provisional.json`, `m1_ripeness_provisional.json` | Metrics + metadata of the provisional model (weights are git-ignored) |
 | `training/kaggle/` | `sawitsense_m1.ipynb` + `kernel-metadata.json` (built by `build_notebook.py`) |
@@ -76,7 +76,7 @@ Latest run (`src/tests/smoke_output.txt`): **all assertions pass.**
 ## Verification defect log (Software-owned)
 | ID | Fix |
 |---|---|
-| D-04 | `/latest` = non-buffered reading with the highest seq; chart ordered by `captured_at` |
+| D-04 / D-16 | `/latest` = most recently captured non-buffered reading (v0.2.6); chart ordered by `captured_at` |
 | D-12 | Demo keys disabled in cloud mode; admin token mandatory (fail closed) |
 | S-01 | Dashboard `get()` sends `X-Admin-Token` |
 | S-02 | Documented here, in 06 §4.3, DEPLOY_AZURE §7 and ALTERNATIVES |
@@ -95,7 +95,7 @@ Latest run (`src/tests/smoke_output.txt`): **all assertions pass.**
 | S-12 | Hardware-owned (firmware LOCAL rounding). No backend change needed |
 
 ## Interface changes requested
-None open. v0.2.5 implemented. Backend-only additions:
+None open. v0.2.6 implemented. Backend-only additions:
 - `ALL_OK` rule ID.
 - `received_at`, `captured_at` and `duplicate` in the POST response.
 - `cal_id` in the calibration body.
