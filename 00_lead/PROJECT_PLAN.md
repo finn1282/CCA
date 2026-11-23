@@ -61,7 +61,7 @@ Target dates: P1 by 26 Nov · P2 by 3 Dec · P3 by 6 Dec · P4 by 10 Dec · P5 b
 5. No unverifiable claims: every fact gets a source; every dataset gets a URL + licence; simulated data is labelled as such.
 5a. **Cite throughout (D11):** every section of every deliverable (report, technical summary, design docs, presentation script) cites its sources in-text, Harvard style (Author, Year), using the keys in `01_research/sources.md`. A section without citations fails the Lead gate. Need a source you don't have? Add a row to `01_research/REQUESTS.md`.
 6. Markdown + Mermaid; concise.
-7. **Never use browser automation tools (the stakeholder's Chrome) unless the stakeholder explicitly approves (D52).**
+7. **Browser use (D53):** allowed only to visually test our own localhost pages, in one tab in the Claude tab group; no other sites or logins.
 
 ## Team plans & change proposals (D13)
 Every team starts with a **plan step** before building:
