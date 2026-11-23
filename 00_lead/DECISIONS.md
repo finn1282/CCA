@@ -13,3 +13,4 @@
 | D9 | 2026-11-23 | Lead checks in with stakeholder after Phase 1, then runs Phases 2–5 autonomously, reporting at gates. Problems must be validated by research, not assumed | Stakeholder |
 | D10 | 2026-11-23 | Work runs as a parallel pipeline: research on demand (via `01_research/REQUESTS.md`), Hardware ∥ Software from the start, verification passes run alongside the builds at each milestone, outputs handed on as soon as they exist | Stakeholder |
 | D11 | 2026-11-23 | In-text Harvard citations required in every section of the report and other deliverables, not just a reference list at the end | Stakeholder |
+| D12 | 2026-11-23 | A baseline research wave (incl. `01_research/00_baseline_brief.md` giving direction per team) runs and passes the Lead gate BEFORE any other team starts; after that teams run in parallel with on-demand research | Stakeholder |

@@ -7,8 +7,8 @@
 | Phase | Owner | Target | Status | Gate result |
 |---|---|---|---|---|
 | 0 Setup | Lead | 23 Nov | ✅ Done | Lead files pushed |
-| 1 Research wave 1 (then on demand) | Research | 26 Nov | 🟡 In progress | — |
-| 2 Build (HW ∥ SW, parallel with research) | Hardware, Software | 3 Dec | 🟡 In progress | — |
+| 1 Baseline research wave (then on demand) | Research | 26 Nov | 🟡 In progress — all other teams wait for this (D12) | — |
+| 2 Build (HW ∥ SW, parallel with on-demand research) | Hardware, Software | 3 Dec | ⚪ Starts after baseline gate | — |
 | 3 Verify (rolling passes per milestone) | HW/SW testers | 6 Dec | ⚪ Starts at first build milestone | — |
 | 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | ⚪ Not started | — |
 | 5 Rubric audit & fixes | Compliance | 12 Dec | ⚪ Not started | — |

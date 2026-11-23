@@ -34,7 +34,8 @@ flowchart LR
   REQ[01_research/REQUESTS.md] --> R
   HW & SW & REP & PRES -.->|research requests| REQ
 ```
-- **Research is on demand.** Wave 1 unblocks the build teams (hardware facts, datasets, cloud platforms, problem evidence). Any member who needs more research appends a row to `01_research/REQUESTS.md`; the Lead dispatches a research wave to answer it.
+- **Baseline first (D12).** Research wave 1 runs alone and ends with `01_research/00_baseline_brief.md` (evidence-based direction for every team). The Lead verifies it, updates SPEC §8, checks in with the stakeholder, and only then starts the other teams.
+- **Research is then on demand.** Wave 1 unblocks the build teams (hardware facts, datasets, cloud platforms, problem evidence). Any member who needs more research appends a row to `01_research/REQUESTS.md`; the Lead dispatches a research wave to answer it.
 - **Hardware and Software run in parallel** from the start, coordinating through `INTERFACES.md`. Software begins with platform-agnostic work (architecture, ingestion API, dashboard skeleton) and adopts the dataset/platform once the stakeholder confirms them.
 - **Verification runs alongside the builds:** the Lead triggers a verification pass each time a build member pushes a milestone, so defects are fixed while the build is still going.
 - **Report and Presentation start as soon as their inputs exist**; Report Part 1 can begin as soon as the problem evidence is accepted.
