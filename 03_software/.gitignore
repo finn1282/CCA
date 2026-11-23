@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/
+models/*
+!models/README.md
+src/runtime/
+*.db
+*.sqlite
+.env
+secrets.h
+*.onnx
+_runtime/

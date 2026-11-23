@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SawitSense Dashboard</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/vendor/chart.umd.min.js"></script>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">◉</span> SawitSense <small>From sensor to signed-off decision</small></div>
+  <div class="status">
+    <span id="mode" class="pill">—</span>
+    <span id="conn" class="pill">connecting…</span>
+    <span id="clock" class="muted"></span>
+  </div>
+</header>
+
+<main class="grid">
+  <!-- Live soil -->
+  <section class="card span2" id="soil-card">
+    <h2>Live soil node <span id="soil-dev" class="muted"></span></h2>
+    <div class="tiles" id="tiles"></div>
+    <div class="chart-wrap"><canvas id="soil-chart"></canvas></div>
+  </section>
+
+  <!-- Recommendation -->
+  <section class="card" id="rec-card">
+    <h2>Recommendation <span id="rec-sim" class="badge sim hidden">SIMULATED agronomy</span></h2>
+    <div id="rec-main" class="rec-main"><span class="led"></span><span class="act">—</span><span class="conf"></span></div>
+    <p id="rec-reason" class="reason"></p>
+    <ul id="rec-actions" class="rules"></ul>
+    <p id="rec-cf" class="cf"></p>
+    <div id="rec-ml" class="ml"></div>
+    <div class="row">
+      <span id="rec-ev" class="mono muted"></span>
+      <span class="spacer"></span>
+      <button data-review="approve">Approve</button>
+      <select id="ovr-act"><option>ok</option><option>irrigate</option><option>drain</option><option>lime</option><option>fertilise</option><option>skip_fertiliser</option><option>watch</option></select>
+      <button data-review="override" class="secondary">Override</button>
+    </div>
+    <p id="rec-review" class="muted small"></p>
+  </section>
+
+  <!-- Camera -->
+  <section class="card" id="cam-card">
+    <h2>FFB ripeness (camera) <span id="cam-model" class="muted small"></span></h2>
+    <div class="row"><button id="capture">Capture</button><span id="cam-msg" class="muted small"></span></div>
+    <img id="cam-heat" class="heat hidden" alt="Image and class-activation heatmap">
+    <div id="cam-res" class="cam-res"></div>
+    <div id="cam-probs" class="bars"></div>
+    <p id="cam-exp" class="reason"></p>
+    <p id="cam-adv" class="advice"></p>
+  </section>
+
+  <!-- Calibration -->
+  <section class="card" id="cal-card">
+    <h2>TDS calibration</h2>
+    <p class="muted small">Nutrient rules compare TDS with a per-device baseline set on the day (SIMULATED agronomy).</p>
+    <div class="row">
+      <label>Device <select id="cal-dev"></select></label>
+    </div>
+    <div class="row">
+      <label>Baseline ppm <input id="cal-base" type="number" min="1" step="1" style="width:6em"></label>
+      <label>Margin <input id="cal-margin" type="number" min="0.05" max="0.9" step="0.05" value="0.30" style="width:4.5em"></label>
+    </div>
+    <div class="row"><button id="cal-latest" class="secondary">Use current reading</button><button id="cal-save">Save</button></div>
+    <p id="cal-msg" class="muted small"></p>
+  </section>
+
+  <!-- Cascade -->
+  <section class="card span2" id="cascade-card">
+    <h2>Ganoderma screening cascade <span class="muted small">satellite → drone → ground</span></h2>
+    <div class="cascade">
+      <div><h3>1 · Satellite (NDVI anomaly)</h3><div id="sat-src" class="muted small"></div><img id="sat-img" class="map hidden" alt="NDVI anomaly map"><div class="chart-wrap small"><canvas id="ndvi-chart"></canvas></div><ul id="sat-flag" class="list"></ul></div>
+      <div><h3>2 · Drone (palm scoring)</h3><div id="drone-src" class="muted small"></div><img id="drone-img" class="map hidden" alt="Drone screening tile"><div id="drone-metrics" class="small"></div></div>
+      <div><h3>3 · Ground check list</h3><p class="muted small" id="ground-note"></p><ol id="ground-list" class="list"></ol></div>
+    </div>
+  </section>
+
+  <!-- Harvest -->
+  <section class="card span2" id="harvest-card">
+    <h2>Harvester allocation <span class="badge sim">SIMULATED estate</span></h2>
+    <div class="row"><label>Crew <input id="crew" type="number" min="1" max="200" value="12" style="width:4.5em"></label><span id="hv-sum" class="muted small"></span><span class="spacer"></span><a href="/harvester" target="_blank">Harvester view ↗</a></div>
+    <table class="tbl" id="hv-tbl"><thead><tr><th>Block</th><th>Ripe bunches</th><th>Over-ripe share</th><th>Needed</th><th>Assigned</th><th>At risk</th><th>Status</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <!-- Evidence -->
+  <section class="card span2" id="ev-card">
+    <h2>Explain-to-audit evidence log</h2>
+    <div class="row">
+      <button id="verify" class="secondary">Verify chain</button>
+      <a id="export" href="/api/v1/evidence/export" target="_blank">MSPO audit pack ↗</a>
+      <label class="small"><input type="checkbox" id="ev-nonok" checked> decisions only</label>
+      <span id="verify-msg" class="small"></span>
+    </div>
+    <table class="tbl" id="ev-tbl"><thead><tr><th>Evidence</th><th>Time (UTC)</th><th>Kind</th><th>Block</th><th>Decision</th><th>MSPO</th><th>Hash</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <section class="card span2" id="mspo-card">
+    <h2>MSPO criterion coverage</h2>
+    <div id="mspo" class="mspo"></div>
+  </section>
+</main>
+
+<footer class="foot small muted">
+  Data sources: FFB ripeness model trained on Kamal et al. (2024) and tested on Rosbi (2024), both CC BY 4.0 ·
+  Contains modified Copernicus Sentinel data processed via Microsoft Planetary Computer · Global oil palm map Descals et al. (2021), CC BY 4.0 ·
+  UAV Ganoderma data Mimboro et al. (2026), CC BY 4.0 · Fertiliser/estate panels use SIMULATED data, clearly labelled.
+</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>

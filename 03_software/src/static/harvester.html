@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SawitSense Harvester</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+  .job { border: 1px solid var(--line); border-left: 6px solid var(--green); border-radius: 8px; padding: 10px 12px; margin: 10px 0; background: var(--card); }
+  .job.partial { border-left-color: var(--amber); } .job.deferred { border-left-color: var(--red); opacity: .7; }
+  .big { font-size: 22px; font-weight: 800; } main { max-width: 520px; margin: 0 auto; padding: 8px 16px; }
+</style>
+</head>
+<body>
+<header class="top"><div class="brand"><span class="logo">◉</span> SawitSense <small>Today's harvest round</small></div></header>
+<main>
+  <p class="small muted">Mobile view for harvest mandores (SIMULATED estate data). Target design: native harvester app with BM / Bahasa Indonesia / Nepali text.</p>
+  <div id="ripe" class="card small"></div>
+  <div id="jobs"></div>
+</main>
+<script>
+(async () => {
+  const h = await (await fetch("/api/v1/harvest/plan")).json();
+  const l = await (await fetch("/api/v1/latest")).json();
+  if (l.ripeness) document.getElementById("ripe").innerHTML =
+    `Latest bunch check (${l.ripeness.block_id}): <b>${l.ripeness.label}</b> — ${l.ripeness.harvest_advice}`;
+  else document.getElementById("ripe").textContent = "No bunch photo graded yet today.";
+  document.getElementById("jobs").innerHTML = h.blocks.map((b, i) => `
+    <div class="job ${b.status}">
+      <div class="big">${i + 1}. Block ${b.block_id}</div>
+      <div>${b.assigned_harvesters} harvester(s) · ~${b.ripe_bunches_est} ripe bunches · ${Math.round(b.overripe_share * 100)}% over-ripe risk</div>
+      <div class="small muted">${b.status === "covered" ? "Fully covered" : b.status === "partial" ? b.bunches_at_risk + " bunches left for next round" : "Deferred — no crew left"}</div>
+    </div>`).join("");
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+{
+ "simulated": true,
+ "estate": "SawitSense demo estate (SIMULATED)",
+ "crew_size": 12,
+ "bunches_per_harvester_day": 90,
+ "assumptions": [
+  "Block ripe-bunch estimates are SIMULATED (in production: aggregated M1 grades + M2 schedule).",
+  "Harvester productivity 90 bunches/day and crew of 12 are placeholders pending research R1(e).",
+  "~136 palms/ha planting density is an assumption."
+ ],
+ "blocks": [
+  {
+   "block_id": "DEMO-A1",
+   "area_ha": 37.5,
+   "palms": 5100,
+   "planted": 2009,
+   "ripe_bunches_est": 758,
+   "overripe_share": 0.07,
+   "ndvi_z": -0.61
+  },
+  {
+   "block_id": "A2",
+   "area_ha": 42.5,
+   "palms": 5776,
+   "planted": 2013,
+   "ripe_bunches_est": 292,
+   "overripe_share": 0.21,
+   "ndvi_z": -0.64
+  },
+  {
+   "block_id": "A3",
+   "area_ha": 34.4,
+   "palms": 4672,
+   "planted": 2005,
+   "ripe_bunches_est": 389,
+   "overripe_share": 0.08,
+   "ndvi_z": -1.04
+  },
+  {
+   "block_id": "B1",
+   "area_ha": 35.1,
+   "palms": 4772,
+   "planted": 2005,
+   "ripe_bunches_est": 529,
+   "overripe_share": 0.25,
+   "ndvi_z": -0.61
+  },
+  {
+   "block_id": "B2",
+   "area_ha": 37.4,
+   "palms": 5092,
+   "planted": 2009,
+   "ripe_bunches_est": 808,
+   "overripe_share": 0.06,
+   "ndvi_z": -2.1
+  },
+  {
+   "block_id": "B3",
+   "area_ha": 37.3,
+   "palms": 5066,
+   "planted": 2005,
+   "ripe_bunches_est": 277,
+   "overripe_share": 0.03,
+   "ndvi_z": -0.37
+  },
+  {
+   "block_id": "C1",
+   "area_ha": 34.3,
+   "palms": 4668,
+   "planted": 2017,
+   "ripe_bunches_est": 704,
+   "overripe_share": 0.14,
+   "ndvi_z": -1.58
+  },
+  {
+   "block_id": "C2",
+   "area_ha": 30.0,
+   "palms": 4073,
+   "planted": 2013,
+   "ripe_bunches_est": 208,
+   "overripe_share": 0.06,
+   "ndvi_z": -0.93
+  }
+ ]
+}

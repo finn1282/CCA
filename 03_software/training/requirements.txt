@@ -1,0 +1,9 @@
+# Training (Kaggle has these preinstalled except onnx/onnxscript)
+torch>=2.3
+torchvision>=0.18
+onnx>=1.16
+onnxscript>=0.1
+onnxruntime>=1.18
+scikit-learn>=1.4
+numpy>=2.0
+pillow>=10.0
