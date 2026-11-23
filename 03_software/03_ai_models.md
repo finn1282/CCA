@@ -12,7 +12,7 @@
 | M4 | O2 / O4 palm count | Same detector, one class | D4 (+D5-DOMINGUEZ2025) | Real data |
 | M5 | O2 / O4 canopy stress | Time-series anomaly (NDVI z-score) | Sentinel-2 L2A (MPC-S2; GEE-S2) + oil-palm mask (GEE-OILPALM) | Real data, unlabelled |
 | M6 | O3 / P3 fertiliser, lime, irrigation | Rules + decision tree (tabular) | Thresholds (KANANG2026; AAR-SOIL; CARR2011); **simulated** sensor dataset | Simulated (no public soil-sensor data) |
-| M7 | O4 / P3 MSPO compliance | Knowledge base + coverage reasoning | MS 2530:2022 clauses 4.1.3, 4.1.3.4, 4.1.3.5, 4.2.2, 4.5.4, 4.5.5 (MPOCC-P31; MPOCC-P21) | Knowledge-based |
+| M7 | O4 / P3 MSPO compliance | Knowledge base + coverage reasoning | MS 2530-3-2:2022 (estates > 500 ha) and MS 2530-4-1:2022 (mills) clauses 4.1.3, 4.1.3.4, 4.1.3.5, 4.2.2, 4.5.4, 4.5.5 (MPOCC-P32; MPOCC-P41; MPOCC-P21) | Knowledge-based |
 | NLP | All | LLM rewording of structured explanations (multilingual) + audit narrative | Azure OpenAI, non-personal prompts (AZ-AOAI-MODELS) | Target design |
 
 ---
@@ -124,11 +124,11 @@
 
 ## M7 — MSPO compliance reasoner (O4)
 
-- **Knowledge base.** Every evidence record type maps to the MS 2530:2022 clauses it supports (MPOCC-P31; MPOCC-P21):
+- **Knowledge base.** Every evidence record type maps to the clauses it supports in MS 2530-3-2:2022 (estates > 500 ha) and MS 2530-4-1:2022 (mills). The clause numbers are the same in both parts (MPOCC-P32; MPOCC-P41). The fertilising example under 4.1.3 site-management SOPs follows MPOCC guidance (MPOCC-P21):
 
 | Evidence type | Clause |
 |---|---|
-| Soil reading, fertilise/lime/skip decision | **4.1.3.1** SOP records (fertilising, soil fertility) |
+| Soil reading, fertilise/lime/skip decision | **4.1.3** site-management SOPs (e.g. fertilising), records of implementation (4.1.3.1) |
 | Irrigation / drainage advice | **4.5.5** water management |
 | Fertilise / skip decision → N quantity → N₂O estimate | **4.5.4** GHG |
 | Ganoderma screening + follow-up | **4.1.3.5** IPM |
@@ -142,15 +142,15 @@
 ## NLP — explanations and audit narrative
 
 - The structured explanation (rule ID, reading, threshold, counterfactual) is rewritten into short plain language in BM, English, Bahasa Indonesia or Nepali for a largely foreign field workforce (STAR-LAB2026). Azure OpenAI also drafts the audit-pack narrative.
-- **The LLM never decides.** It receives only the structured, non-personal explanation, and runs in Southeast Asia because Malaysia West does not offer it (AZ-AOAI-MODELS; D32a).
+- **The LLM never decides.** It receives only the structured, non-personal explanation, and runs in Southeast Asia because it is not evidenced in Malaysia West (AZ-AOAI-MODELS; D50).
 - Template text is the fallback when the service is unavailable.
 
-## 9. Measured results (this project)
+## 9. Evaluation plan
 
-| Model | Test set | Metric | Result |
-|---|---|---|---|
-| M1 (provisional, CPU) | D2 Malaysia test, n = 89 (unripe 34, ripe 41, overripe 14); trained on a 190-image D2-train subset | accuracy / macro-F1 | **0.93 / 0.94**. Recall: unripe 0.82, ripe 1.00, overripe 1.00. Errors: 5 unripe→ripe, 1 unripe→overripe. Same-country test, and no *underripe* class in D2, so this is an upper-bound sanity check, **not** the cross-country result |
-| M1 (final) | D1 test (Indonesia) and D2 (Malaysia, cross-country) | accuracy / macro-F1 / within-one-class | From the GPU notebook run (`training/RUN_ON_KAGGLE.md`). Insert the values from `m1_metrics.json` before the report is frozen |
-| M6 | Simulated hold-out (n = 4,000) | accuracy vs noisy labels | **0.88** (irrigate F1 0.94, lime 0.88, drain 0.92, fertilise 0.82, watch 0.58: the narrow 4.0–4.2 band is where sensor noise matters most) |
-| M3 | D4 disjoint test blocks | Ganoderma recall, mAP@0.5 | Roadmap (stretch, SW-P6) |
-| M5 | Sentinel-2 over a Malaysian estate AOI | flagged blocks | Pre-computed export (`gee/`) |
+| Model | Validation set | Primary metrics |
+|---|---|---|
+| M1 | Train on D1 (Indonesia), test on D2 (Malaysia): a planned cross-country validation step; duplicates between D2 train and test removed first | Accuracy, macro-F1, within-one-class accuracy, ripe/overripe recall |
+| M3/M4 | D4's geographically disjoint test blocks | Ganoderma recall first, then precision and mAP@0.5 |
+| M5 | Pilot-estate blocks with ground-checked follow-ups | Share of flagged blocks with confirmed stress or BSR |
+| M6 | Pilot estate: agronomist decisions and leaf-analysis results | Agronomist agreement rate (target ≥ 80 %), fertiliser saved per hectare |
+| M7 | Internal MSPO audit of the pilot estate | Clause coverage, zero record findings |

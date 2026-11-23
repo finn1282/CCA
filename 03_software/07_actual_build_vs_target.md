@@ -48,3 +48,39 @@
 ## 4. Known deviations from the brief
 - Brief item 4 asked for "student implementation within credits; local fallback; cost table" in `04_cloud_design.md`. Under D23 these moved here and to `deploy/` (internal). Doc 04 keeps enterprise cost drivers framed only as a vendor & cost risk.
 - M3/M4 (drone YOLO) is not trained: a stretch goal (SW-P6), not reached because of time and network limits.
+
+## 5. Demonstration sequence (live presentation; moved from 02 per S-22)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Node as IoT soil node
+  participant Cam as Field camera
+  participant API as SawitSense API
+  participant ML as Model endpoints
+  participant EV as Evidence log
+  participant UI as Dashboard
+  Note over UI: Pre-computed: Sentinel-2 NDVI anomaly flags block B2 → drone scores → ranked ground list
+  Node->>API: POST reading (pH 3.8, moisture 45 %)
+  API->>API: Rules → LIME (PH_LIME), counterfactual "OK if pH ≥ 4.2"
+  API->>ML: M6 check → agrees, confidence 0.87
+  API->>EV: append record (+ MSPO 4.1.3.1), hash-chain
+  API-->>Node: action, short text, colour
+  UI->>API: Capture request
+  Cam->>API: poll → capture → POST image
+  API->>ML: M1 → "ripe 0.9" + heat-map
+  API->>EV: append record (harvest SOP, traceability)
+  UI->>API: Approve / override recommendation
+  API->>EV: append review record
+  UI->>API: Verify chain → "all N records intact"; export MSPO pack
+```
+
+## 6. Measured prototype results (moved from 03 §9 per S-22/D40 — not for the report)
+
+| Model | Test set | Metric | Result |
+|---|---|---|---|
+| M1 (provisional, CPU) | D2 Malaysia test, n = 89 (unripe 34, ripe 41, overripe 14); trained on a 190-image D2-train subset | accuracy / macro-F1 | **0.93 / 0.94**. Recall: unripe 0.82, ripe 1.00, overripe 1.00. Errors: 5 unripe→ripe, 1 unripe→overripe. Same-country test, and no *underripe* class in D2, so this is an upper-bound sanity check, **not** the cross-country result |
+| M1 (final) | D1 test (Indonesia) and D2 (Malaysia, cross-country) | accuracy / macro-F1 / within-one-class | From the GPU notebook run (`training/RUN_ON_KAGGLE.md`). Insert the values from `m1_metrics.json` before the report is frozen |
+| M6 | Simulated hold-out (n = 4,000) | accuracy vs noisy labels | **0.88** (irrigate F1 0.94, lime 0.88, drain 0.92, fertilise 0.82, watch 0.58: the narrow 4.0–4.2 band is where sensor noise matters most) |
+| M3 | D4 disjoint test blocks | Ganoderma recall, mAP@0.5 | Roadmap (stretch, SW-P6) |
+| M5 | Sentinel-2 over a Malaysian estate AOI | flagged blocks | Pre-computed export (`gee/`) |

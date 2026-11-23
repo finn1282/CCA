@@ -1,7 +1,7 @@
 # 05 — SawitSense API Specification (v0.2.6)
 
 > Implements `00_lead/INTERFACES.md` v0.2.6 (D25, D30, D33, D39, D45, D46). Base path `/api/v1`. All bodies are JSON (UTF-8), except the camera upload, which is raw `image/jpeg`. Interactive OpenAPI docs are served at `/docs`.
-> - In the target design this API runs on Azure Container Apps behind API Management, and device traffic arrives through IoT Hub (`04_cloud_design.md`).
+> - In the target design this API runs on Azure App Service/AKS behind API Management in Malaysia West, and device traffic arrives through the Event Grid MQTT broker (`04_cloud_design.md`, D50).
 > - In the build, devices call it directly over HTTPS (INTERFACES §1).
 
 ## 1. Conventions
