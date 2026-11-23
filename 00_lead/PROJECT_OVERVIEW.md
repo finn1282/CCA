@@ -19,16 +19,16 @@
 | Rubric item | Where it will be evidenced | Status |
 |---|---|---|
 | P1 Describe case (2) | Research → Report §1 | ⚪ |
-| P1 ≥3 problems + evidence (4) | Research → Report §1 | ⚪ |
-| P1 Cognitive capability per problem (4) | Research/Software → Report §1 | ⚪ |
+| P1 ≥3 problems + evidence (4) | Research `01_…` → Report §1 | 🟡 evidence ready |
+| P1 Cognitive capability per problem (4) | Research `02_…` v2 → Report §1 | 🟡 evidence ready |
 | P2 App proposal (2) | Software → Report §2 — **SawitSense** | 🟡 |
 | P2 Technologies justified (3) | Software/Hardware → Report §2 | ⚪ |
-| P2 Compare ≥3 platforms + recommend (5) | Research → Report §2 | ⚪ |
+| P2 Compare ≥3 platforms + recommend (5) | Research `08_…` → Report §2 | 🟡 evidence ready |
 | P2 Integration + phased plan (3) | Software → Report §2 | ⚪ |
 | P2 Risks + mitigation (2) | Software/Verification → Report §2 | ⚪ |
 | P3 Novelty (3) | All → Report §3 | ⚪ |
 | P3 Future extension (2) | All → Report §3 | ⚪ |
-| ≥10 Harvard sources | Research | ✅ 64 collected |
+| ≥10 Harvard sources | Research | ✅ 95 collected |
 | Progress report (member contributions) | Report | ⚪ |
 | 15-min presentation, 5 speakers, demo | Presentation + Hardware | ⚪ |
 
@@ -49,7 +49,7 @@
 | SW-P1 | Software | App name SawitSense | ✅ D24 |
 | SW-P4/P5 | Software | Part 3 package; O4 scope; NLP layer | ✅ D28 |
 | SW-P6/P7 | Software | Training scope; build platform | ✅ D29 |
-| HW-P9 / SW-P8 | HW + SW | Research wave 2 requests | ✅ dispatched |
+| HW-P9 / SW-P8 | HW + SW | Research wave 2 requests | ✅ answered (D32) |
 
 ## Open decisions for stakeholder
 Accounts for the build (Kaggle, Azure for Students, Earth Engine) — asked 23 Nov.
