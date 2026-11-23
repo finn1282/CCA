@@ -86,7 +86,10 @@ function renderRipeness(r) {
   $("cam-heat").src = r.heatmap_url + "?v=" + r.evidence_id;
   $("cam-heat").classList.toggle("hidden", !r.heatmap_url);
   $("cam-res").textContent = `${r.label} · ${(r.confidence * 100).toFixed(0)}%`;
-  $("cam-probs").innerHTML = Object.entries(r.probs).map(([k, v]) =>
+  const ORDER = ["unripe", "underripe", "ripe", "overripe"];   // ripeness order, not alphabetical
+  const rank = (k) => { const i = ORDER.indexOf(k); return i < 0 ? 99 : i; };
+  const probs = Object.entries(r.probs).sort(([a], [b]) => rank(a) - rank(b));
+  $("cam-probs").innerHTML = probs.map(([k, v]) =>
     `<div class="bar"><span>${esc(k)}</span><div class="track"><div class="fill" style="width:${(v * 100).toFixed(0)}%"></div></div><span>${(v * 100).toFixed(0)}%</span></div>`).join("");
   $("cam-exp").textContent = r.explanation;
   $("cam-adv").textContent = "Harvest advice (rule-based schedule): " + r.harvest_advice;

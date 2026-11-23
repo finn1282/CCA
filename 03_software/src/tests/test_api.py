@@ -296,3 +296,10 @@ def test_cloud_mode_uses_rollback_journal(tmp_path, monkeypatch):
     monkeypatch.setattr(C, "CLOUD", False)
     db.reset_for_tests(tmp_path / "local.db")
     assert db.q("PRAGMA journal_mode")[0][0].lower() == "wal"
+
+
+def test_audit_pack_cites_mspo_parts(client):
+    """S-26: clause references name MS 2530-3-2 (estates) and MS 2530-4-1 (mills), not bare MS 2530:2022."""
+    client.post("/api/v1/readings", json=reading(soil_ph=3.8), headers=SOIL)
+    pack = client.get("/api/v1/evidence/export").text
+    assert "MS 2530-3-2:2022 4.1.3.1" in pack and "MS 2530-4-1:2022 4.2.2" in pack and "MS 2530:2022" not in pack
