@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | 0 Setup | Lead | 23 Nov | ✅ Done | Lead files pushed |
 | 1 Baseline research wave (then on demand) | Research | 26 Nov | ✅ Wave 1 done 23 Nov | ✅ Passed (D14) — 4 proposals awaiting stakeholder |
-| 2 Build (HW ∥ SW, parallel with on-demand research) | Hardware, Software | 3 Dec | 🟡 SW docs 01–05 ✅, 22/22 tests; M1 provisional model training; final M1 = stakeholder Kaggle run. HW fixing pass-1 defects + compile | PLAN gate ✅ · SW docs ✅ |
+| 2 Build (HW ∥ SW, parallel with on-demand research) | Hardware, Software | 3 Dec | 🟡 SW ✅ complete (D42: 32/32 tests, provisional M1, run guides). HW fixing pass-1 defects; compile waiting on slow ESP32 core download | PLAN gate ✅ · SW docs ✅ |
 | 3 Verify (rolling passes per milestone) | HW/SW testers | 6 Dec | 🟡 HW pass 1 ✅ done (2 major/10 minor → owners; integration 16/18); SW pass 1 ✅ done (2 major/13 minor → owners) | — |
 | 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | 🟡 Report draft v1 ✅ (D41: ~4,270 words, 26 refs). Tech summary + presentation not started | Part 1 gate ✅ |
 | 5 Rubric audit & fixes | Compliance | 12 Dec | ⚪ Not started | — |

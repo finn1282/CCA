@@ -1,4 +1,4 @@
-# Interface Contract (HW ↔ SW) — v0.2.3 (agreed)
+# Interface Contract (HW ↔ SW) — v0.2.4 (agreed)
 
 > Owner: Lead. v0.2 reconciles HW-P1–P5/P7 and SW-P2/P3 (D25). Hardware and Software MUST both conform.
 > Change requests → your PLAN.md Proposals table; the Lead bumps the version here.
@@ -34,7 +34,7 @@ Interval 10 s in demo mode (configurable); short button press = send now.
 ```
 - `ts` optional/null (no NTP) → server stamps `received_at`. `seq` monotonic; buffered replays send `buffered: true`.
 - **v0.2.2:** optional `age_s` (int, seconds between capture and send; 0 for fresh readings). Server sets `captured_at = received_at − age_s` when `ts` is null. Firmware **replays the buffer before posting the fresh reading**; backend `/latest` uses the non-buffered reading with the highest `seq` (never a buffered replay).
-- **v0.2.3:** `ts` must be ISO-8601 UTC (`…Z`); an unparseable `ts` is treated as null (server logs a warning), never stored as-is. `(device_id, seq)` is unique: a repeat POST is idempotent and returns the original response without creating new evidence.
+- **v0.2.3:** `ts` must be ISO-8601 UTC (`…Z`); an unparseable `ts` is treated as null (server logs a warning), never stored as-is. `(device_id, seq)` with **identical values** is idempotent (returns the original response, no new evidence); the same `seq` with **different values** is stored as a new reading (so a device whose seq resets after reboot is not silenced) (v0.2.4).
 - **Failed sensor → `null`, never a fabricated value.** `ec_us_cm` optional; backend derives EC ≈ TDS/0.5 and labels it approximate.
 - `cal_id` = date of last calibration (feeds the evidence log audit trail, D18).
 
