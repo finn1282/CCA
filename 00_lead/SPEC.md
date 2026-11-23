@@ -48,7 +48,7 @@ NodeMCU ESP32 ×1 · ESP32-CAM + USB base ×1 · capacitive soil moisture ×1 ·
 Members: `[Member 1 – Leader]`, `[Member 2]`, `[Member 3]`, `[Member 4]`, `[Member 5]`; Group No: `[GroupNo]`; Student IDs: `[ID]`.
 
 ## 8. Facts confirmed by Research (wave 1 gate passed 23 Nov 2026 — details in `01_research/`)
-- Start every team from `01_research/00_baseline_brief.md`; cite keys from `01_research/sources.md` (64 entries).
+- Start every team from `01_research/00_baseline_brief.md`; cite keys from `01_research/sources.md` (95+ entries).
 - Industry 2025: 5.70 M ha, record 20.28 Mt CPO, RM112.4 bn exports; ~80 % foreign plantation workforce; 30,000-worker shortage (Oct 2026); harvesting not mechanised.
 - Ganoderma BSR: 9.2 % of surveyed smallholder area, >20 % in some mature plantings; asymptomatic until 60–70 % infected; early-detection accuracy in literature ≈64–84 % → position as **screening/prioritisation, not diagnosis**.
 - MSPO mandatory since 2020 (~87 % area certified); MS2530:2022 requires fertiliser/soil-fertility records, traceability, GHG (N2O from fertiliser). Fertiliser ≈30 % of production cost. EUDR applies 30 Dec 2026 (Malaysia "standard risk"; EU = 6.8 % of exports).

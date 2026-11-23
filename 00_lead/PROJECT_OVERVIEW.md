@@ -10,7 +10,7 @@
 | 1 Baseline research wave (then on demand) | Research | 26 Nov | ✅ Wave 1 done 23 Nov | ✅ Passed (D14) — 4 proposals awaiting stakeholder |
 | 2 Build (HW ∥ SW, parallel with on-demand research) | Hardware, Software | 3 Dec | 🟡 Building (plans ruled 23 Nov) | PLAN gate ✅ |
 | 3 Verify (rolling passes per milestone) | HW/SW testers | 6 Dec | 🟡 HW pass 1 ✅ done (2 major/10 minor → owners; integration 16/18); SW pass 1 running | — |
-| 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | 🟡 Report Part 1 drafting | — |
+| 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | 🟡 Report Part 1 ✅ drafted (~5.5k words, 37 sources); Parts 2–3 wait for SW docs | Part 1 gate ✅ |
 | 5 Rubric audit & fixes | Compliance | 12 Dec | ⚪ Not started | — |
 
 > Workflow is a parallel pipeline (D10) — see diagram in `PROJECT_PLAN.md`.
@@ -18,9 +18,9 @@
 ## Rubric coverage tracker
 | Rubric item | Where it will be evidenced | Status |
 |---|---|---|
-| P1 Describe case (2) | Research → Report §1 | ⚪ |
-| P1 ≥3 problems + evidence (4) | Research `01_…` → Report §1 | 🟡 evidence ready |
-| P1 Cognitive capability per problem (4) | Research `02_…` v2 → Report §1 | 🟡 evidence ready |
+| P1 Describe case (2) | Report §1.1 | ✅ drafted |
+| P1 ≥3 problems + evidence (4) | Report §1.2 (Table 3 prioritisation) | ✅ drafted |
+| P1 Cognitive capability per problem (4) | Report §1.3 | ✅ drafted |
 | P2 App proposal (2) | Software → Report §2 — **SawitSense** | 🟡 |
 | P2 Technologies justified (3) | Software/Hardware → Report §2 | ⚪ |
 | P2 Compare ≥3 platforms + recommend (5) | Research `08_…` → Report §2 | 🟡 evidence ready |

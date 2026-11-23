@@ -49,6 +49,6 @@
 ## 5. Proposals
 | ID | Proposal | Why | Impact | Lead ruling |
 |---|---|---|---|---|
-| REP-P1 | Score the problem ranking in 1.2 with four explicit criteria (Table 2) rather than an unstructured argument. | Rubric's Outstanding band requires that problems be *prioritised*; a transparent rule is easier for a marker to credit and for the presenter to defend in Q&A. | Presentation may reuse Table 2. | Pending |
-| REP-P2 | Add a short "interdependence" paragraph showing P2 and P3 aggravate P1. | Gives an "insightful" problem statement and pre-justifies an integrated platform in Part 2. | None. | Pending |
-| REP-P3 | Request one source on FELDA scale and one on EUDR commodity scope (rubber, cocoa) — R-REP1. | 1.1 would otherwise describe FELDA without a citation; 3.2 needs evidence for the cross-sector extension. | Research wave on demand. | Pending |
+| REP-P1 | Score the problem ranking in 1.2 with four explicit criteria (Table 2) rather than an unstructured argument. | Rubric's Outstanding band requires that problems be *prioritised*; a transparent rule is easier for a marker to credit and for the presenter to defend in Q&A. | Presentation may reuse Table 2. | ACCEPTED (D34) |
+| REP-P2 | Add a short "interdependence" paragraph showing P2 and P3 aggravate P1. | Gives an "insightful" problem statement and pre-justifies an integrated platform in Part 2. | None. | ACCEPTED (D34) |
+| REP-P3 | Request one source on FELDA scale and one on EUDR commodity scope (rubber, cocoa) — R-REP1. | 1.1 would otherwise describe FELDA without a citation; 3.2 needs evidence for the cross-sector extension. | Research wave on demand. | ACCEPTED — research wave 3 dispatched |
