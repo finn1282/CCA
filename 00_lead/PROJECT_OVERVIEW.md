@@ -10,7 +10,7 @@
 | 1 Baseline research wave (then on demand) | Research | 26 Nov | ✅ Wave 1 done 23 Nov | ✅ Passed (D14) — 4 proposals awaiting stakeholder |
 | 2 Build (HW ∥ SW, parallel with on-demand research) | Hardware, Software | 3 Dec | 🟡 SW ✅ complete (D42: 32/32 tests, provisional M1, run guides). HW fixing pass-1 defects; compile waiting on slow ESP32 core download | PLAN gate ✅ · SW docs ✅ |
 | 3 Verify (rolling passes per milestone) | HW/SW testers | 6 Dec | 🟡 HW pass 1 ✅ done (2 major/10 minor → owners; integration 16/18); SW pass 1 ✅ done (2 major/13 minor → owners) | — |
-| 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | 🟡 Report draft v1 ✅ (D41: ~4,270 words, 26 refs). Tech summary + presentation not started | Part 1 gate ✅ |
+| 4 Outputs (Tech summary ✅, Report, Presentation storyboard ✅ D48 → building) | Report, Presentation | 10 Dec | 🟡 Report draft v1 ✅ (D41: ~4,270 words, 26 refs). Tech summary + presentation not started | Part 1 gate ✅ |
 | 5 Rubric audit & fixes | Compliance | 12 Dec | 🟡 Report audit 1 ✅ (est. 24.5/30 → ~28 after fixes); research wave 4 → report revision | Audit 1 ✅ |
 
 > Workflow is a parallel pipeline (D10) — see diagram in `PROJECT_PLAN.md`.
