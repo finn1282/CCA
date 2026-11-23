@@ -110,6 +110,8 @@
 | [MILESIGHT-EM500] | Milesight (n.d.) *EM500-SMTC soil moisture, temperature & electrical conductivity sensor*. Available at: https://www.milesight.com/iot/product/lorawan-sensor/em500-smtc (Accessed: 23 November 2026). |
 | [TTS-AZURE] | The Things Industries (n.d.) *Azure IoT Hub – The Things Stack for LoRaWAN*. Available at: https://www.thethingsindustries.com/docs/integrations/cloud-integrations/azure-iot-hub/ (Accessed: 23 November 2026). |
 | [MAXIS-NBIOT] | Maxis (n.d.) *Narrowband IoT*. Available at: https://business.maxis.com.my/iot/narrowband-iot (Accessed: 23 November 2026). |
+| [ESP32-DS] | Espressif Systems (2026) *ESP32 Series Datasheet*, Version 5.3, July. Available at: https://espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf (Accessed: 23 November 2026). |
+| [AZ-CA] | Microsoft (2026) *Azure Certificate Authority details*. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/security/fundamentals/azure-certificate-authority-details (Accessed: 23 November 2026). |
 | [ESPFAQ] | Espressif Systems (n.d.) *ESP-FAQ: Analog-to-Digital Converter (ADC)*. Available at: https://docs.espressif.com/projects/esp-faq/en/latest/software-framework/peripherals/adc.html (Accessed: 23 November 2026). |
 | [DFR-SEN0244] | DFRobot (n.d.) *Gravity: Analog TDS Sensor/Meter (SKU: SEN0244)*. Available at: https://wiki.dfrobot.com/sen0244/ (Accessed: 23 November 2026). |
 | [DFR-SEN0193] | DFRobot (n.d.) *Capacitive Soil Moisture Sensor (SKU: SEN0193)*. Available at: https://wiki.dfrobot.com/Capacitive_Soil_Moisture_Sensor_SKU_SEN0193 (Accessed: 23 November 2026). |

@@ -11,6 +11,9 @@
 | H2 | ESP32 ADC input must stay within 0–3.3 V (effective top lower on some chips); internal reference ≈1.1 V; default inter-chip error up to **±6 %**; two-point calibration recommended. | Use 11/12 dB attenuation, average ≥10 samples, apply `analogReadMilliVolts()` (uses eFuse calibration) rather than raw counts; keep sensor signals ≤ ~3.1 V. | [ESPFAQ] |
 | H3 | Strapping pins: GPIO0, 2, 5, 12 (MTDI), 15 (MTDO) — their level at boot matters. | Avoid wiring pull-ups/sensors to GPIO12 (wrong level can set flash voltage and stop boot). Buttons on GPIO0 only if intended. | [ESPFAQ] |
 
+| H4 | Datasheet: two 12-bit SAR ADCs, 18 channels; **GPIO34–39 input-only, no internal pull-up/down**; five strapping pins (GPIO0, 2 boot mode; others). ADC accuracy at 11 dB attenuation (atten = 3) is specified for **150–2450 mV (±60 mV)**; above ~2450 mV (raw >3000) accuracy is worse [ESP32-DS]. | Keep analog signals ≤ ~2.45 V where accuracy matters: pH via 10k/20k divider stays ≤2.5 V even at pH 0 (fine for pH 3–9); TDS 0–2.3 V fine; **capacitive moisture dry-air reading may sit above 2.45 V** → treat the very dry end as less accurate, or add a divider. | [ESP32-DS] |
+| H5 | Azure TLS endpoints chain to **DigiCert Global Root G2** (among other roots listed by Microsoft); Baltimore CyberTrust Root was removed from Azure's CA list on 8 Oct 2024 [AZ-CA]. | Firmware doing HTTPS to Azure should pin/embed **DigiCert Global Root G2** (and ideally a second listed root, e.g. Microsoft RSA Root CA 2017) — not Baltimore. | [AZ-CA] |
+
 ## 2. Sensor-by-sensor notes
 
 ### 2.1 Capacitive soil moisture sensor (v1.2-style)
