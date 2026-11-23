@@ -8,7 +8,7 @@
 - Source: `CCA Group Assignment.pdf` (repo root). Module ITS69404 Cognitive Computing and Applications, Group Assignment One, 30% of module.
 - Case study: **#4 Agriculture — Smart Palm Oil Plantation Management** (Malaysia: FELDA, Sime Darby Plantation (now SD Guthrie), IOI).
 - **Hard deadline: report submission 15 Dec 2026, 00:00** (i.e. end of 14 Dec). Presentation Week 13, 15 minutes, all 5 members speak, Q&A on any part.
-- **Report length (D35): 10–15 pages total (~4,300 body words), 15–20 references.**
+- **Report length (D35/D40): 10–15 pages (~4,300 body words), ~22–26 references; content + references + progress report only (no cover/TOC/formatting).**
 - Report requirements (content): Harvard referencing **with in-text citations in every section** (D11), **≥10 credible sources** (industry reports, academic papers, vendor docs), progress report with each member's contribution, cover page with names/IDs (placeholders for now). Formatting is handled by the stakeholder — deliver **Markdown**.
 - AI-generated content is **permitted** this year (stakeholder confirmed; the PDF clause is from an old template).
 
