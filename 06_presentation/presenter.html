@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SawitSense Presenter</title>
+<script src="js/data.js"></script>
+<style>
+  :root { --bg: #0c2217; --surface: #173b28; --line: #2f6146; --ink: #f7f1de; --muted: #c9cdb5; --leaf: #a6d25a; --ffb: #f5a028; --red: #ef5a40; --gold: #f4c95d; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 20px/1.4 "Segoe UI", system-ui, Roboto, Arial, sans-serif; padding: 18px; }
+  .top { display: flex; gap: 18px; align-items: stretch; }
+  .box { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; }
+  .clock { font-size: 54px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
+  .lbl { font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .late { color: var(--red); } .warn { color: var(--gold); } .ok { color: var(--leaf); }
+  h1 { margin: 4px 0; font-size: 34px; } .who { color: var(--ffb); font-weight: 700; font-size: 26px; }
+  .cues { margin: 16px 0; padding: 0; list-style: none; }
+  .cues li { padding: 10px 14px; border-radius: 10px; margin: 6px 0; color: var(--muted); }
+  .cues li.cur { background: var(--surface); color: var(--ink); font-size: 26px; outline: 3px solid var(--ffb); }
+  .bar { height: 10px; background: #08170f; border-radius: 5px; overflow: hidden; margin-top: 8px; }
+  .bar i { display: block; height: 100%; background: var(--leaf); }
+  button { font: 700 20px inherit; padding: 10px 20px; border-radius: 10px; border: 0; background: var(--ffb); color: #1a1208; cursor: pointer; }
+  button.alt { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+  .next { color: var(--muted); } .grow { flex: 1; }
+  .run { font-size: 16px; color: var(--muted); columns: 2; margin-top: 12px; }
+  .run div.cur { color: var(--ffb); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="box"><div class="lbl">Talk clock (target 12:30)</div><div class="clock" id="master">0:00</div><div class="lbl" id="plan">planned —</div></div>
+  <div class="box"><div class="lbl">This scene</div><div class="clock" id="scene">0:00</div><div class="lbl" id="sdur">of —</div><div class="bar"><i id="sbar" style="width:0"></i></div></div>
+  <div class="box"><div class="lbl">Slot left (15:00, incl. Q&amp;A)</div><div class="clock" id="slot">15:00</div></div>
+  <div class="box grow" style="display:flex; gap:10px; align-items:center; justify-content:flex-end; flex-wrap:wrap">
+    <button class="alt" id="prev">◀ Back</button><button id="next">Next ▶</button><button class="alt" id="start">Restart clock</button>
+  </div>
+</div>
+<div style="margin-top:16px">
+  <div class="lbl" id="pos">Scene —</div>
+  <h1 id="title">Waiting for the main window… (open it with P from the presentation)</h1>
+  <div class="who" id="who"></div>
+  <ul class="cues" id="cues"></ul>
+  <div class="next" id="next-up"></div>
+  <div class="run" id="run"></div>
+</div>
+<script>
+(function () {
+  const S = SAWIT.SCENES; let st = null, skew = 0;
+  const $ = (id) => document.getElementById(id);
+  let chan = null; try { chan = new BroadcastChannel("sawit-presenter"); chan.onmessage = (e) => onState(e.data); } catch (e) {}
+  function send(cmd, extra) {
+    const m = Object.assign({ type: "cmd", cmd }, extra || {});
+    if (window.opener && !window.opener.closed) { try { window.opener.postMessage(m, "*"); return; } catch (e) {} }
+    if (chan) chan.postMessage(m);
+  }
+  window.addEventListener("message", (e) => onState(e.data));
+  function onState(d) { if (!d || d.type !== "state") return; st = d; skew = Date.now() - d.now; render(); }
+  $("run").innerHTML = S.map((s, i) => `<div id="r${i}">${i + 1}. ${SAWIT.fmt(s.start)} ${s.title} · ${s.speaker} (${SAWIT.fmt(s.dur)})</div>`).join("");
+  function render() {
+    if (!st) return;
+    const s = S[st.cur];
+    $("pos").textContent = `Scene ${st.cur + 1}/${S.length} · step ${st.step + 1}/${st.steps} · planned ${SAWIT.fmt(s.start)}–${SAWIT.fmt(s.start + s.dur)}`;
+    $("title").textContent = s.title; $("who").textContent = s.speaker;
+    $("cues").innerHTML = s.cues.map((c, i) => `<li class="${i === Math.min(st.step, s.cues.length - 1) ? "cur" : ""}">${c}</li>`).join("");
+    const n = S[st.cur + 1];
+    $("next-up").textContent = n ? `Next: ${n.title} · ${n.speaker}` : "Next: Q&A until 15:00";
+    S.forEach((x, i) => $("r" + i).className = i === st.cur ? "cur" : "");
+    tick();
+  }
+  function tick() {
+    if (!st) return;
+    const now = Date.now() - skew, s = S[st.cur];
+    const el = st.t0 ? (now - st.t0) / 1000 : 0, se = (now - st.sceneT0) / 1000;
+    $("master").textContent = SAWIT.fmt(el);
+    const drift = el - (s.start + Math.min(se, s.dur));
+    $("master").className = "clock " + (drift > 20 ? "late" : drift > 5 ? "warn" : "ok");
+    $("plan").textContent = st.t0 ? (drift > 0 ? `${SAWIT.fmt(drift)} behind plan` : `${SAWIT.fmt(-drift)} ahead of plan`) : "clock starts on first Next";
+    $("scene").textContent = SAWIT.fmt(se);
+    $("scene").className = "clock " + (se > s.dur ? "late" : se > s.dur * 0.85 ? "warn" : "ok");
+    $("sdur").textContent = "of " + SAWIT.fmt(s.dur);
+    $("sbar").style.width = Math.min(100, se / s.dur * 100) + "%";
+    $("slot").textContent = SAWIT.fmt(SAWIT.SLOT_S - el);
+  }
+  setInterval(tick, 250);
+  $("next").onclick = () => send("next"); $("prev").onclick = () => send("prev"); $("start").onclick = () => send("start");
+  document.addEventListener("keydown", (e) => {
+    if (["ArrowRight", " ", "PageDown"].includes(e.key)) { e.preventDefault(); send("next"); }
+    if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); send("prev"); }
+  });
+  send("hello");
+})();
+</script>
+</body>
+</html>
