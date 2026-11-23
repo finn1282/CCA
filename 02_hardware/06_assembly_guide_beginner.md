@@ -33,6 +33,17 @@
 2. *File → Examples → 01.Basics → Blink*, change `LED_BUILTIN` to `2`, Upload. The blue LED blinks → toolchain works.
    If upload stalls at "Connecting…", hold the **BOOT** button until it starts writing.
 
+### 3.1 Compile safety — Verify first, then Upload
+These sketches have **never been compiled before your build** (D43: no ESP32 toolchain on the team machine), so treat the first compile as a test step of its own.
+1. Create `secrets.h` first (§5 step 1) in the sketch folder — the sketch does not compile without it.
+2. Click **Verify (✓)**, not Upload. This separates *compile* errors (your code/libraries) from *upload* errors (cable/port/boot mode).
+3. Success looks like this at the end of the output:
+   `Sketch uses 1012345 bytes (77%) of program storage space. Maximum is 1310720 bytes.`
+   `Global variables use 45678 bytes (13%) of dynamic memory …`
+   (numbers will differ). **Warnings are fine** (e.g. `ADC_11db` is deprecated in ESP32 core 3.x); any line containing **`error:`** is not — look it up in the compile-error table in §6.
+4. Only after a clean Verify, click **Upload**.
+5. **Record what worked:** *Tools → Board → Boards Manager* version of "esp32 by Espressif Systems" and each library version from §1, in the calibration log (`04_calibration.md` §6, "Build versions" row). If a later update breaks the build, reinstall exactly these versions.
+
 ## 4. Wire and test one sensor at a time
 Open *Tools → Serial Monitor* at **115200** baud. For each step, flash `firmware/soil_node/soil_node.ino` (after §5 step 1 creates `secrets.h`; WiFi can stay unconfigured for now) and watch the `[read]` line every 10 s. Missing sensors print `nan` and are sent as `null` — that is expected until they are wired.
 
@@ -50,16 +61,34 @@ Type `raw` in the Serial Monitor to print raw millivolts any time.
 
 ## 5. Integrate and flash for the demo
 1. In `firmware/soil_node/`, copy `secrets.h.example` → `secrets.h` and fill in hotspot SSID/password, `API_BASE`, `API_BASE_LOCAL` (laptop IP on the hotspot, port 8000), `DEVICE_KEY` (from Software — **one key for both backends**: start the laptop server with the same `SAWIT_DEVICE_KEYS` as the cloud app, otherwise the LAN fallback answers 401) and the root CA (instructions inside the file). **Never commit `secrets.h`** (it is git-ignored).
-2. Upload; Serial must show `[wifi] connected …` and, once the backend is up, `[cloud] action=… ev=…`.
+2. Verify (§3.1), then Upload; Serial must show `[wifi] connected …` and, once the backend is up, `[CLOUD] action=… ev=…` (or `[LAN] …` when the answering base is an `http://` laptop URL).
 3. Calibrate (`04_calibration.md`).
 4. **Camera:** in `firmware/cam_node/`, create `secrets.h` the same way (`DEVICE_ID "cam-01"`). Seat the ESP32-CAM on its USB base (camera facing away from the USB socket), *Board* **AI Thinker ESP32-CAM**, Upload (the base handles boot mode; if it fails, hold IO0 on the base, tap RST, release IO0). After upload press **RST**. Serial shows `[cam] ok`, `[wifi] … local page http://<ip>/` and a boot capture `[infer] ripe (0.87) …`.
 5. Open `http://<cam-ip>/preview` to aim the camera, then use the dashboard **Capture** button.
 
-CLI equivalent (as used for the compile check):
+CLI equivalent (full sequence from the repo root; nobody has run it yet — your build is the first compile):
 ```
-arduino-cli compile --fqbn esp32:esp32:esp32 02_hardware/firmware/soil_node
+# one-time setup (~1–2 GB download)
+arduino-cli config init
+arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+arduino-cli core update-index && arduino-cli core install esp32:esp32
+arduino-cli lib install "ArduinoJson" "Adafruit SSD1306" "Adafruit GFX Library" "OneWire" "DallasTemperature" "DHT sensor library" "Adafruit Unified Sensor"
+
+# secrets (then edit both files)
+cp 02_hardware/firmware/soil_node/secrets.h.example 02_hardware/firmware/soil_node/secrets.h
+cp 02_hardware/firmware/cam_node/secrets.h.example  02_hardware/firmware/cam_node/secrets.h
+
+# verify (compile only) — must end with "Sketch uses … Maximum is …" and no "error:"
+arduino-cli compile --fqbn esp32:esp32:esp32    02_hardware/firmware/soil_node
 arduino-cli compile --fqbn esp32:esp32:esp32cam 02_hardware/firmware/cam_node
-arduino-cli upload  -p /dev/ttyUSB0 --fqbn esp32:esp32:esp32 02_hardware/firmware/soil_node
+#   if "Sketch too big":  --fqbn esp32:esp32:esp32:PartitionScheme=huge_app
+
+# upload (port: /dev/ttyUSB0 on Linux, COMx on Windows, /dev/cu.* on macOS)
+arduino-cli upload -p /dev/ttyUSB0 --fqbn esp32:esp32:esp32    02_hardware/firmware/soil_node
+arduino-cli upload -p /dev/ttyUSB0 --fqbn esp32:esp32:esp32cam 02_hardware/firmware/cam_node
+
+# record the versions that worked (paste into 04_calibration.md §6)
+arduino-cli core list; arduino-cli lib list
 ```
 
 ## 6. Troubleshooting
@@ -68,6 +97,16 @@ arduino-cli upload  -p /dev/ttyUSB0 --fqbn esp32:esp32:esp32 02_hardware/firmwar
 | No serial port | Charge-only cable / missing driver | Use a D27 data cable; install CP210x/CH340 driver |
 | `Failed to connect to ESP32` | Not in boot mode | Hold BOOT (NodeMCU) or IO0 (CAM base) while uploading |
 | `secrets.h: No such file` | Not created | Copy `secrets.h.example` → `secrets.h` |
+
+**Compile errors (Verify step)** — fix, then Verify again:
+| Error text contains | Cause | Fix |
+|---|---|---|
+| `ArduinoJson.h: No such file`, `DHT.h: No such file`, `Adafruit_SSD1306.h: No such file`, `OneWire.h` / `DallasTemperature.h: No such file` | Library not installed | Install it from the §1 table (exact name and author) |
+| `'JsonDocument' does not name a type`, or hints about `StaticJsonDocument` / `DynamicJsonDocument` | ArduinoJson **6** installed | Library Manager → ArduinoJson → install **7.x** |
+| `esp_camera.h: No such file`, `WiFi.h: No such file` | Wrong board selected or ESP32 core not installed | Board **AI Thinker ESP32-CAM** (cam) / **ESP32 Dev Module** (soil); install "esp32 by Espressif Systems" |
+| `Sketch too big` / `text section exceeds available space` | Default partition too small | *Tools → Partition Scheme →* **Huge APP (3MB No OTA)** (CLI: `:PartitionScheme=huge_app`) |
+| `'WIFI_SSID_2' was not declared`, `'API_BASE_LOCAL' was not declared`, `'ROOT_CA' was not declared`, `'ALLOW_INSECURE_TLS' …` | Old or incomplete `secrets.h` | Re-copy from the current `secrets.h.example`, then refill your values |
+| `ADC_11db is deprecated` (warning) | ESP32 core 3.x naming | Harmless — ignore |
 | Board resets when WiFi starts / CAM "Brownout detector was triggered" | Weak USB supply or long cable | Short cable, different port, 2-port ≥2 A bank (D27) [RNT-CAM] |
 | Analog values jump wildly or read 4095/0 while WiFi on | Sensor on an ADC2 pin | Only GPIO32–39 for analog [ESPFAQ] |
 | Board won't boot with wires attached | Something on GPIO0/2/5/12/15 | Move it; see pin map |

@@ -1,6 +1,6 @@
 /*
   SawitSense soil node — NodeMCU ESP32 (ESP32-WROOM-32)
-  Firmware 0.2.0 — conforms to 00_lead/INTERFACES.md v0.2.3
+  Firmware 0.2.6 — conforms to 00_lead/INTERFACES.md v0.2.6
 
   Sensors: capacitive moisture (GPIO34), pH PO via 10k/20k divider (GPIO35), TDS (GPIO32, powered from GPIO25),
            DS18B20 (GPIO4), DHT22 (GPIO16). OLED SSD1306 I2C (21/22). LEDs G/A/R (18/19/23), status LED (2).
@@ -29,7 +29,7 @@
 #include <math.h>
 #include "secrets.h"   // copy secrets.h.example -> secrets.h
 
-#define FW_VERSION "0.2.3"
+#define FW_VERSION "0.2.6"
 
 // ---------------- Pins ----------------
 const int PIN_MOIST   = 34;  // ADC1_CH6
@@ -289,33 +289,36 @@ int httpRequest(const String& base, const String& path, const char* method, cons
   http.end();
   return code;
 }
+// v0.2.6 (D-13): only 400/413/422 mean "this payload is bad" -> drop. 401/403/404/408/429/5xx/transport -> keep buffered.
+bool isRejected(int code) { return code == 400 || code == 413 || code == 422; }
 // Base selection (INTERFACES v0.2.2 §2): cloud first; once the laptop (LAN) answered, stay on LAN and
 // retry API_BASE every CLOUD_RETRY_MS, switching back on success.
-// Returns the best HTTP code (2xx wins, else 4xx, else last error); sets usedBase to "CLOUD" or "LAN".
+// Returns the best HTTP code (2xx wins, else a payload reject 400/413/422, else last code); usedBase = CLOUD (https) or LAN (http).
 int requestAny(const String& path, const char* method, const String& body, String& resp, String& usedBase) {
   bool cloudFirst = !onLan || (millis() - tLastCloudTry >= CLOUD_RETRY_MS);
   const char* bases[2] = { cloudFirst ? API_BASE : API_BASE_LOCAL, cloudFirst ? API_BASE_LOCAL : API_BASE };
   int best = -1;
   for (int i = 0; i < 2; i++) {
     if (strlen(bases[i]) == 0) continue;
-    bool isCloud = (strcmp(bases[i], API_BASE) == 0);
-    if (isCloud) tLastCloudTry = millis();
+    if (i == 1 && strcmp(bases[0], bases[1]) == 0) break;     // same URL configured twice: don't retry it
+    bool isPrimary = (strcmp(bases[i], API_BASE) == 0);
+    bool isCloud = (strncmp(bases[i], "https://", 8) == 0);   // v0.2.6 (D-14): tag by scheme, not by slot
+    if (isPrimary) tLastCloudTry = millis();
     digitalWrite(PIN_LED_NET, LOW);
     int code = httpRequest(String(bases[i]), path, method, body, resp);
     digitalWrite(PIN_LED_NET, WiFi.status() == WL_CONNECTED);
     if (code >= 200 && code < 300) {
       usedBase = isCloud ? "CLOUD" : "LAN";
-      if (onLan == isCloud) Serial.printf("[net] now using %s\n", usedBase.c_str());
-      onLan = !isCloud;
+      if (onLan == isPrimary) Serial.printf("[net] now using %s (%s)\n", usedBase.c_str(), bases[i]);
+      onLan = !isPrimary;              // 'onLan' = answered by the fallback base -> retry primary every 5 min
       return code;
     }
     Serial.printf("[http] %s %s%s -> %d\n", method, bases[i], path.c_str(), code);
-    if (code >= 400 && code < 500) best = code; else if (best < 400) best = code;
+    if (isRejected(code)) best = code; else if (!isRejected(best)) best = code;
   }
   usedBase = "LOCAL";
   return best;
 }
-bool isRejected(int code) { return code >= 400 && code < 500; }   // permanent: do not buffer / drop from queue
 String toJson(const Reading& r, bool buffered) {
   JsonDocument d;
   d["device_id"] = DEVICE_ID;
@@ -382,8 +385,8 @@ void cycle() {
     String r2, u2;
     int c = requestAny("/api/v1/readings", "POST", toJson(ring[ringHead], true), r2, u2);
     if (c >= 200 && c < 300) { Serial.printf("[buf] replayed seq=%u via %s\n", ring[ringHead].seq, u2.c_str()); bufferPop(); }
-    else if (isRejected(c))  { Serial.printf("[buf] DROPPED seq=%u (HTTP %d rejected)\n", ring[ringHead].seq, c); bufferPop(); }
-    else { linkOk = false; break; }                  // transport error / 5xx: try again next cycle
+    else if (isRejected(c))  { Serial.printf("[buf] DROPPED seq=%u (HTTP %d payload rejected)\n", ring[ringHead].seq, c); bufferPop(); }
+    else { linkOk = false; Serial.printf("[buf] kept seq=%u (HTTP %d)\n", ring[ringHead].seq, c); break; }  // retry next cycle
   }
   // 2) fresh reading
   String resp, used = "LOCAL";

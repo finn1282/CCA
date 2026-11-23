@@ -15,7 +15,7 @@
 | 0:00 | Start state (D-10): pot dry, moisture probe in soil; pH + TDS + DS18B20 in **REFERENCE** cup. Point at pot + node | Dashboard live panel; OLED "SawitSense CLOUD" | "This pot stands in for one management block. The node measures moisture, pH, nutrients and temperature, and sends them to SawitSense every ten seconds." |
 | 0:15 | Pot is dry (not watered since rehearsal) | Red LED, OLED **IRRIGATE** "moist 24%<30%" (only rule firing: pH OK, TDS = baseline); dashboard reason + counterfactual | "It isn't just a number — it gives an action and the reason: moisture 24 %, below 30 %. It would be OK at 30 %." |
 | 0:35 | Pour ~100 mL water; press button (send now) | Moisture rises → **OK, green** (probes still in REFERENCE); new evidence-log row | "Every decision is logged with its reading number and calibration date — the audit trail MSPO needs for fertiliser and soil records." |
-| 1:00 | Rinse; probes into **PLAIN** (distilled water) cup, press button | TDS < 0.7 × baseline → amber **FERTILISE (simulated)** | "This cup is a nutrient-depleted block. Nutrients are low against this block's baseline, so it recommends fertilising — labelled simulated agronomy." |
+| 1:00 | Rinse; probes into **PLAIN** (distilled water) cup, wait ~60 s for pH to settle, press button | TDS < 0.7 × baseline → amber **FERTILISE (simulated)** | "This cup is a nutrient-depleted block. Nutrients are low against this block's baseline, so it recommends fertilising — labelled simulated agronomy." |
 | 1:25 | Rinse; probes to **NUTRIENT** cup, press button | TDS > 1.3 × baseline → **SKIP FERTILISER** | "After fertiliser, it says skip the next round — saving cost and runoff. Fertiliser is about 30 % of estate cost." |
 | 1:50 | Hold A5 FFB print under the ESP32-CAM; operator clicks **Capture** | Dashboard: label + confidence + heatmap | "At harvest time the same platform grades bunches: ripe, 0.87 — and the heatmap shows what the model looked at." |
 | 2:20 | Wrap | Dashboard overview | "Field sensors, camera and satellite all flow into one explained, auditable decision." |
@@ -23,8 +23,9 @@ Optional (if time): **acidic** cup → red **LIME** "pH 3.8<4.0".
 
 ## 3. One backend at a time (D39)
 - **At the rehearsal, pick the primary:** cloud (Azure) if it is deployed and stable on the presentation hotspot, otherwise the laptop.
-- Set `API_BASE` on both boards to the primary; `API_BASE_LOCAL` = laptop (only used if the primary fails). If the laptop is the primary, both can point at the laptop.
+- Set `API_BASE` on both boards to the primary; `API_BASE_LOCAL` = laptop (only used if the primary fails). If the laptop is the primary, see the tag note below.
 - Open the dashboard **on the primary** only. Both backends use the same `SAWIT_DEVICE_KEYS`.
+- OLED tags follow the URL scheme (v0.2.6): an `https://` base shows **CLOUD**, an `http://` (laptop) base shows **LAN** — so if the laptop is the primary, the OLED honestly says LAN. When the laptop is primary, set `API_BASE_LOCAL ""` (or the same URL; the node does not retry an identical URL).
 - If the primary fails on stage, the nodes switch to LAN by themselves; the operator then opens the laptop dashboard (`http://localhost:8000`).
 
 ## 4. Setup timeline (venue)
@@ -57,7 +58,10 @@ Optional (if time): **acidic** cup → red **LIME** "pH 3.8<4.0".
 - [ ] Power bank stays on ≥15 min at node load (auto-off test)
 - [ ] Laptop power saving / sleep off; USB ports stay powered
 - [ ] pH calibrated today, `cal show` slope 0.16–0.19 V/pH, `cal_id` = today
-- [ ] TDS baseline set from REFERENCE cup; PLAIN reads < baseline × 0.7, NUTRIENT > baseline × 1.3
+- [ ] REFERENCE cup made from **pot leachate** (not tap water); TDS baseline set from it
+- [ ] pH check 1: REFERENCE reads **4.2–6.5** (OK, green — else WATCH spoils the 0:35 beat)
+- [ ] pH check 2: PLAIN reads **not below 4.0** after 60 s (else LIME outranks FERTILISE)
+- [ ] PLAIN reads < baseline × 0.7, NUTRIENT > baseline × 1.3
 - [ ] Start state: pot dry, probes in REFERENCE, OLED shows IRRIGATE only
 - [ ] Pot soil dry enough for IRRIGATE (< 30 %)
 - [ ] Cups labelled and filled; rinse water; paper towels; tray

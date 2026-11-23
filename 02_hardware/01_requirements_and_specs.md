@@ -56,15 +56,15 @@ Out of scope: on-device ML inference, drone/satellite hardware, real fertiliser 
 | Power bank (+ 2-port ≥2 A bought, D27) | Soil node supply | 5 V USB | — | Check auto-off at low load | [05_hardware_notes §2.6] |
 
 ## 5. Demo → real plantation deployment
-Placeholders `[R-HW1]` are filled with citations when research wave 2 returns (see `01_research/REQUESTS.md`).
+Citations from research wave 2 (R-HW1, `01_research/07_field_evidence_and_naming.md`).
 
 | Demo element | Real deployment | Notes |
 |---|---|---|
-| One breadboard soil node in a pot | Sealed (IP67) field node per management block, sensors buried at root depth, several per block | Block-level fertiliser and liming decisions [MPOCC-P21] |
+| One breadboard soil node in a pot | Sealed (IP67/IP68) LoRaWAN field node per management block measuring moisture, temperature and EC, sensors at root depth, several per block | Commercial nodes of this class exist [MILESIGHT-EM500]; block-level fertiliser/liming records [MPOCC-P21]; Malaysian oil-palm ESP32 + LoRa soil-node prototype [RUSLAN2021] |
 | Capacitive moisture probe | Calibrated volumetric soil-moisture probe (e.g. FDR/TDR) | Demo shows relative %, not VWC |
 | Liquid pH/TDS probes in a slurry cup | Periodic lab soil sampling plus in-situ EC sensors; pH by slurry method in lab | Standard agronomic slurry method [05_hardware_notes §2.2] |
-| WiFi to phone hotspot | LoRaWAN radio to estate gateways (or 4G/NB-IoT where covered) | Range/battery figures `[R-HW1]`; IOI estate-wide 4G precedent [IOI2026] |
-| Power bank | Solar panel + battery, duty-cycled sensing (minutes–hours interval) | Battery-life figures `[R-HW1]` |
-| HTTPS POST to App Service | Gateway/network server → **Azure IoT Hub** → stream processing → Azure ML (report-facing, D20) | Device auth and fleet management handled by IoT Hub |
+| WiFi to phone hotspot | LoRaWAN (AS923) radio to estate gateways, or 4G/NB-IoT where covered | Vendor range up to 15 km rural [MILESIGHT-EM500], but in a Malaysian oil-palm stand **each trunk costs 5.0–7.6 dB and each canopy 5.5–9.3 dB** → plan gateway spacing from plantation measurements [ANZUM2022]; NB-IoT coverage is regional, not nationwide [MAXIS-NBIOT]; IOI has >100 4G/LTE estate sites [IOI2026] |
+| Power bank | Long-life battery (or solar) with duty-cycled sensing | Up to ~10 years at a 10-min interval on a 19,000 mAh Li-SOCl₂ cell (vendor lab figure, guideline only) [MILESIGHT-EM500]; optimised low-power agri nodes outlast commercial motes [BORRERO2020] |
+| HTTPS POST to App Service | Gateway → LoRaWAN network server → **Azure IoT Hub** (device twins, downlinks) → Azure ML (report-facing, D20) | The Things Stack has a native Azure IoT Hub integration [TTS-AZURE] |
 | ESP32-CAM on printed photo | Harvester's phone app / drone camera feeding the same inference API | Harvester allocation from ripeness (D28) |
 | OLED + LEDs | Mandor/field supervisor mobile app with the same explained action | Same `oled`/`reason` text, multilingual (D28) |

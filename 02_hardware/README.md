@@ -1,19 +1,19 @@
 # 02_hardware — README
 
 ## Status
-**Step 2 deliverables written and pushed (23 Nov 2026).** Contract: `00_lead/INTERFACES.md` **v0.2.3** (D25, D30, D33, D39). Soil firmware 0.2.3, camera 0.2.2. Verification Pass 1 fixes applied (see below).
-Compile check: see "Verification notes" below. Bench test on real hardware still needed (only the person holding the parts can do it).
+**Step 2 deliverables written and pushed (23 Nov 2026).** Contract: `00_lead/INTERFACES.md` **v0.2.6** (D25, D30, D33, D39, D46). Firmware 0.2.6 (both sketches). Verification Pass 1 fixes applied (see below).
+**Compile = stakeholder build step (D43):** no ESP32 core on the team machine; firmware reviewed statically by Verification (Pass 1–2). First compile follows `06_assembly_guide_beginner.md` §3.1. Bench test on real hardware still needed (only the person holding the parts can do it).
 Audience (D23): demo, Verification and presentation — hardware detail does not go into the report.
 
 ## Inputs used
-`00_lead/SPEC.md`, `PROJECT_PLAN.md`, `DECISIONS.md` (D17, D20, D21, D23–D39), `INTERFACES.md` v0.2.3, `07_verification/hardware/PASS_1_REPORT.md`, `components.md`,
+`00_lead/SPEC.md`, `PROJECT_PLAN.md`, `DECISIONS.md` (D17, D20, D21, D23–D46), `INTERFACES.md` v0.2.6, `07_verification/hardware/PASS_2_REPORT.md`, `07_verification/hardware/PASS_1_REPORT.md`, `components.md`,
 `01_research/00_baseline_brief.md`, `05_hardware_notes.md`, `sources.md`.
 
 ## Outputs
 | File | Content |
 |---|---|
 | `PLAN.md` | Approach, tasks, ideas, conflicts, proposals HW-P1…P9 with Lead rulings |
-| `01_requirements_and_specs.md` | Demo objectives → O1/O3/O4, FR/NFR, component specs, demo → real deployment mapping (`[R-HW1]` placeholders) |
+| `01_requirements_and_specs.md` | Demo objectives → O1/O3/O4, FR/NFR, component specs, demo → real deployment mapping (R-HW1 citations filled) |
 | `02_system_design.md` | Block + data-flow + wiring diagrams, pin map, netlist, pH divider, CAM role, power budget, placement |
 | `03_bom.md` | Owned parts, approved purchases (D21, D27) ≈ RM44–84 |
 | `firmware/soil_node/soil_node.ino` + `secrets.h.example` | All sensors, NVS calibration, OLED pages, LEDs, button, HTTPS POST + CLOUD/LOCAL decision, cloud→local base fallback, 30-reading offline buffer with replay, TDS baseline fetch |
@@ -40,8 +40,8 @@ LEDs G/A/R 18/19/23 · status LED 2 · button 27. Analog only on ADC1; no strapp
 - Root CA for the Azure endpoint must be exported on the day the URL exists (instructions in `secrets.h.example`).
 
 ## Verification notes
-- Compile status: see the latest commit message / section below.
-- Bench checks for the Verification pass: ADC1-only analog, pH pin ≤ 3.1 V, CAM brownouts on laptop USB, power-bank auto-off, offline buffer replay.
+- Compile: stakeholder build step (D43); record core/library versions in `04_calibration.md` §6.
+- Bench checks B-01…B-16 (TEST_PLAN §B) need the person holding the parts.
 
 ## Verification Pass 1 fixes (D33)
 | ID | Fix | Files |
@@ -63,14 +63,20 @@ LEDs G/A/R 18/19/23 · status LED 2 · button 27. Analog only on ADC1; no strapp
 - Readings rounded once at capture to 1 decimal; payload and LOCAL rules use the same values (pH and TDS now sent with 1 decimal).
 - One key for both backends documented in both `secrets.h.example` files and the guide; one-backend-at-a-time demo rule in `05_demo_plan.md` §3.
 
+## Verification Pass 2 fixes (D46)
+| ID | Fix |
+|---|---|
+| D-13 | Only 400/413/422 drop a reading; 401/403/404/408/429/5xx/transport keep it buffered (`isRejected()`) |
+| D-14 | CLOUD/LAN tag by URL scheme (https/http) in both sketches; identical primary/fallback URL not retried; demo plan §3 note |
+| D-15 | REFERENCE cup = pot leachate; pH checks (REFERENCE 4.2–6.5, PLAIN ≥ 4.0 after 60 s) in calibration §3 and pre-show checklist |
+| D-17 | Guide §3.1 "Verify first, then Upload", success line, warnings vs `error:`, compile-error table in §6, full CLI sequence (core/lib install, secrets copy), build-versions row in calibration log |
+| D-18 | Header comments and `FW_VERSION` = 0.2.6 in both sketches |
+
 ## Open issues for Lead
-1. R-HW1 citations pending → fill `[R-HW1]` placeholders in `01_requirements_and_specs.md` §5.
-2. [ESP32-DS] and [AZ-CA] are cited in Hardware docs but not yet in `01_research/sources.md` (D33: Research to add).
-3. Bench tests B-01…B-16 need the person holding the hardware.
+1. Bench tests B-01…B-16 need the person holding the hardware.
 
 ## Research requests
-- R-HW1 (LoRaWAN/cellular field soil-node sources) — open in `01_research/REQUESTS.md`.
+- R-HW1 — answered in `01_research/07_field_evidence_and_naming.md`; citations used in `01_requirements_and_specs.md` §5.
 
 ## New sources used
-- [ESP32-DS] Espressif *ESP32 Series Datasheet* v5.3 (ADC effective range) — key from `07_verification/hardware/TEST_PLAN.md`.
-- [AZ-CA] Microsoft Learn *Azure Certificate Authority details* — key from `07_verification/hardware/TEST_PLAN.md`; root certificates fetched from cacerts.digicert.com and the Microsoft PKI repository on 23 Nov 2026.
+None beyond `01_research/sources.md` ([ESP32-DS] and [AZ-CA] were added there in research wave 3).

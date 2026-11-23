@@ -1,6 +1,6 @@
 /*
   SawitSense camera node — AI-Thinker ESP32-CAM (OV2640) on ESP32-CAM-MB USB base
-  Firmware 0.2.0 — conforms to 00_lead/INTERFACES.md v0.2.2 §3
+  Firmware 0.2.6 — conforms to 00_lead/INTERFACES.md v0.2.6 §3
 
   Capture & upload only (no on-device inference). Triggers:
     (a) primary: polls GET {base}/api/v1/devices/{DEVICE_ID}/commands every 2.5 s, captures on {"cmd":"capture"}
@@ -18,7 +18,7 @@
 #include "esp_camera.h"
 #include "secrets.h"   // copy secrets.h.example -> secrets.h
 
-#define FW_VERSION "0.2.2"
+#define FW_VERSION "0.2.6"
 
 // ---- AI-Thinker pin map (fixed by the board) ----
 #define PWDN_GPIO_NUM 32
@@ -118,10 +118,12 @@ int requestAny(const String& path, const uint8_t* body, size_t len, String& resp
   int code = -1;
   for (int i = 0; i < 2; i++) {
     if (strlen(bases[i]) == 0) continue;
-    bool isCloud = (strcmp(bases[i], API_BASE) == 0);
-    if (isCloud) tLastCloudTry = millis();
+    if (i == 1 && strcmp(bases[0], bases[1]) == 0) break;
+    bool isPrimary = (strcmp(bases[i], API_BASE) == 0);
+    bool isCloud = (strncmp(bases[i], "https://", 8) == 0);   // tag by scheme (D-14)
+    if (isPrimary) tLastCloudTry = millis();
     code = httpRequest(String(bases[i]), path, body, len, resp);
-    if (code >= 200 && code < 300) { onLan = !isCloud; via = isCloud ? "CLOUD" : "LAN"; return code; }
+    if (code >= 200 && code < 300) { onLan = !isPrimary; via = isCloud ? "CLOUD" : "LAN"; return code; }
     if (body) Serial.printf("[http] %s%s -> %d\n", bases[i], path.c_str(), code);
   }
   via = "none";

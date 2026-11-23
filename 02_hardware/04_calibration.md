@@ -60,11 +60,11 @@ TDS    = (133.42·V_comp³ − 255.86·V_comp² + 857.39·V_comp) × 0.5 × K
   Three cups (Verification D-01 — a cup used to *set* the baseline can never trigger a rule against it):
   | Cup | Contents | Role | Must read |
   |---|---|---|---|
-  | `REFERENCE` | Pot leachate (or tap water) + a **small pinch** of NPK in 250 mL | Sets the baseline ("adequately fertilised block") | = baseline |
-  | `PLAIN` | Distilled water | "Nutrient-depleted block" → `fertilise` | **< 0.7 × baseline** |
+  | `REFERENCE` | **Pot leachate** (water poured through the pot, collected underneath — not tap water, which can read pH > 6.5) + a **small pinch** of NPK, ~250 mL | Sets the baseline ("adequately fertilised block") | = baseline **and pH 4.2–6.5** (OK) |
+  | `PLAIN` | Distilled water | "Nutrient-depleted block" → `fertilise` | **< 0.7 × baseline**, pH **not below 4.0** (else LIME outranks FERTILISE) |
   | `NUTRIENT` | ≈ ½ teaspoon NPK in 250 mL | "Just fertilised block" → `skip_fertiliser` | **> 1.3 × baseline** |
   1. Probes + DS18B20 in `REFERENCE`, wait 30 s → note the dashboard TDS; set it as the device baseline in the dashboard calibration panel (default margin 30 %).
-  2. Move to `PLAIN` → must show FERTILISE; move to `NUTRIENT` → must show SKIP FERTILISER. If either is inside ±30 %, adjust the pinch in `REFERENCE` (more NPK if PLAIN is not low enough; less if NUTRIENT is not high enough) and re-set the baseline.
+  2. Check REFERENCE shows **OK** (pH 4.2–6.5). Move to `PLAIN`, give the pH electrode **60 s** to settle (distilled water makes glass electrodes drift) → must show FERTILISE, not LIME/WATCH; move to `NUTRIENT` → must show SKIP FERTILISER. If either is inside ±30 %, adjust the pinch in `REFERENCE` (more NPK if PLAIN is not low enough; less if NUTRIENT is not high enough) and re-set the baseline.
   3. Rinse probes in `RINSE` between cups; return them to `REFERENCE` (the demo start state).
   4. The node fetches the baseline (boot + every 5 min) for LOCAL mode; without it, LOCAL mode skips TDS rules.
 - pH and TDS are read **sequentially**: the firmware powers the TDS module (GPIO25) only during its own reading, so both probes may sit in one cup.
@@ -86,3 +86,5 @@ No calibration. Sanity check: both within ±1 °C of each other in still room ai
 | Date | cal_id | Moist dry / wet (mV) | V6.86 / V4.01 (V) | Slope (V/pH) | T_cal (°C) | TDS K | TDS baseline (ppm) | By |
 |---|---|---|---|---|---|---|---|---|
 | | | | | | | | | |
+
+**Build versions (record after the first clean compile):** ESP32 core `____` · ArduinoJson `____` · Adafruit SSD1306 `____` · Adafruit GFX `____` · OneWire `____` · DallasTemperature `____` · DHT sensor library `____` · Adafruit Unified Sensor `____` · soil fw `0.2.6` · cam fw `0.2.6`
