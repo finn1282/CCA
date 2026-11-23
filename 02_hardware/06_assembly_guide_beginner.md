@@ -49,7 +49,7 @@ Open *Tools → Serial Monitor* at **115200** baud. For each step, flash `firmwa
 Type `raw` in the Serial Monitor to print raw millivolts any time.
 
 ## 5. Integrate and flash for the demo
-1. In `firmware/soil_node/`, copy `secrets.h.example` → `secrets.h` and fill in hotspot SSID/password, `API_BASE`, `API_BASE_LOCAL` (laptop IP on the hotspot, port 8000), `DEVICE_KEY` (from Software) and the root CA (instructions inside the file). **Never commit `secrets.h`** (it is git-ignored).
+1. In `firmware/soil_node/`, copy `secrets.h.example` → `secrets.h` and fill in hotspot SSID/password, `API_BASE`, `API_BASE_LOCAL` (laptop IP on the hotspot, port 8000), `DEVICE_KEY` (from Software — **one key for both backends**: start the laptop server with the same `SAWIT_DEVICE_KEYS` as the cloud app, otherwise the LAN fallback answers 401) and the root CA (instructions inside the file). **Never commit `secrets.h`** (it is git-ignored).
 2. Upload; Serial must show `[wifi] connected …` and, once the backend is up, `[cloud] action=… ev=…`.
 3. Calibrate (`04_calibration.md`).
 4. **Camera:** in `firmware/cam_node/`, create `secrets.h` the same way (`DEVICE_ID "cam-01"`). Seat the ESP32-CAM on its USB base (camera facing away from the USB socket), *Board* **AI Thinker ESP32-CAM**, Upload (the base handles boot mode; if it fails, hold IO0 on the base, tap RST, release IO0). After upload press **RST**. Serial shows `[cam] ok`, `[wifi] … local page http://<ip>/` and a boot capture `[infer] ripe (0.87) …`.
@@ -75,7 +75,7 @@ arduino-cli upload  -p /dev/ttyUSB0 --fqbn esp32:esp32:esp32 02_hardware/firmwar
 | pH stuck at one value / `nan` | Board not on 5 V, probe cap still on, divider wrong | Check VIN 5 V, remove cap, measure PO |
 | pH drifts | Probe not settled / TDS interference | Wait 30–60 s; firmware already turns TDS off for pH |
 | HTTP −1 on cloud, local works | TLS root CA wrong/rotated | Re-export root CA; emergency `ALLOW_INSECURE_TLS 1` (log it) |
-| HTTP 401/403 | Wrong `DEVICE_KEY` / `DEVICE_ID` | Ask Software for the key |
+| HTTP 401/403 | Wrong `DEVICE_KEY` / `DEVICE_ID`, or laptop server started without the cloud's `SAWIT_DEVICE_KEYS` | Ask Software for the key; restart laptop server with the same `SAWIT_DEVICE_KEYS` |
 | OLED stays on LOCAL (or LAN when the cloud should work) | Backend unreachable (LAN: cloud down/TLS; node retries cloud every 5 min) | Check laptop IP matches `API_BASE_LOCAL`, firewall allows port 8000 |
 | CAM poll never captures | Dashboard command not issued / wrong device id | Check `cam-01`; use local `/capture` page |
 | Power bank switches off | Load too low for auto-off detection | Use the 2-port bank or keep laptop/USB meter in line |

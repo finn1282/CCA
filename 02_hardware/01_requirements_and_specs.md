@@ -20,7 +20,7 @@ Out of scope: on-device ML inference, drone/satellite hardware, real fertiliser 
 | FR2 | pH read with TDS module powered **off** (GPIO25 low), TDS read with it on; DS18B20 temperature used for TDS compensation | Serial log shows order; `04_calibration.md` |
 | FR3 | POST `application/json` to `{API_BASE}/api/v1/readings` with `X-Device-Id` + `X-Device-Key`, payload fields exactly as INTERFACES §2; failed sensor → `null` | Backend log / Verification |
 | FR4 | Parse 200 response: show `oled[0..1]` and `led` tagged **CLOUD** (answered by `API_BASE`) or **LAN** (answered by `API_BASE_LOCAL`) | Demo |
-| FR5 | On failure: compute local result from INTERFACES §4 thresholds and priority, show tagged **LOCAL**; TDS rules only if a baseline was received earlier | Unplug WiFi test |
+| FR5 | On failure: compute local result from INTERFACES §4 thresholds and priority, show tagged **LOCAL**; TDS rules only if a baseline was received earlier; rules compare the same 1-decimal values the payload sends; moisture, pH and TDS all null → amber **NO DATA** in every mode (v0.2.3) | Unplug WiFi test |
 | FR6 | Ring buffer of the last 30 unsent readings, replayed oldest-first with `buffered:true` and `age_s` **before** the fresh reading when the link returns; a 4xx-rejected reading is dropped and logged (never blocks the queue, never buffered) | Offline test |
 | FR7 | Cloud URL tried first, `API_BASE_LOCAL` (laptop) second; while on LAN, retry the cloud every 5 min and switch back on success | Fallback drill |
 | FR8 | Button short press = send now; long press (≥1.5 s) = next OLED page; very long press (≥5 s) on the calibration page = capture moisture dry/wet raw value to NVS | Demo, calibration |

@@ -1,6 +1,6 @@
 /*
   SawitSense soil node — NodeMCU ESP32 (ESP32-WROOM-32)
-  Firmware 0.2.0 — conforms to 00_lead/INTERFACES.md v0.2.2
+  Firmware 0.2.0 — conforms to 00_lead/INTERFACES.md v0.2.3
 
   Sensors: capacitive moisture (GPIO34), pH PO via 10k/20k divider (GPIO35), TDS (GPIO32, powered from GPIO25),
            DS18B20 (GPIO4), DHT22 (GPIO16). OLED SSD1306 I2C (21/22). LEDs G/A/R (18/19/23), status LED (2).
@@ -29,7 +29,7 @@
 #include <math.h>
 #include "secrets.h"   // copy secrets.h.example -> secrets.h
 
-#define FW_VERSION "0.2.2"
+#define FW_VERSION "0.2.3"
 
 // ---------------- Pins ----------------
 const int PIN_MOIST   = 34;  // ADC1_CH6
@@ -133,6 +133,9 @@ String isoTime(time_t t) {
   char b[25]; strftime(b, sizeof b, "%Y-%m-%dT%H:%M:%SZ", &tmv);
   return String(b);
 }
+// v0.2.3: values are rounded once at capture to what the payload sends (1 decimal), so LOCAL == CLOUD at thresholds
+float r1(float v) { return isnan(v) ? NAN : roundf(v * 10.0f) / 10.0f; }
+bool allSoilNull(const Reading& r) { return isnan(r.moist) && isnan(r.ph) && isnan(r.tds); }
 time_t nowOrZero() { time_t t = time(nullptr); return (t > 1700000000) ? t : 0; }
 
 // ============================================================ NVS
@@ -207,6 +210,8 @@ Reading takeReading() {
   r.airRh = isnan(h) ? NAN : h;
   r.airT = isnan(t) ? NAN : t;
   r.rssi = (WiFi.status() == WL_CONNECTED) ? WiFi.RSSI() : 0;
+  r.moist = r1(r.moist); r.ph = r1(r.ph); r.tds = r1(r.tds);
+  r.soilT = r1(r.soilT); r.airT = r1(r.airT); r.airRh = r1(r.airRh);
   Serial.printf("[read] seq=%u moist=%.1f%% (%.0fmV) pH=%.2f (PO %.3fV) tds=%.0fppm (%.3fV) T=%.1f air=%.1fC/%.0f%%\n",
                 r.seq, r.moist, lastMoistMv, r.ph, lastPhV, r.tds, lastTdsV, r.soilT, r.airT, r.airRh);
   return r;
@@ -214,7 +219,13 @@ Reading takeReading() {
 
 // ============================================================ local rules (INTERFACES v0.2 §4)
 // priority: irrigate/drain (4) > lime (3) > fertilise/skip_fertiliser (2) > watch (1) > ok (0)
+void showNoData(const String& tag) {
+  // v0.2.3: all rule sensors null -> amber NO DATA in every mode (never green OK)
+  decSource = tag; decLine1 = "NO DATA"; decLine2 = "check sensors"; decLed = "amber"; decEvidence = "";
+  setLed(decLed);
+}
 void localDecision(const Reading& r) {
+  if (allSoilNull(r)) { showNoData("LOCAL"); return; }
   int best = 0; String act = "ok", led = "green", l2 = "all in range";
   auto consider = [&](int prio, const char* a, const char* c, String why) {
     if (prio > best) { best = prio; act = a; led = c; l2 = why; }
@@ -314,8 +325,8 @@ String toJson(const Reading& r, bool buffered) {
   d["age_s"] = (uint32_t)((millis() - r.capMs) / 1000);   // v0.2.2: 0 for fresh readings
   d["block_id"] = BLOCK_ID;
   jsonNum(d, "soil_moisture_pct", r.moist, 1);
-  jsonNum(d, "soil_ph", r.ph, 2);
-  jsonNum(d, "tds_ppm", r.tds, 0);
+  jsonNum(d, "soil_ph", r.ph, 1);
+  jsonNum(d, "tds_ppm", r.tds, 1);
   d["ec_us_cm"] = nullptr;                         // backend derives EC ≈ TDS/0.5 (INTERFACES §2)
   jsonNum(d, "soil_temp_c", r.soilT, 1);
   jsonNum(d, "air_temp_c", r.airT, 1);
@@ -341,7 +352,8 @@ bool applyCloudResponse(const String& resp, const String& tag) {
   if (l2.length() == 0) l2 = String((const char*)(d["reason"] | ""));
   decSource = tag; decLine1 = l1.substring(0, 16); decLine2 = l2.substring(0, 16);
   decLed = d["led"] | "amber"; decEvidence = d["evidence_id"] | "";
-  setLed(decLed);
+  if (allSoilNull(last) && decLine1 != "NO DATA") showNoData(tag);
+  else setLed(decLed);
   Serial.printf("[%s] action=%s led=%s ev=%s reason=%s\n", tag.c_str(), a.c_str(), decLed.c_str(),
                 decEvidence.c_str(), (const char*)(d["reason"] | ""));
   return true;

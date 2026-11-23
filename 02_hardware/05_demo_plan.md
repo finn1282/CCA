@@ -21,18 +21,24 @@
 | 2:20 | Wrap | Dashboard overview | "Field sensors, camera and satellite all flow into one explained, auditable decision." |
 Optional (if time): **acidic** cup → red **LIME** "pH 3.8<4.0".
 
-## 3. Setup timeline (venue)
+## 3. One backend at a time (D39)
+- **At the rehearsal, pick the primary:** cloud (Azure) if it is deployed and stable on the presentation hotspot, otherwise the laptop.
+- Set `API_BASE` on both boards to the primary; `API_BASE_LOCAL` = laptop (only used if the primary fails). If the laptop is the primary, both can point at the laptop.
+- Open the dashboard **on the primary** only. Both backends use the same `SAWIT_DEVICE_KEYS`.
+- If the primary fails on stage, the nodes switch to LAN by themselves; the operator then opens the laptop dashboard (`http://localhost:8000`).
+
+## 4. Setup timeline (venue)
 | T− | Task |
 |---|---|
 | Day before | Full rehearsal on the **same phone hotspot** and power; calibrate moisture; charge power bank + phone; record the fallback video |
 | Morning | pH two-point calibration (`04_calibration.md` §2), set `cal_id`; prepare cups (fresh buffers) |
-| 30 min | Start backend (cloud) + local fallback server on laptop; check `GET /api/v1/health` |
+| 30 min | Check the **primary** backend `GET /api/v1/health`; start the laptop server as standby with the same `SAWIT_DEVICE_KEYS` |
 | 15 min | Table layout (`02_system_design.md` §7); power bank → soil node; laptop USB → CAM |
 | 10 min | Hotspot on; both nodes join (OLED network page shows IP, CAM Serial shows IP) |
 | 8 min | Probes in **REFERENCE** cup → set TDS baseline in dashboard; dip-check PLAIN (FERTILISE) and NUTRIENT (SKIP); probes back to REFERENCE; check node shows CLOUD; one test capture |
 | 5 min | Dry soil check (IRRIGATE showing); dashboard on projector; probes rinsed, pH probe in water cup |
 
-## 4. Fallbacks (decide fast — operator calls it)
+## 5. Fallbacks (decide fast — operator calls it)
 | Failure | Symptom | Fallback | Time |
 |---|---|---|---|
 | Venue WiFi blocked/captive | Nodes don't connect | Phone hotspot is **primary** already; WIFI_SSID_2 = venue as spare | 0 s |
@@ -41,11 +47,12 @@ Optional (if time): **acidic** cup → red **LIME** "pH 3.8<4.0".
 | No network at all | OLED **LOCAL** + "NO NET", buffer count rising | Demo runs on OLED/LEDs (LOCAL decisions); explain buffering; buffered readings replay first with `buffered:true` and `age_s` when the link returns | 0 s |
 | Dashboard Capture does nothing | No new result after 5 s | Open `http://<cam-ip>/capture` on laptop; else press RST on CAM (capture on boot) | 10 s |
 | CAM brownout loop | CAM Serial "Brownout detector was triggered" | Move CAM to the 2-port power bank / shorter cable | 30 s |
-| Sensor reads `--` | OLED shows `--`, payload `null` | Say "failed sensors are sent as null, never faked" — continue | 0 s |
+| Sensor reads `--` | OLED shows `--`, payload `null`; all soil sensors null → amber **NO DATA** | Say "failed sensors are sent as null, never faked" — reseat the wire, continue | 0 s |
 | Everything fails | — | Play recorded video (laptop desktop, 2:30) | 5 s |
 
-## 5. Pre-show checklist
-- [ ] `secrets.h` filled on both boards (hotspot SSID, `API_BASE`, `API_BASE_LOCAL` = laptop IP on hotspot, device keys)
+## 6. Pre-show checklist
+- [ ] `secrets.h` filled on both boards (hotspot SSID, `API_BASE` = primary chosen at rehearsal, `API_BASE_LOCAL` = laptop IP on hotspot, device keys)
+- [ ] Laptop server started with the same `SAWIT_DEVICE_KEYS` as the cloud; dashboard opened on the primary only
 - [ ] Laptop IP on hotspot noted and matches `API_BASE_LOCAL` (set a fixed IP if the phone allows)
 - [ ] Power bank stays on ≥15 min at node load (auto-off test)
 - [ ] Laptop power saving / sleep off; USB ports stay powered
