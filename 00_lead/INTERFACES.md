@@ -1,4 +1,4 @@
-# Interface Contract (HW ↔ SW) — DRAFT v0
+# Interface Contract (HW ↔ SW) — DRAFT v0.1
 
 > Owner: Lead. Hardware and Software must both conform. Proposals for change go in your README
 > "Open issues for Lead"; the Lead bumps the version here. Finalised at the Phase 2 gate.
@@ -30,3 +30,11 @@
 
 ## Recommendation response (draft)
 `{ "action": "fertilise|irrigate|lime|ok", "reason": "...", "confidence": 0.0-1.0 }` → dashboard and optionally back to the node (OLED/LED).
+
+## Shared thresholds (v0.1, D17) — firmware LEDs/OLED and backend rules MUST use these
+| Reading | OK | Action |
+|---|---|---|
+| soil_ph | 4.2–5.5 | <4.0 → `lime`; 4.0–4.2 → watch; >5.5 → flag (sources: 01_research/05_hardware_notes.md) |
+| soil_moisture_pct | 30–80 | <30 → `irrigate`; >80 → drainage warning (demo calibration values) |
+| tds_ppm / ec | calibrated on the day | low vs calibrated baseline → `fertilise` (simulated agronomy, labelled) |
+Note: pH and TDS probes read a soil-water slurry, not raw soil.

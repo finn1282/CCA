@@ -7,7 +7,7 @@
 | Phase | Owner | Target | Status | Gate result |
 |---|---|---|---|---|
 | 0 Setup | Lead | 23 Nov | ✅ Done | Lead files pushed |
-| 1 Baseline research wave (then on demand) | Research | 26 Nov | 🟡 In progress — all other teams wait for this (D12) | — |
+| 1 Baseline research wave (then on demand) | Research | 26 Nov | ✅ Wave 1 done 23 Nov | ✅ Passed (D14) — 4 proposals awaiting stakeholder |
 | 2 Build (HW ∥ SW, parallel with on-demand research) | Hardware, Software | 3 Dec | ⚪ Starts after baseline gate | — |
 | 3 Verify (rolling passes per milestone) | HW/SW testers | 6 Dec | ⚪ Starts at first build milestone | — |
 | 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | ⚪ Not started | — |
@@ -28,17 +28,24 @@
 | P2 Risks + mitigation (2) | Software/Verification → Report §2 | ⚪ |
 | P3 Novelty (3) | All → Report §3 | ⚪ |
 | P3 Future extension (2) | All → Report §3 | ⚪ |
-| ≥10 Harvard sources | Research | ⚪ |
+| ≥10 Harvard sources | Research | ✅ 64 collected |
 | Progress report (member contributions) | Report | ⚪ |
 | 15-min presentation, 5 speakers, demo | Presentation + Hardware | ⚪ |
 
 ## Team proposals (D13)
 | ID | Team | Proposal | Lead ruling |
 |---|---|---|---|
-| — | — | _none yet_ | — |
+| R-P1 | Research | Re-frame P2 as Ganoderma (primary) + ageing; rank P1 > P2 > P3 | ⏳ Stakeholder |
+| R-P2 | Research | Train on Kaggle/Colab; deploy on Azure for Students; Earth Engine for satellite | ⏳ Stakeholder |
+| R-P3 | Research | Azure as enterprise recommendation | ✅ D15 |
+| R-P4 | Research | Primary datasets D1+D2, D4, Sentinel-2, simulated fertiliser | ✅ D16 |
+| R-P5 | Research | Shared demo thresholds | ✅ D17 |
+| R-P6 | Research | Buy pH buffer sachets (~RM5–10) | ⏳ Stakeholder |
+| R-P7 | Research | Ask lecturer about GCP edu credits / IBM SkillsBuild | ⏳ Stakeholder |
+| R-P8 | Research | "Explain-to-audit" MSPO evidence log as Part 3 anchor | ✅ D18 |
 
 ## Open decisions for stakeholder
-_None right now. Next check-in: after Phase 1 (datasets, cloud platform, any extra parts to buy)._
+R-P1, R-P2, R-P6, R-P7 (above) — asked 23 Nov.
 
 ## Risks
 | Risk | Impact | Mitigation |
