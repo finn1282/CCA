@@ -15,6 +15,7 @@ subagents belong to the session that started them and cannot be resumed from ano
 | `research.md` | Research (wave 1 baseline; later waves on demand from `01_research/REQUESTS.md`) | Now / on demand |
 | `hardware.md` | Hardware | After baseline gate + stakeholder check-in |
 | `software.md` | Software & Cloud AI | After baseline gate + stakeholder check-in |
-| _verification, report, presentation, technical summary_ | written by the Lead when those stages start | — |
+| `verification_hardware.md` | HW Verification (rolling passes) | Each Hardware milestone |
+| _software verification, compliance, report, presentation, technical summary_ | written by the Lead when those stages start | — |
 
 Shared rules for every member live in `00_lead/PROJECT_PLAN.md` (working rules, citations, git, PLAN.md/proposals).
