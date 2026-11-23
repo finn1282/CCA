@@ -11,3 +11,5 @@
 | D7 | 2026-11-23 | All deliverables in Markdown (stakeholder does final formatting) | Stakeholder |
 | D8 | 2026-11-23 | Member names/IDs/group no. are placeholders | Stakeholder |
 | D9 | 2026-11-23 | Lead checks in with stakeholder after Phase 1, then runs Phases 2–5 autonomously, reporting at gates. Problems must be validated by research, not assumed | Stakeholder |
+| D10 | 2026-11-23 | Work runs as a parallel pipeline: research on demand (via `01_research/REQUESTS.md`), Hardware ∥ Software from the start, verification passes run alongside the builds at each milestone, outputs handed on as soon as they exist | Stakeholder |
+| D11 | 2026-11-23 | In-text Harvard citations required in every section of the report and other deliverables, not just a reference list at the end | Stakeholder |

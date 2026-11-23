@@ -16,6 +16,30 @@ Deadline: **15 Dec 2026 00:00**. Start: 23 Nov 2026.
 | Verification | SW tester | `07_verification/software/` | SW test plan, dataset validity, training run check, end-to-end integration dry run |
 | Verification | Compliance | `07_verification/compliance/` | Rubric scorecard for report + presentation, gap list |
 
+## Workflow: parallel pipeline (supersedes strict phase order — D10)
+```mermaid
+flowchart LR
+  R[Research waves<br/>on demand] -->|notes + sources| HW[Hardware]
+  R --> SW[Software & Cloud AI]
+  HW <-->|INTERFACES.md| SW
+  HW -->|each milestone| VH[HW Verification]
+  SW -->|each milestone| VS[SW Verification]
+  VH -->|defects| HW
+  VS -->|defects| SW
+  HW & SW --> TS[Technical Summary]
+  R --> REP[Report]
+  TS --> REP & PRES[Presentation]
+  REP & PRES --> C[Compliance audit]
+  C -->|gaps| REP & PRES
+  REQ[01_research/REQUESTS.md] --> R
+  HW & SW & REP & PRES -.->|research requests| REQ
+```
+- **Research is on demand.** Wave 1 unblocks the build teams (hardware facts, datasets, cloud platforms, problem evidence). Any member who needs more research appends a row to `01_research/REQUESTS.md`; the Lead dispatches a research wave to answer it.
+- **Hardware and Software run in parallel** from the start, coordinating through `INTERFACES.md`. Software begins with platform-agnostic work (architecture, ingestion API, dashboard skeleton) and adopts the dataset/platform once the stakeholder confirms them.
+- **Verification runs alongside the builds:** the Lead triggers a verification pass each time a build member pushes a milestone, so defects are fixed while the build is still going.
+- **Report and Presentation start as soon as their inputs exist**; Report Part 1 can begin as soon as the problem evidence is accepted.
+- The phase table below now lists **milestones**, not strict sequential stages.
+
 ## Phases & gates
 | # | Phase | Runs | Gate (Lead verifies before next phase) |
 |---|---|---|---|
@@ -32,8 +56,9 @@ Target dates: P1 by 26 Nov · P2 by 3 Dec · P3 by 6 Dec · P4 by 10 Dec · P5 b
 1. Read `00_lead/SPEC.md`, `00_lead/DECISIONS.md`, `00_lead/INTERFACES.md`, and the `README.md` of any folder you depend on, **before** starting.
 2. Write only inside your own folder (Lead owns `00_lead/`).
 3. Keep `<your folder>/README.md` current: Status · Inputs used · Outputs (file list + one line each) · Assumptions · Open issues for Lead.
-4. After each meaningful step: `git add <your folder> && git commit -m "<folder>: <what>" && git pull --rebase && git push`. Commit message ends with the Co-Authored-By line.
+4. After each meaningful step: `git add <your folder> && git commit -m "<folder>: <what>" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git push`. All members share **one working directory**, so do **not** `git pull --rebase` routinely. On `index.lock`, wait and retry; if a push is rejected, `git pull --rebase --autostash` then push.
 5. No unverifiable claims: every fact gets a source; every dataset gets a URL + licence; simulated data is labelled as such.
+5a. **Cite throughout (D11):** every section of every deliverable (report, technical summary, design docs, presentation script) cites its sources in-text, Harvard style (Author, Year), using the keys in `01_research/sources.md`. A section without citations fails the Lead gate. Need a source you don't have? Add a row to `01_research/REQUESTS.md`.
 6. Markdown + Mermaid; concise.
 
 ## Lead verification checklist (applied at each gate)

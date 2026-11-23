@@ -7,11 +7,13 @@
 | Phase | Owner | Target | Status | Gate result |
 |---|---|---|---|---|
 | 0 Setup | Lead | 23 Nov | ✅ Done | Lead files pushed |
-| 1 Research | Research | 26 Nov | 🟡 In progress | — |
-| 2 Build (HW ∥ SW) | Hardware, Software | 3 Dec | ⚪ Not started | — |
-| 3 Verify | HW/SW testers | 6 Dec | ⚪ Not started | — |
+| 1 Research wave 1 (then on demand) | Research | 26 Nov | 🟡 In progress | — |
+| 2 Build (HW ∥ SW, parallel with research) | Hardware, Software | 3 Dec | 🟡 In progress | — |
+| 3 Verify (rolling passes per milestone) | HW/SW testers | 6 Dec | ⚪ Starts at first build milestone | — |
 | 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | ⚪ Not started | — |
 | 5 Rubric audit & fixes | Compliance | 12 Dec | ⚪ Not started | — |
+
+> Workflow is a parallel pipeline (D10) — see diagram in `PROJECT_PLAN.md`.
 
 ## Rubric coverage tracker
 | Rubric item | Where it will be evidenced | Status |
