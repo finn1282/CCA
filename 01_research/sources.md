@@ -57,6 +57,24 @@
 ## Vendor / technical documentation
 | Key | Harvard entry |
 |---|---|
+| [AZ-STUDENT] | Microsoft (2026) *Azure for Students*. Available at: https://azure.microsoft.com/en-us/free/students (Accessed: 23 November 2026). |
+| [MSQA-GPU] | Microsoft Q&A (2023) *Using GPU compute resources in a student account*, answer by AshokPeddakotla-MSFT, 28 August. Available at: https://learn.microsoft.com/en-us/answers/questions/1352279/using-gpu-compute-resources-in-a-student-account (Accessed: 23 November 2026). |
+| [AZ-REGIONS] | Microsoft (2026) *List of Azure regions*. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/reliability/regions-list (Accessed: 23 November 2026). |
+| [AZ-IOTC2026] | Microsoft (2026) *Azure IoT Central is evolving: what you need to know*. Microsoft Tech Community IoT Blog, 25 September. Available at: https://techcommunity.microsoft.com/blog/iotblog/azure-iot-central-is-evolving-what-you-need-to-know/4554570 (Accessed: 23 November 2026). |
+| [GCP-TRIAL] | Google Cloud (2026) *Google Cloud Free Program: free trial and free tier*. Available at: https://docs.cloud.google.com/free/docs/free-cloud-features (Accessed: 23 November 2026). |
+| [GCP-EDU] | Google Cloud (n.d.) *Do I need to enter any credit card information to redeem these credits in Google Cloud?* Google Cloud Higher Education Programs Help. Available at: https://support.google.com/google-cloud-higher-ed/answer/10322773?hl=en (Accessed: 23 November 2026). |
+| [GEE-NONCOM] | Google (n.d.) *Earth Engine noncommercial use*. Available at: https://earthengine.google.com/noncommercial/ (Accessed: 23 November 2026). |
+| [GCP-REGIONS] | Google Cloud (2026) *Regions and zones* (Compute Engine documentation). Available at: https://docs.cloud.google.com/compute/docs/regions-zones (Accessed: 23 November 2026). |
+| [GCP-MY2024] | Google Cloud (2024) *Google breaks ground on US$2 billion Malaysia data center and cloud region* [Press release], 1 October. Available at: https://www.googlecloudpresscorner.com/2024-10-1-Google-Breaks-Ground-on-US-2-Billion-Malaysia-Data-Center-and-Cloud-Region,-Announces-Support-for-New-Sustainability-and-Skilling-Initiatives (title seen in search results; page not opened — **unverified**). |
+| [GCP-PRICING] | Google Cloud (2026) *Gemini platform pricing* (formerly Vertex AI pricing). Available at: https://cloud.google.com/vertex-ai/pricing (Accessed: 23 November 2026). |
+| [GCP-IOTCORE] | Google Cloud (n.d.) *Google.Cloud.Iot.V1 .NET client library reference* (deprecation notice). Available at: https://docs.cloud.google.com/dotnet/docs/reference/Google.Cloud.Iot.V1/latest (Accessed: 23 November 2026). |
+| [AWS-FREE] | Amazon Web Services (2026) *AWS Free Tier*. Available at: https://aws.amazon.com/free/ (Accessed: 23 November 2026). |
+| [AWS-STUDIOLAB] | Amazon Web Services (2026) *Amazon SageMaker Studio Lab components overview*. Available at: https://docs.aws.amazon.com/sagemaker/latest/dg/studio-lab-overview.html (Accessed: 23 November 2026). |
+| [AWS-MYREGION] | Amazon (2024) *AWS launches infrastructure region in Malaysia* [Press release], 21 August. Available at: https://press.aboutamazon.com/2024/8/aws-launches-infrastructure-region-in-malaysia (Accessed: 23 November 2026). |
+| [AWS-IOTCORE] | Amazon Web Services (2026) *AWS IoT Core*. Available at: https://aws.amazon.com/iot-core/ (Accessed: 23 November 2026). |
+| [IBM-WXPLANS] | IBM (2026) *watsonx.ai Runtime service plans*. Available at: https://www.ibm.com/docs/en/SSYOK8/wsj/getting-started/wml-plans.html (Accessed: 23 November 2026). |
+| [COLAB-FAQ] | Google (n.d.) *Colaboratory frequently asked questions*. Available at: https://research.google.com/colaboratory/faq.html (Accessed: 23 November 2026). |
+| [REG-WIOT] | Clark, L. (2022) 'IBM to fire Watson IoT Platform from its cloud', *The Register*, 15 November. Available at: https://www.theregister.com/2022/11/15/ibm_set_to_retire_watson/ (Accessed: 23 November 2026). |
 | [ESPFAQ] | Espressif Systems (n.d.) *ESP-FAQ: Analog-to-Digital Converter (ADC)*. Available at: https://docs.espressif.com/projects/esp-faq/en/latest/software-framework/peripherals/adc.html (Accessed: 23 November 2026). |
 | [DFR-SEN0244] | DFRobot (n.d.) *Gravity: Analog TDS Sensor/Meter (SKU: SEN0244)*. Available at: https://wiki.dfrobot.com/sen0244/ (Accessed: 23 November 2026). |
 | [DFR-SEN0193] | DFRobot (n.d.) *Capacitive Soil Moisture Sensor (SKU: SEN0193)*. Available at: https://wiki.dfrobot.com/Capacitive_Soil_Moisture_Sensor_SKU_SEN0193 (Accessed: 23 November 2026). |
