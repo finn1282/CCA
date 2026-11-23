@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | 0 Setup | Lead | 23 Nov | ✅ Done | Lead files pushed |
 | 1 Baseline research wave (then on demand) | Research | 26 Nov | ✅ Wave 1 done 23 Nov | ✅ Passed (D14) — 4 proposals awaiting stakeholder |
-| 2 Build (HW ∥ SW, parallel with on-demand research) | Hardware, Software | 3 Dec | 🟡 PLAN step running (23 Nov) | — |
+| 2 Build (HW ∥ SW, parallel with on-demand research) | Hardware, Software | 3 Dec | 🟡 Building (plans ruled 23 Nov) | PLAN gate ✅ |
 | 3 Verify (rolling passes per milestone) | HW/SW testers | 6 Dec | ⚪ Starts at first build milestone | — |
 | 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | ⚪ Not started | — |
 | 5 Rubric audit & fixes | Compliance | 12 Dec | ⚪ Not started | — |
@@ -21,7 +21,7 @@
 | P1 Describe case (2) | Research → Report §1 | ⚪ |
 | P1 ≥3 problems + evidence (4) | Research → Report §1 | ⚪ |
 | P1 Cognitive capability per problem (4) | Research/Software → Report §1 | ⚪ |
-| P2 App proposal (2) | Software → Report §2 | ⚪ |
+| P2 App proposal (2) | Software → Report §2 — **SawitSense** | 🟡 |
 | P2 Technologies justified (3) | Software/Hardware → Report §2 | ⚪ |
 | P2 Compare ≥3 platforms + recommend (5) | Research → Report §2 | ⚪ |
 | P2 Integration + phased plan (3) | Software → Report §2 | ⚪ |
@@ -43,9 +43,16 @@
 | R-P6 | Research | Buy pH buffer sachets (~RM5–10) | ✅ D21 |
 | R-P7 | Research | Ask lecturer about GCP edu credits / IBM SkillsBuild | ❌ D22 skipped |
 | R-P8 | Research | "Explain-to-audit" MSPO evidence log as Part 3 anchor | ✅ D18 |
+| HW-P1–P5, P7 / SW-P2–P3 | HW + SW | Interface changes, merged into INTERFACES v0.2 | ✅ D25 |
+| HW-P6 | Hardware | Power: node on power bank, CAM on laptop USB | ✅ D26 |
+| HW-P8 | Hardware | Demo purchases | ✅ D27 (stakeholder) |
+| SW-P1 | Software | App name SawitSense | ✅ D24 |
+| SW-P4/P5 | Software | Part 3 package; O4 scope; NLP layer | ✅ D28 |
+| SW-P6/P7 | Software | Training scope; build platform | ✅ D29 |
+| HW-P9 / SW-P8 | HW + SW | Research wave 2 requests | ✅ dispatched |
 
 ## Open decisions for stakeholder
-_None open._ Next: extra hardware purchases list from Hardware.
+Accounts for the build (Kaggle, Azure for Students, Earth Engine) — asked 23 Nov.
 
 ## Risks
 | Risk | Impact | Mitigation |
