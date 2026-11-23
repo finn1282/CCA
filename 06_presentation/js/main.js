@@ -66,7 +66,7 @@
         s += `<g class="palm" transform="translate(${px},${py})">` +
           `<circle class="root${inf >= 0 ? " inf" : ""}" r="19" style="--d:${(inf * 0.35).toFixed(2)}s"/>` +
           `<polygon class="crown" points="${CROWN}"/>` +
-          `<circle class="ffb${ripe ? " ripe" : ""}${over ? " over" : ""}" cx="7" cy="7" r="6" style="--d:${(1.2 + rnd() * 1.6).toFixed(2)}s"/></g>`;
+          `<circle class="ffb${ripe ? " ripe" : ""}${over ? " over" : ""}" cx="7" cy="7" r="8" style="--d:${(1.2 + rnd() * 1.6).toFixed(2)}s"/></g>`;
         n++;
       }
       s += `</g>`;
@@ -224,6 +224,16 @@
     },
     leave() { clearInterval(demo.timer); }
   };
+  // After a full (re)load the dashboard renders its panels asynchronously, so an initial #panel scroll can land
+  // in the wrong place. Re-apply the current panel once the content has settled (fragment-only, no reload).
+  dash.addEventListener("load", () => {
+    setTimeout(() => {
+      const p = currentPanel(); if (!p) return;
+      const base = withToken(demo.base);
+      dash.setAttribute("src", base + "#_");
+      setTimeout(() => dash.setAttribute("src", base + "#" + p), 60);
+    }, 1500);
+  });
   $("#hurl").textContent = "PRIMARY: " + demo.base;
   frameTo("");           // warm the dashboard up at load time
   // focus hint: keys typed while the iframe has focus go to the dashboard, not the slides
