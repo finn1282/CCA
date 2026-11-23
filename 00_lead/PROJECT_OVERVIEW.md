@@ -10,7 +10,7 @@
 | 1 Baseline research wave (then on demand) | Research | 26 Nov | ✅ Wave 1 done 23 Nov | ✅ Passed (D14) — 4 proposals awaiting stakeholder |
 | 2 Build (HW ∥ SW, parallel with on-demand research) | Hardware, Software | 3 Dec | 🟡 SW docs 01–05 ✅, 22/22 tests; M1 provisional model training; final M1 = stakeholder Kaggle run. HW fixing pass-1 defects + compile | PLAN gate ✅ · SW docs ✅ |
 | 3 Verify (rolling passes per milestone) | HW/SW testers | 6 Dec | 🟡 HW pass 1 ✅ done (2 major/10 minor → owners; integration 16/18); SW pass 1 ✅ done (2 major/13 minor → owners) | — |
-| 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | 🟡 Outline v2 ✅ approved (D40); full rewrite in progress | Part 1 gate ✅ |
+| 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | 🟡 Report draft v1 ✅ (D41: ~4,270 words, 26 refs). Tech summary + presentation not started | Part 1 gate ✅ |
 | 5 Rubric audit & fixes | Compliance | 12 Dec | ⚪ Not started | — |
 
 > Workflow is a parallel pipeline (D10) — see diagram in `PROJECT_PLAN.md`.
@@ -21,15 +21,15 @@
 | P1 Describe case (2) | Report §1.1 | ✅ drafted |
 | P1 ≥3 problems + evidence (4) | Report §1.2 (Table 3 prioritisation) | ✅ drafted |
 | P1 Cognitive capability per problem (4) | Report §1.3 | ✅ drafted |
-| P2 App proposal (2) | Software → Report §2 — **SawitSense** | 🟡 |
-| P2 Technologies justified (3) | SW `02_architecture`, `03_ai_models` → Report §2.2 | 🟡 evidence ready |
-| P2 Compare ≥3 platforms + recommend (5) | Research `08_…` → Report §2 | 🟡 evidence ready |
-| P2 Integration + phased plan (3) | SW `04_cloud_design` → Report §2.4 | 🟡 evidence ready |
-| P2 Risks + mitigation (2) | SW `04_cloud_design` → Report §2.5 | 🟡 evidence ready |
-| P3 Novelty (3) | All → Report §3 | ⚪ |
-| P3 Future extension (2) | All → Report §3 | ⚪ |
+| P2 App proposal (2) | Software → Report §2 — **SawitSense** | ✅ drafted |
+| P2 Technologies justified (3) | SW `02_architecture`, `03_ai_models` → Report §2.2 | ✅ drafted |
+| P2 Compare ≥3 platforms + recommend (5) | Research `08_…` → Report §2 | ✅ drafted |
+| P2 Integration + phased plan (3) | SW `04_cloud_design` → Report §2.4 | ✅ drafted |
+| P2 Risks + mitigation (2) | SW `04_cloud_design` → Report §2.5 | ✅ drafted |
+| P3 Novelty (3) | All → Report §3 | ✅ drafted |
+| P3 Future extension (2) | All → Report §3 | ✅ drafted |
 | ≥10 Harvard sources | Research | ✅ 101 collected; 37 cited in report so far |
-| Progress report (member contributions) | Report | ⚪ |
+| Progress report (member contributions) | Report | ✅ drafted (placeholders)|
 | 15-min presentation, 5 speakers, demo | Presentation + Hardware | ⚪ |
 
 ## Team proposals (D13)

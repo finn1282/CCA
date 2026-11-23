@@ -40,7 +40,7 @@ If using Claude Code: start a session in this repo and say *"You are the project
 | Software | Docs 01–05 ✅ (D38); 22/22 tests; fixing SW-verif S-01…S-11 + v0.2.3; training **provisional** M1 (D2-only, CPU); run guides (RUN_ON_KAGGLE written, may be uncommitted; DEPLOY_AZURE, RUN_EARTH_ENGINE, implementation guide, 07_actual_build_vs_target pending) | Resume `briefs/software.md` with the above list |
 | HW Verification | Pass 1 ✅ (2 major/10 minor → fixed by owners in progress) | Pass 2: compile both sketches, re-check fixes, cert test vs Azure URL |
 | SW Verification | Pass 1 ✅ (132/154; 2 major/13 minor) | Pass 2 on M1 model + fixes + docs 01–05 + run guides |
-| Report | Outline v2 **approved** (D40); writing full REPORT.md (outline v3 → full content, ~4,300 words, ~22–26 refs, no cover/TOC) | Resume `briefs/report.md`: finish whatever sections aren't pushed; Lead then gates it (rubric, D20/D23/D32/D40, length) and shows stakeholder |
+| Report | ✅ Full draft v1 done & Lead-gated (D41): `05_report/REPORT.md`, ~4,270 words, 26 refs | Stakeholder review; fill placeholders; optional ledger citation; then compliance audit |
 | Technical summary (04_technical), Presentation (06_presentation, storyboard approval first per D36), Compliance audit | **Not started** — Lead writes briefs | — |
 
 **Stakeholder to-dos:** regenerate Kaggle token (was pasted in chat); run Kaggle training via `03_software/training/RUN_ON_KAGGLE.md` (gives the real D1→D2 M1 model); Earth Engine project ID → `EE_PROJECT` + `03_software/gee/RUN_EARTH_ENGINE.md` when written; resolve Azure for Students sign-up (else laptop backend is primary per D39); buy demo items (D21, D27); run hardware bench tests B-01…B-16 (B-01 pH board voltage **before** wiring to GPIO35).
