@@ -334,7 +334,7 @@ The common thread is that each problem is constrained by **judgement over unstru
 
 ## References
 
-<!-- REFS -->
+
 
 Ahmad, M.R., Jamaludin, N., Jelani, A.R., Bakri, A. and Shuib, A.R. (2020) 'The effect of design parameters on the force and energy requirement for cutting oil palm fronds using magnetic force', *Jurnal Teknologi (Sciences & Engineering)*, 82(4), pp. 141–150. doi:10.11113/jt.v82.14236 (Accessed: 23 November 2026).
 
@@ -420,4 +420,20 @@ The Vibes (2025) 'Replanting crucial to safeguard palm oil yields and exports, s
 
 ## Appendix B — Rubric Cross-Reference
 
-<!-- APPB -->
+*Table B1: Mapping of each assignment sub-task and rubric requirement to the report sections that address it*
+
+| Part (weight) | Sub-task from the brief | Marks | Section(s) | How the Outstanding-band requirement is addressed |
+|---|---|---|---|---|
+| 1 Case Analysis & Problem Identification (10 %) | Describe the case: organisation(s), key stakeholders, current situation | 2 | 1.1 (Tables 1–2) | Sector facts from MPOB and JOPR; three organisations contrasted by operating model; stakeholder map; current practice and external pressure (MSPO, EUDR, workforce policy) |
+| | Identify and justify at least three key problems, supported by evidence | 4 | 1.2 (Table 3) | Three problems ranked on explicit criteria (scale, urgency, labour dependence, cognitive addressability); quantified evidence from government, academic and industry sources; critical nuances (cyclical labour shortage, capital-bound ageing, limited EU export share); interaction between problems |
+| | Explain how specific cognitive capabilities address each problem | 4 | 1.3 (Figure 1, Tables 4–5) | One primary capability per problem plus supporting ones; state-of-the-art evidence; conventional approach and its limits; explicit reasons why cognitive computing is better suited for each problem; stated limits (screening, not diagnosis; simulated training data) |
+| 2 Technology Evaluation & Solution Proposal (15 %) | Propose a cognitive application: name, core functions, target users | 2 | 2.1 | *Pending* |
+| | Identify and justify underlying technologies | 3 | 2.2 (adapted Figure 4 architecture) | *Pending* |
+| | Evaluate and compare at least three enterprise solutions against case criteria; recommend one, justified against Part 1 problems | 5 | 2.3 | *Pending:* four platforms (Azure, AWS, Google "Gemini platform (formerly Vertex AI)", IBM watsonx), capability-only weighted matrix with sensitivity checks; recommendation linked to P1–P3 |
+| | Integration with existing IT; phased implementation plan (short vs long term) | 3 | 2.4 (following PDF Figure 6) | *Pending* |
+| | Integration and implementation risks (technical, operational, vendor & cost) and mitigations | 2 | 2.5 (following PDF Figure 6) | *Pending:* prioritised risks with concrete mitigations; PDPA 2010 (as amended 2024) only where it constrains integration |
+| 3 Creative Thinking & Innovation (5 %) | Novelty versus a standard, off-the-shelf implementation | 3 | 3.1 | *Pending:* explain-to-audit evidence log, counterfactual explanations, satellite→drone→ground cascade, harvester allocation, cross-country validation |
+| | Future extension for the organisation or other sectors | 2 | 3.2 | *Pending* |
+| General requirements | Harvard referencing with in-text citations in every section; at least 10 credible sources | — | All sections; References | Every section cites in Harvard (Author, Year) style; 37 sources cited so far (industry, government, academic, vendor documentation) |
+| | Progress report with each member's contribution | — | Appendix A | *Pending* |
+| | Cover page with names and student IDs | — | Cover page | Placeholders for group number, names and IDs |
