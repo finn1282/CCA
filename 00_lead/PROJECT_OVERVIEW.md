@@ -32,6 +32,11 @@
 | Progress report (member contributions) | Report | ⚪ |
 | 15-min presentation, 5 speakers, demo | Presentation + Hardware | ⚪ |
 
+## Team proposals (D13)
+| ID | Team | Proposal | Lead ruling |
+|---|---|---|---|
+| — | — | _none yet_ | — |
+
 ## Open decisions for stakeholder
 _None right now. Next check-in: after Phase 1 (datasets, cloud platform, any extra parts to buy)._
 

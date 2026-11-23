@@ -24,6 +24,7 @@ Deliverables: Markdown report (Parts 1–3 + progress report), interactive prese
 2. Read `SPEC.md` + `DECISIONS.md`.
 3. Open the README of the team in the current phase; its "Status" and "Open issues" say exactly what's left.
 4. Continue that phase following `PROJECT_PLAN.md` working rules (commit + push after every step).
+4a. Check each team's `PLAN.md` Proposals table for rows with no Lead ruling — rule on them first (see PROJECT_PLAN.md "Team plans & change proposals").
 5. When a phase finishes, run the Lead checklist in `PROJECT_PLAN.md`, update OVERVIEW, SPEC §8 and this file.
 
 If using Claude Code: start a session in this repo and say *"You are the project lead. Read 00_lead/HANDOFF.md and continue from the current phase."*
@@ -37,6 +38,7 @@ If using Claude Code: start a session in this repo and say *"You are the project
 ## 5. Phase log
 | Date | Event |
 |---|---|
+| 2026-11-23 | Team PLAN.md + proposal/ruling process added (D13) |
 | 2026-11-23 | Baseline research must finish before other teams start (D12) |
 | 2026-11-23 | Switched to parallel pipeline + on-demand research + citations in every section (D10, D11) |
 | 2026-11-23 | Brief saved, assignment read, stakeholder Q&A done (D1–D9), Phase 0 files pushed |

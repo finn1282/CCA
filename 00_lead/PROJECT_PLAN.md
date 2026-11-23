@@ -62,6 +62,22 @@ Target dates: P1 by 26 Nov · P2 by 3 Dec · P3 by 6 Dec · P4 by 10 Dec · P5 b
 5a. **Cite throughout (D11):** every section of every deliverable (report, technical summary, design docs, presentation script) cites its sources in-text, Harvard style (Author, Year), using the keys in `01_research/sources.md`. A section without citations fails the Lead gate. Need a source you don't have? Add a row to `01_research/REQUESTS.md`.
 6. Markdown + Mermaid; concise.
 
+## Team plans & change proposals (D13)
+Every team starts with a **plan step** before building:
+1. Write `<your folder>/PLAN.md`:
+   - **Approach**: how you'll meet your brief, with task breakdown, order, and which other teams' outputs you depend on / they depend on.
+   - **Ideas**: improvements beyond the brief (e.g. a better demo, a novel feature for Part 3).
+   - **Conflicts**: anything in SPEC/DECISIONS/INTERFACES or another team's output you think is wrong, with evidence.
+   - **Proposals** table: `| ID (e.g. HW-P1) | Proposal | Why (evidence) | Impact on other teams | Lead ruling |`.
+2. Commit + push, then report to the Lead and **pause** until the Lead rules on your proposals (meanwhile only do work no proposal affects).
+3. The Lead rules on each proposal:
+   - **Accept** → logged in `DECISIONS.md`; SPEC/INTERFACES updated; affected teams notified.
+   - **Reject** → reason recorded in your PLAN.md "Lead ruling" column.
+   - **Escalate to stakeholder** → for scope, the problem/outcome list, money, or anything changing what the stakeholder asked for.
+4. New ideas or conflicts that come up mid-work follow the same route: add a row to your PLAN.md Proposals table and flag it in your README "Open issues for Lead". Never silently diverge.
+
+The Lead's plan (this file) and SPEC are living documents: accepted proposals change them, and the change is visible in `DECISIONS.md` and git history.
+
 ## Lead verification checklist (applied at each gate)
 - Consistent with SPEC and other teams' outputs (names, numbers, platform, interfaces)?
 - Maps to a rubric sub-task in SPEC §2?
