@@ -20,8 +20,27 @@ class ModelUnavailable(RuntimeError):
     pass
 
 
+def _fetch_from_blob() -> None:
+    """Cloud build: if the model is not on disk, download it from Azure Blob Storage using SAS URLs given
+    in env vars SAWIT_MODEL_URL / SAWIT_MODEL_META_URL (credentials never live in the repo)."""
+    import os
+    import urllib.request
+    for url_var, dst in (("SAWIT_MODEL_URL", C.MODEL_PATH), ("SAWIT_MODEL_META_URL", C.MODEL_META_PATH)):
+        url = os.getenv(url_var)
+        if url and not dst.exists():
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            tmp = dst.with_suffix(dst.suffix + ".part")
+            urllib.request.urlretrieve(url, tmp)
+            tmp.replace(dst)
+
+
 @lru_cache(maxsize=1)
 def _load():
+    if not C.MODEL_PATH.exists() or not C.MODEL_META_PATH.exists():
+        try:
+            _fetch_from_blob()
+        except Exception as e:  # noqa: BLE001
+            raise ModelUnavailable(f"Model download from Blob failed: {e}") from e
     if not C.MODEL_PATH.exists() or not C.MODEL_META_PATH.exists():
         raise ModelUnavailable(f"Ripeness model not found at {C.MODEL_PATH} — train it with training/ripeness/train_m1.py")
     import onnxruntime as ort
