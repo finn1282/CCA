@@ -72,3 +72,30 @@ Research's view: **Option 2 is viable if §2's SAP evidence is accepted. Otherwi
 **Conclusion:** at least **two of the three named producers (IOI, SD Guthrie) run SAP**. The report can say: "major Malaysian planters such as IOI (SAP S/4HANA across estates and mills) and SD Guthrie (SAP-based estate master data and accounting) run SAP ERP". FGV is unconfirmed; the report should not claim it. This supports **Option 2** in §1e (Azure Logic Apps SAP connector with IDoc/BAPI/RFC as a deciding integration criterion). Note that IOI is on S/4HANA, which AWS can also reach via OData (AppFlow) or the SDK for SAP ABAP. Azure's advantage is breadth (IDoc/BAPI/RFC) and in-region availability, not exclusivity.
 
 Naming note: MPOB has a mill-grading system called **SawitSCAN** (June 2026) [MPOB-TT698]. "SawitSense" does not clash with it, but the report could mention SawitSCAN as related work.
+
+## 3. C-16: Which MSPO part applies to large estates?
+- **MS 2530-3-1:2022 is the wrong part for large estates.** It covers plantations of **40.46–500 ha** [MPOCC-P31]. Large estates (FELDA/FGV, SD Guthrie, IOI) fall under **MS 2530-3-2:2022, "General Principles for Oil Palm Plantations (more than 500 hectares)"** [MPOCC-P32]. Mills, including supply-chain/traceability obligations, fall under **MS 2530-4-1:2022** [MPOCC-P41]. Independent smallholders use Part 2-1 [MPOCC-P21].
+- **The clause numbers hold in Part 3-2** (checked in the guidance text) [MPOCC-P32]:
+  - **4.1.3** Existing site management (4.1.3.1: SOPs, with records of implementation maintained)
+  - **4.1.4** Replanting (a useful link to P2 ageing trees)
+  - **4.2.2** Traceability
+  - **4.5.4** GHG emissions (4.5.4.1–4.5.4.3: MSPO GHG Calculator, Jan–Dec reporting)
+  - **4.5.5** Water resources
+- **Part 4-1 (mills)** also uses **4.2.2 Traceability** and **4.5.4 GHG** [MPOCC-P41].
+- Caveat: the explicit SOP list naming "**Fertilising**" and "managing soil fertility" appears in the Part 2-1 guidance [MPOCC-P21]. The Part 3-x guidance states the SOP requirement generically (4.1.3.1). The report should cite fertiliser SOPs as "4.1.3 site-management SOPs (e.g. fertilising, per MPOCC guidance)".
+- **Report fix:** replace "MS 2530-3-1" with "**MS 2530-3-2:2022** (estates >500 ha) and **MS 2530-4-1:2022** (mills)". Clause numbers are unchanged.
+- Context: SD Guthrie estates (Bukit Benut) were audited against the earlier 2013 parts MS 2530-3:2013 (plantations) and MS 2530-4:2013 (mills) in visits 2022–2024 (final report Oct 2024) [BSI-SDG-MSPO2024]. This confirms the Part 3/Part 4 split for large companies.
+
+## 4. C-18: Recent (2023+) sources on current estate practice
+| Practice | Evidence (2023 or later) | Key |
+|---|---|---|
+| **Manual ripeness grading** | MPOB (June 2026): FFB grading at mills "is still largely performed manually by human workers". Only **50–100 bunches are sampled per 5–20 t consignment (0.1–0.4 % of the load)**, which causes grading disputes. MPOB is developing SawitSCAN (imaging + AI) as the alternative. | [MPOB-TT698] |
+| | JOPR review (2023): grading "is commonly conducted using visual inspection by trained workers" using colour and loose-fruit count. It is labour-intensive, and misclassification comes from tree height, miscounted loose fruit, poor visibility and lighting. | [MANSOUR2023] |
+| | JOPR (2026): conventional FFB monitoring "relies heavily on manual inspection, which is labour-intensive" | [HASSAN2026] |
+| **Visual Ganoderma census** | Review (2023): palms are asymptomatic early, and symptoms are noticed visually on foliage only when infection is ~60–70 % developed. Lab diagnostics (PCR/ELISA/GSM) are costly or slow for large-scale use. | [KHOO2023] |
+| | Smartphone study (2025, Malaysia and Thailand): most model errors were between early-infected and healthy palms, the same distinction human visual census struggles with. | [DARANAGAMA2025] |
+| | (Older but official method) MPOB national surveillance identified BSR by **visual symptoms**, confirmed with selective media. | [IBRAHIM2020] |
+| **Uniform fertiliser rates** | Sabah growers (Aug 2026) apply a fixed **kg per palm** (e.g. cut from ~12 kg to ~9 kg per palm) and cut rates across the board when prices rise. Planters call for "nutrient-use efficiency, precision agriculture". | [STAR-FERT2026] |
+| | Thesis (2024): yield gaps "often stem from inadequate nutrient management practices and limited agronomic knowledge"; it proposes a site-specific decision-support tool | [FARRASATI2024] |
+
+Gap: no 2023+ source quantifies how common blanket schedules are on large estates. The report should phrase this as "uniform per-palm rates adjusted by price/age" with [STAR-FERT2026], not as "all estates use blanket schedules".

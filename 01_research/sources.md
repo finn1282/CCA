@@ -19,6 +19,9 @@
 | [BSI-SDG-RSPO2023] | BSI Services Malaysia (2023) *RSPO P&C public summary report – SD Hadapan POM (SOU 24), annual surveillance assessment 2_3* (Sime Darby Plantation / SD Guthrie). Available at: https://bsigroup.com/siteassets/pdf/en/about-us/rspo/rspo-pc-public-summary-report-sd-hadapan-pom-sou-24-asa-2-3.pdf (Accessed: 23 November 2026). |
 | [SAP-FGVPRODATA] | SAP (n.d.) *FGV Prodata Systems Sdn Bhd – SAP partner profile*. Available at: https://www.sap.com/partners/profile/fgv-prodata-systems-sdn-bhd (Accessed: 23 November 2026). |
 | [MPOB-TT698] | Abdul Hadi, N., Amer, M.A., Che Mat, C.R., Jalani, N.F., Abu Bakar, N., Mohd Anwar, M.S. and Che Soh, M.N. (2026) *SawitSCAN – Sawit (FFB) spectral capture and automatic scanning*, MPOB Information Series TT No. 698, June. Available at: https://tot.mpob.gov.my/app/files/2026/07/TT698.pdf (Accessed: 23 November 2026). |
+| [MPOCC-P32] | Malaysian Palm Oil Certification Council (MPOCC) (2023) *Guidance document for MS2530-3-2:2022 General principles for oil palm plantations (more than 500 hectares)*, Version 1.0, May. Available at: https://mspo.org.my/wp-content/uploads/2025/08/Guidance-document-for-MSPO-Part-3-2.pdf (Accessed: 23 November 2026). |
+| [MPOCC-P41] | Malaysian Palm Oil Certification Council (MPOCC) (2023) *Guidance document for MS2530-4-1:2022 General principles for palm oil mill including supply chain requirements*. Available at: https://mspo.org.my/wp-content/uploads/2025/08/Guidance-document-for-MSPO-Part-4-1.pdf (Accessed: 23 November 2026). |
+| [BSI-SDG-MSPO2024] | BSI Services Malaysia (2024) *MSPO public summary report – SD Guthrie Bukit Benut Palm Oil Mill, Bukit Benut Estate & Lambak Elaeis Estate* (final report 16 October). Available at: https://www.bsigroup.com/siteassets/pdf/en/about-us/mspo/12-mspo-public-summary-report-sd-guthrie-bukit-benut-asa1-2.pdf (Accessed: 23 November 2026). |
 | [AAR-SOIL] | Applied Agricultural Resources Sdn Bhd (AAR) (n.d.) *Soil management: soil requirements of plantation tree crops*. Available at: https://aarsb.com.my/soil-management-soil-requirements-of-plantation-tree-crops (Accessed: 23 November 2026). |
 
 ## News / trade press
@@ -60,6 +63,8 @@
 | [BORRERO2020] | Borrero, J.D. and Zabalo, A. (2020) 'An autonomous wireless device for real-time monitoring of water needs', *Sensors*, 20(7), 2078. doi:10.3390/s20072078 (Accessed: 23 November 2026). |
 | [HASSAN2026] | Che Hassan, C.A.Z., Muhammad Razif, M.R., Mohd, M.N., Abd Halim, A., Mohd Mustapha, N.H. and Azman, M.N. (2026) 'Real-time oil palm fresh fruit bunch drone image classification using YOLO11 architecture', *Journal of Oil Palm Research* (article in press, published online 17 August). doi:10.21894/jopr.2026.0033 (Accessed: 23 November 2026). |
 | [DARANAGAMA2025] | Daranagama, D.A.S. and Takeuchi, W. (2025) 'Smartphone application for detecting and visualizing basal stem rot disease stages in oil palm', *Frontiers in Remote Sensing*, 6, 1553844. doi:10.3389/frsen.2025.1553844 (Accessed: 23 November 2026). |
+| [MANSOUR2023] | Mansour, M.Y.M.A., Dambul, K.D. and Yeep, C.K. (2023) 'A review of non-destructive ripeness classification techniques for oil palm fresh fruit bunches', *Journal of Oil Palm Research*, 35(4), pp. 543–554. doi:10.21894/jopr.2022.0063 (Accessed: 23 November 2026). |
+| [FARRASATI2024] | Farrasati, R. (2024) *Designing a decision-support tool for fertilizer recommendations in oil palm smallholders*. MSc thesis, University of Nebraska–Lincoln. Available at: https://digitalcommons.unl.edu/agronhortdiss/267 (Accessed: 23 November 2026). |
 
 ## Datasets
 | Key | Harvard entry |
