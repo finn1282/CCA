@@ -55,7 +55,7 @@ Members: `[Member 1 – Leader]`, `[Member 2]`, `[Member 3]`, `[Member 4]`, `[Me
 - Ganoderma BSR: 9.2 % of surveyed smallholder area, >20 % in some mature plantings; asymptomatic until 60–70 % infected; early-detection accuracy in literature ≈64–84 % → position as **screening/prioritisation, not diagnosis**.
 - MSPO mandatory since 2020 (~87 % area certified); MS2530:2022 requires fertiliser/soil-fertility records, traceability, GHG (N2O from fertiliser). Fertiliser ≈30 % of production cost. EUDR applies 30 Dec 2026 (Malaysia "standard risk"; EU = 6.8 % of exports).
 - Application name: **SawitSense** (D24). Interfaces: v0.2 (D25). Part 3 package + O4 scope + NLP layer: D28.
-- Enterprise platform: **Azure** (D15; capability-only matrix D32: Azure 88 / AWS 79 / Google 67 / IBM 49). Residency split + explainability scoping: **D32 — mandatory for report-facing docs**. Datasets: D16. Thresholds: D17. Part 3 anchor: D18.
+- Enterprise platform: **Azure on case fit (D50)** — matrix shown honestly (AWS 89 / Azure 85 / Google 67 / IBM 49); Azure chosen for SAP-run estates, weeks-offline edge, audit-ready explanations. Residency layout per D50. Residency split + explainability scoping: **D32 — mandatory for report-facing docs**. Datasets: D16. Thresholds: D17. Part 3 anchor: D18.
 - No public data for harvest-window prediction, soil-sensor fertiliser models, or multispectral Ganoderma → simulated/proxy, labelled.
 - Retired services (never propose): Google Cloud IoT Core (Aug 2023), IBM Watson IoT (Dec 2023). SageMaker Studio Lab closed to new users.
 - Stakeholder rulings: D19 problems, D20 training/deployment framing, D21 pH buffers bought, D22 no lecturer credits.
