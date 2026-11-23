@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import sys
 import json
 import random
 import re
@@ -32,6 +33,10 @@ import torch.nn as nn
 from PIL import Image, ImageOps
 from torch.utils.data import DataLoader, Dataset
 from torchvision import models, transforms
+
+# Shared serving preprocessing (S-16): repo path first, else a copy next to this script (Kaggle).
+sys.path[:0] = [str(Path(__file__).resolve().parents[2] / "src" / "app"), str(Path(__file__).resolve().parent)]
+import preprocess as PP  # noqa: E402
 
 CLASSES = ["unripe", "underripe", "ripe", "overripe"]
 MEAN, STD = [0.485, 0.456, 0.406], [0.229, 0.224, 0.225]
@@ -53,6 +58,31 @@ def map_class(path: Path) -> str | None:
     if re.search(r"ripe|masak|mature", s):
         return "ripe"
     return None
+
+
+def dhash(path: Path, size: int = 8) -> int:
+    """Difference hash (64-bit) for near-duplicate detection (S-17)."""
+    img = Image.open(path)
+    img.draft("L", (size * 8, size * 8))          # fast JPEG decode at reduced size
+    g = np.asarray(img.convert("L").resize((size + 1, size), Image.BILINEAR), dtype=np.int16)
+    bits = (g[:, 1:] > g[:, :-1]).flatten()
+    return int("".join("1" if b else "0" for b in bits), 2)
+
+
+def dedupe_test(test, train, max_dist: int = 6):
+    """Drop test images whose dHash is within max_dist bits of any train image (same photograph re-used
+    across the provided D2 split — S-17). Returns (kept, dropped_pairs)."""
+    th = [(it, dhash(it[0])) for it in train]
+    kept, dropped = [], []
+    for it in test:
+        h = dhash(it[0])
+        twin = next(((t, bin(h ^ x).count("1")) for t, x in th if bin(h ^ x).count("1") <= max_dist), None)
+        if twin:
+            dropped.append({"test": str(Path(*it[0].parts[-2:])), "train_twin": str(Path(*twin[0][0].parts[-2:])),
+                            "hamming": twin[1]})
+        else:
+            kept.append(it)
+    return kept, dropped
 
 
 def split_of(path: Path) -> str | None:
@@ -94,22 +124,14 @@ class ImgDS(Dataset):
         return len(self.items)
 
     def _open(self, p: Path) -> Image.Image:
-        # Cache a 288-px copy: D2 originals are up to 5 MB, decoding them every epoch is slow on CPU.
+        # Cached base image (288-px short side), stored losslessly so train/eval/serving see the same pixels.
         if self.cache:
-            cp = self.cache / (hashlib.md5(str(p).encode()).hexdigest() + ".jpg")
+            cp = self.cache / (hashlib.md5(str(p).encode()).hexdigest() + ".png")
             if cp.exists():
                 return Image.open(cp).convert("RGB")
-        img = Image.open(p)
-        try:
-            img = ImageOps.exif_transpose(img)
-        except Exception:  # noqa: BLE001 — some phone JPEGs carry malformed EXIF; keep original orientation
-            pass
-        img = img.convert("RGB")
-        img.thumbnail((288 * 4, 288 * 4))
-        w, h = img.size; s = 288 / min(w, h)
-        img = img.resize((max(1, round(w * s)), max(1, round(h * s))), Image.BILINEAR)
+        img = PP.base_image(Image.open(p))
         if self.cache:
-            img.save(cp, quality=92)
+            img.save(cp)
         return img
 
     def __getitem__(self, i):
@@ -121,7 +143,12 @@ def tfs(train: bool):
     if train:
         return transforms.Compose([transforms.RandomResizedCrop(224, scale=(0.6, 1.0)), transforms.RandomHorizontalFlip(),
                                    transforms.ColorJitter(0.15, 0.15, 0.1, 0.02), transforms.ToTensor(), transforms.Normalize(MEAN, STD)])
-    return transforms.Compose([transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), transforms.Normalize(MEAN, STD)])
+    # Evaluation = the exact serving path (shared preprocess module)
+    return eval_tf
+
+
+def eval_tf(img):   # module-level (picklable for DataLoader workers)
+    return torch.from_numpy(PP.to_array(PP.eval_crop(img)))
 
 
 @torch.no_grad()
@@ -211,6 +238,14 @@ def main():
     d2 = scan(a.d2) if a.d2 and a.d2.exists() else []
     d2_test = [it for it in d2 if it[2] == "test"]
     d2_train = [it for it in d2 if it[2] == "train"]
+    d2_dupes = []
+    if d2_test and d2_train:
+        n0 = len(d2_test)
+        d2_test, d2_dupes = dedupe_test(d2_test, d2_train)
+        d2 = d2_train + d2_test
+        print(f"D2 dedupe: dropped {len(d2_dupes)} of {n0} test images with a train twin (dHash <= 6)", flush=True)
+        for d in d2_dupes:
+            print("   ", d, flush=True)
     print("D2:", dict(Counter(CLASSES[i[1]] for i in d2)), "test", len(d2_test), "train", len(d2_train), flush=True)
     provisional = False
     d1 = scan(a.d1) if a.d1 else []
@@ -296,6 +331,7 @@ def main():
         train_head(head2.cpu(), Xmix, ymix, Xv.cpu(), yv, epochs=150)
         Xt2, yt2 = extract(net, d2_test, tfs(False), a.device, a.bs, a.workers, cache)
         res["d2_malaysia_test_after_head_finetune"] = metrics(yt2.numpy(), head2(Xt2).argmax(1).numpy())
+    res["d2_test_duplicates_removed"] = d2_dupes
     res["train_seconds"] = round(time.time() - t0)
     res["device"] = a.device
     res["finetune_epochs"] = a.finetune_epochs
@@ -318,8 +354,25 @@ def main():
     (a.out / "m1_metrics.json").write_text(json.dumps(res, indent=2))
     print(json.dumps(meta["metrics_summary"], indent=2), f"\nsaved {onnx_path} ({onnx_path.stat().st_size / 1e6:.1f} MB)")
 
-    # Sanity check: ONNX matches PyTorch
+    # Serving-path evaluation (S-16): exported ONNX + the API's own preprocessing on the original files.
     import onnxruntime as ort
+    sess = ort.InferenceSession(str(onnx_path), providers=["CPUExecutionProvider"])
+    serve_sets = {"d2_malaysia_test": sp["test"]} if provisional else {"d1_test": sp["test"]}
+    if d2_test:
+        serve_sets["d2_malaysia_test_zero_shot"] = d2_test
+    res["serving_path"] = {}
+    for name, items in serve_sets.items():
+        preds = []
+        for pth, _, _ in items:
+            x, _crop = PP.eval_array(Image.open(pth))
+            preds.append(int(sess.run(["logits"], {"input": x[None]})[0].argmax()))
+        res["serving_path"][name] = metrics([i[1] for i in items], preds)
+        print(f"serving path {name}: acc {res['serving_path'][name]['accuracy']}", flush=True)
+    meta["metrics_summary_serving_path"] = {k: v["accuracy"] for k, v in res["serving_path"].items()}
+    (a.out / "m1_ripeness.json").write_text(json.dumps(meta))
+    (a.out / "m1_metrics.json").write_text(json.dumps(res, indent=2))
+
+    # Sanity check: ONNX matches PyTorch
     x = torch.randn(2, 3, 224, 224)
     lo, fo = ort.InferenceSession(str(onnx_path)).run(None, {"input": x.numpy()})
     lt, ft = net_cpu(x)

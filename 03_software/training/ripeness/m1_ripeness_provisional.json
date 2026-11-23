@@ -23,6 +23,9 @@
  "explainability": "CAM from final linear layer (= Grad-CAM for GAP-linear head)",
  "data": "PROVISIONAL: train/test D2 Rosbi 2024 Malaysia (CC BY 4.0); no underripe class in D2",
  "metrics_summary": {
-  "d2_malaysia_test": 0.9326
+  "d2_malaysia_test": 0.9136
+ },
+ "metrics_summary_serving_path": {
+  "d2_malaysia_test": 0.9136
  }
 }

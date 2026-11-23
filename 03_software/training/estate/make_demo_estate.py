@@ -12,7 +12,8 @@ import numpy as np
 
 rng = np.random.default_rng(7)
 blocks = []
-for i, name in enumerate(["DEMO-A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2"]):
+# 3x3 grid IDs, identical to gee/ndvi_estate.py block_id() (S-24)
+for i, name in enumerate(["DEMO-A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3"]):
     area = float(rng.uniform(25, 45))
     planted = rng.choice([2001, 2005, 2009, 2013, 2017])
     palms = int(area * 136)                      # ~136 palms/ha triangular planting (assumption)

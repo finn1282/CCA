@@ -285,3 +285,14 @@ def test_latest_survives_seq_reset(client):
     # a fresh-but-older capture (device clock) must not override a newer one
     client.post("/api/v1/readings", json=reading(seq=2, ts="2026-11-19T00:00:00Z", soil_moisture_pct=20), headers=SOIL)
     assert client.get("/api/v1/latest").json()["soil"][0]["seq"] == 1
+
+
+def test_cloud_mode_uses_rollback_journal(tmp_path, monkeypatch):
+    """S-19: WAL is unsafe on App Service's network share → DELETE journal in cloud mode."""
+    from app import config as C
+    monkeypatch.setattr(C, "CLOUD", True)
+    db.reset_for_tests(tmp_path / "cloud.db")
+    assert db.q("PRAGMA journal_mode")[0][0].lower() == "delete"
+    monkeypatch.setattr(C, "CLOUD", False)
+    db.reset_for_tests(tmp_path / "local.db")
+    assert db.q("PRAGMA journal_mode")[0][0].lower() == "wal"

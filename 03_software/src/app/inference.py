@@ -14,6 +14,7 @@ import numpy as np
 from PIL import Image
 
 from . import config as C
+from .preprocess import base_image, eval_crop, to_array
 
 
 class ModelUnavailable(RuntimeError):
@@ -58,16 +59,10 @@ def model_info() -> dict:
         return {"available": False, "error": str(e)}
 
 
-def _preprocess(img: Image.Image, meta: dict) -> np.ndarray:
-    s = meta["input_size"]
-    w, h = img.size
-    scale = meta.get("resize", 256) / min(w, h)
-    img = img.resize((max(s, round(w * scale)), max(s, round(h * scale))), Image.BILINEAR)
-    w, h = img.size
-    left, top = (w - s) // 2, (h - s) // 2
-    img = img.crop((left, top, left + s, top + s))
-    a = (np.asarray(img, dtype=np.float32) / 255.0 - np.array(meta["mean"], np.float32)) / np.array(meta["std"], np.float32)
-    return a.transpose(2, 0, 1)[None].astype(np.float32), img
+def _preprocess(img: Image.Image, meta: dict) -> tuple[np.ndarray, Image.Image]:
+    """Identical to training/evaluation preprocessing (shared module, S-16)."""
+    crop = eval_crop(base_image(img), meta.get("resize", 256), meta["input_size"])
+    return to_array(crop, meta["mean"], meta["std"])[None], crop
 
 
 def _colormap(x: np.ndarray) -> np.ndarray:

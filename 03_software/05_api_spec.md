@@ -125,7 +125,7 @@ Body: raw JPEG (≤ 5 MB) with device headers. The block comes from the device m
   - ripe → "Harvest this round"
   - overripe → "Harvest immediately — loose-fruit and FFA risk; flag block for a shorter round"
 
-## 3. Dashboard / application endpoints (read: open; write: admin)
+## 3. Dashboard / application endpoints (read: open locally, admin token in cloud mode; write: admin)
 
 | Method & path | Purpose | Response (main fields) |
 |---|---|---|
@@ -168,5 +168,6 @@ Body: raw JPEG (≤ 5 MB) with device headers. The block comes from the device m
 | `SAWIT_DEVICE_KEYS` | demo keys (local only) | **required**: `soilnode-01:<key>,cam-01:<key>` |
 | `SAWIT_ADMIN_TOKEN` | empty (open) | **required** |
 | `SAWIT_RUNTIME_DIR` / `SAWIT_DB` | `src/runtime/` | persistent path, e.g. `/home/data` on App Service |
-| `SAWIT_MODEL` | `models/m1_ripeness.onnx` (+ `.json`) | deployed model path |
+| `SAWIT_MODEL` | `models/m1_ripeness.onnx` (+ `.json`), looked up next to `app/` first (deploy zip), then in `03_software/models/` | optional override |
+| `SAWIT_MODEL_URL` / `SAWIT_MODEL_META_URL` | unset | optional SAS URLs to download the model once if it is not on disk (user-delegation SAS ≤ 6 days, S-18). Not needed when the model ships in the zip |
 | `SAWIT_HARVEST_ROUND_DAYS` | 10 | — |

@@ -10,6 +10,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 SCRIPT = (HERE.parent / "ripeness" / "train_m1.py").read_text()
+PREPROCESS = (HERE.parents[1] / "src" / "app" / "preprocess.py").read_text()
 
 D1_URL = "https://data.mendeley.com/public-files/datasets/424y96m6sw/files/cae49a93-5785-4873-a347-bff2a276f62c/file_downloaded"
 D1_SHA = "c3cf88db3194fedd24894a35e27fada3841977e1a09a405a4e064db02ebde0c5"
@@ -48,6 +49,7 @@ cells = [
          "for inner in (data / 'd1').rglob('*.zip'):\n"
          "    zipfile.ZipFile(inner).extractall(inner.with_suffix(''))\n"
          "!du -sh /kaggle/tmp/data/*; find /kaggle/tmp/data/d1 -maxdepth 3 -type d | head -30"),
+    code("%%writefile /kaggle/working/preprocess.py\n" + PREPROCESS),
     code("%%writefile /kaggle/working/train_m1.py\n" + SCRIPT),
     code("!cd /kaggle/working && python train_m1.py --d1 /kaggle/tmp/data/d1 --d2 /kaggle/tmp/data/d2 "
          "--device cuda --finetune-epochs 8 --workers 4 --out /kaggle/working"),

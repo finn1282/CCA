@@ -13,14 +13,14 @@ PASS repeat (device_id, seq) idempotent
 PASS calibration GET as device
 PASS command delivered once
 PASS ripeness inference
-     camera: ripe 0.995 | Harvest this round | ev_000024
+     camera: ripe 0.999 | Harvest this round | ev_000024
 PASS heat-map PNG served
 PASS latest shows sim-01
 PASS evidence chain verified
      All 24 records intact (SHA-256 chain)
 PASS audit pack VERIFIED + head hash + clauses
 PASS harvest plan
-     harvest: 375 bunches at risk; A2:2, C1:3, A3:2, C2:1, B3:2, DEMO-A1:6, B1:14, B2:0
+     harvest: 424 bunches at risk; A2:2, C1:3, A3:2, C2:1, B3:2, C3:2, DEMO-A1:6, B1:12, B2:0
 PASS screening cascade
      satellite source: SIMULATED (satellite pre-compute not yet available) | flagged: ['B2', 'C1']
 PASS GET / 200

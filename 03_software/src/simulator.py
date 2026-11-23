@@ -57,6 +57,30 @@ class Node:
         }
 
 
+def shrink_jpeg(path: str, max_side: int = 1600) -> bytes:
+    """S-23: the API accepts ≤ 5 MB. Downscale to ≤ max_side px (needs Pillow, installed with the backend);
+    without Pillow, send the file as-is if it is small enough."""
+    raw = open(path, "rb").read()
+    try:
+        import io
+        from PIL import Image, ImageOps
+        img = Image.open(io.BytesIO(raw))
+        try:
+            img = ImageOps.exif_transpose(img)
+        except Exception:  # noqa: BLE001
+            pass
+        img = img.convert("RGB")
+        img.thumbnail((max_side, max_side))
+        buf = io.BytesIO()
+        img.save(buf, "JPEG", quality=90)
+        return buf.getvalue()
+    except ImportError:
+        if len(raw) > 5_000_000:
+            print("image > 5 MB and Pillow not installed — pick a smaller file")
+            return b""
+        return raw
+
+
 def post(url: str, body: bytes, headers: dict) -> dict:
     req = urllib.request.Request(url, data=body, headers=headers, method="POST")
     with urllib.request.urlopen(req, timeout=15) as r:
@@ -78,10 +102,11 @@ def main() -> None:
     a = ap.parse_args()
 
     if a.image:
-        with open(a.image, "rb") as f:
-            res = post(f"{a.base}/api/v1/infer/ripeness", f.read(),
+        data = shrink_jpeg(a.image)
+        if data:
+            res = post(f"{a.base}/api/v1/infer/ripeness", data,
                        {"Content-Type": "image/jpeg", "X-Device-Id": "cam-01", "X-Device-Key": a.cam_key})
-        print("camera:", res["label"], res["confidence"], "|", res["harvest_advice"], "|", res["evidence_id"])
+            print("camera:", res["label"], res["confidence"], "|", res["harvest_advice"], "|", res["evidence_id"])
 
     node, n = Node(a.device, a.block), 0
     hdr = {"Content-Type": "application/json", "X-Device-Id": a.device, "X-Device-Key": a.key}

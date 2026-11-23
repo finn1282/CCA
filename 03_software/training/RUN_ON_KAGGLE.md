@@ -93,7 +93,8 @@ You can use **Option A (website, no command line)** or **Option B (Kaggle CLI wi
    ```bash
    ../.venv/bin/python simulator.py --count 1 --image ../data/raw/d2/FFBtest/TestRipe/<file>.jpg
    ```
-5. Tell the Software member or the Lead. They will update `03_ai_models.md` §9 with the numbers.
+   The simulator downsizes the image to under the API's 5 MB limit. Pick a test image that is not in the duplicate list printed by the training cell (`d2_test_duplicates_removed` in `m1_metrics.json`).
+5. Tell the Software member or the Lead. They will record the numbers in `07_actual_build_vs_target.md` §6 (internal; the report describes validation as a planned step, D40).
 
 ## Troubleshooting
 | Symptom | Fix |

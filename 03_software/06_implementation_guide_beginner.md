@@ -63,6 +63,7 @@ PY=../.venv/bin/python ./smoke_test.sh
    ```bash
    ../.venv/bin/python simulator.py --count 1 --image path/to/ffb.jpg
    ```
+   The simulator shrinks the photo to ≤ 1600 px before upload, because the API accepts at most 5 MB (S-23). If you upload some other way, use files under 5 MB.
 7. Mobile harvester view: http://localhost:8000/harvester. You can open it on a phone using the laptop's IP address.
 
 Stop the servers with **Ctrl+C**. The data is kept in `src/runtime/sawitsense.db`. Delete that file to start fresh before a rehearsal.
@@ -123,7 +124,7 @@ Follow `gee/RUN_EARTH_ENGINE.md`. Afterwards, commit `src/static/precomputed/sat
 - [ ] **One backend chosen (D39)**, either the laptop or the cloud. Devices, dashboard and keys all point at it.
 - [ ] Phone hotspot ready as Wi-Fi plan B.
 - [ ] TDS baseline set and pH calibrated.
-- [ ] Printed FFB photos from D2 ready for the camera.
+- [ ] Printed FFB photos ready for the camera. Use only D2 **FFBtest** images, and **not** the 8 that duplicate training photos (S-17): TestOverripe(11), TestRipe(9), TestRipe(15), TestRipe(16), TestRipe(18), TestRipe(39), TestUnripe(8), TestUnripe(15).
 - [ ] For cloud, the dashboard is opened as `https://…/?token=<admin token>`.
 - [ ] The simulator is ready in a terminal, in case the soil node fails: `python simulator.py --scenario acidic --interval 3`.
 

@@ -4,7 +4,7 @@
 | Milestone | State |
 |---|---|
 | Plan (SW-P1…P8) | All accepted (D24–D29) |
-| M1 milestone: backend + simulator + rules + dashboard | **Done.** INTERFACES **v0.2.6** implemented. 33/33 pytest pass. Asserted smoke test passes (`src/tests/smoke_output.txt`) |
+| M1 milestone: backend + simulator + rules + dashboard | **Done.** INTERFACES **v0.2.6** implemented. 34/34 pytest pass. Asserted smoke test passes (`src/tests/smoke_output.txt`) |
 | HW verification pass 1 defects (D-04, D-12) | **Fixed** (b3cb4fe) with tests |
 | SW verification pass 1 defects (S-01…S-15) | **Fixed** (9bd2e04), see table below |
 | M2 milestone: M1 ripeness model | **Provisional model trained on CPU** (D2-only, see Training results). The full D1→D2 run is the stakeholder's Kaggle step (D31) |
@@ -31,7 +31,7 @@
 | `src/static/` | Dashboard (`index.html`, `app.js`, `style.css`, vendored Chart.js + licence), `harvester.html`, `precomputed/estate_blocks.json` (SIMULATED) |
 | `src/simulator.py` | Soil-node simulator (stdlib), 7 scenarios + cycle, optional camera image |
 | `src/smoke_test.sh` + `src/tests/smoke_e2e.py` | Asserted end-to-end smoke test (own server, temp DB, port 8791) |
-| `src/tests/test_api.py` | 33 tests (rules, contract, auth, calibration, commands, evidence tamper, v0.2.2/0.2.3, defects) |
+| `src/tests/test_api.py` | 34 tests (rules, contract, auth, calibration, commands, evidence tamper, v0.2.2/0.2.3, defects) |
 | `training/ripeness/train_m1.py` | M1 training (CPU or GPU; provisional D2-only mode), ONNX export + parity check |
 | `training/ripeness/m1_metrics_provisional.json`, `m1_ripeness_provisional.json` | Metrics + metadata of the provisional model (weights are git-ignored) |
 | `training/kaggle/` | `sawitsense_m1.ipynb` + `kernel-metadata.json` (built by `build_notebook.py`) |
@@ -68,10 +68,12 @@ Latest run (`src/tests/smoke_output.txt`): **all assertions pass.**
 
 ## Training results
 - **M6 (SIMULATED data):** hold-out accuracy against noisy labels **0.88**. Per class: irrigate F1 0.94, drain 0.92, lime 0.88, skip 0.88, ok 0.87, fertilise 0.82, watch 0.58. See `training/fertiliser/metrics_m6.json`.
-- **M1 provisional (CPU, D2-only):** see `training/ripeness/m1_metrics_provisional.json` and the summary in `03_ai_models.md` §9.
-  - Trained on a subset of D2-train (Malaysia) because the D1 download from Mendeley's S3 bucket runs at a few KB/s from this machine.
-  - **No underripe class in D2**, so the model never predicts "underripe" reliably.
-  - The **full model** (D1 train → D2 cross-country test, GPU fine-tune) is produced by the stakeholder's Kaggle run (`training/RUN_ON_KAGGLE.md`). The notebook downloads D1 at datacentre speed.
+- **M1 provisional (CPU, D2-only), serving-path figure:** accuracy **0.91**, macro-F1 0.92 on the D2 test set (n = 81). Recall: unripe 0.78, ripe 1.00, overripe 1.00.
+  - Measured through the exported ONNX and the API's own preprocessing (S-16). Training, evaluation and serving now share `src/app/preprocess.py`, so the training-path figure is the same.
+  - 8 D2 test images that duplicate D2-train photos (dHash ≤ 6) were removed first (S-17). The list is in `training/ripeness/m1_metrics_provisional.json` (`d2_test_duplicates_removed`). The Kaggle notebook runs the same dedupe on the full D2.
+  - Trained on a D2-train subset, because D1 downloads at a few KB/s from this machine. **No underripe class in D2.** The figure is a same-country sanity check.
+  - The final model (D1 → D2 cross-country) comes from the stakeholder's Kaggle run.
+  - Earlier figures are superseded: 0.93 included duplicates, and the old serving path gave 0.90.
 
 ## Verification defect log (Software-owned)
 | ID | Fix |
@@ -92,6 +94,16 @@ Latest run (`src/tests/smoke_output.txt`): **all assertions pass.**
 | S-13 | Cascade retries until loaded; harvester page handles offline; EC tile label depends on `ec_derived` |
 | S-14 | Chart.js MIT banner restored + `vendor/LICENSE-chartjs.txt` |
 | S-15 | Image-cache names use md5 (stable across runs) |
+| S-16 | Shared preprocessing module (`src/app/preprocess.py`) used by training/eval and the API; `train_m1.py` also evaluates the exported ONNX through the serving path and reports `serving_path` metrics |
+| S-17 | `train_m1.py` drops D2 test images with a dHash ≤ 6 twin in D2-train and logs them (8 found locally, including all 6 from the pass-2 list); same code in the Kaggle notebook |
+| S-18 | Model ships inside the deploy zip; Blob optional; SAS note: user-delegation SAS ≤ 6 days |
+| S-19 | `journal_mode=DELETE` in cloud mode (WAL locally); test added |
+| S-20 | Startup command inline (`python -m uvicorn … --workers 1`); expected log line documented |
+| S-21 | 05 §3 header ("read: open locally, admin token in cloud mode"); `SAWIT_MODEL_URL`/`_META_URL` documented |
+| S-22 | 02 §4 demo sequence and 03 §9 results moved to 07 §5–6; "cheapest" replaced by a capability reason; 03 §9 is now an evaluation plan |
+| S-23 | `simulator.py --image` downsizes to ≤ 1600 px; guides say to print only non-duplicate FFBtest images |
+| S-24 | GEE grid is 3×3 with estate IDs (DEMO-A1 … C3); demo estate extended to 9 blocks |
+| S-25 | Windows note in the Earth Engine guide |
 | S-12 | Hardware-owned (firmware LOCAL rounding). No backend change needed |
 
 ## Interface changes requested
@@ -109,7 +121,6 @@ None open. v0.2.6 implemented. Backend-only additions:
 
 ## Open issues for Lead
 1. **D1 not downloadable here** (Mendeley S3 at a few KB/s). The provisional M1 is D2-only. The final M1 depends on the stakeholder's Kaggle run, which is ready to go.
-2. The S-06 deviation described above: please confirm.
 3. M3/M4 (drone YOLO) not trained: a stretch item. The cascade's stage 2 shows "not yet available" until it exists.
 4. Satellite panel shows a labelled SIMULATED placeholder until the stakeholder runs `gee/ndvi_estate.py`.
 5. Brief item 4 (student build and cost table in 04) conflicts with D23. Resolved by moving that content to 07 and `deploy/`, and keeping enterprise cost drivers as risk only in 04.

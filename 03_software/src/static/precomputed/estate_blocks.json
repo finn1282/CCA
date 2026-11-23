@@ -90,6 +90,16 @@
    "overripe_share": 0.06,
    "bunches_per_harvester_day": 250,
    "ndvi_z": -0.93
+  },
+  {
+   "block_id": "C3",
+   "area_ha": 29.0,
+   "palms": 3945,
+   "planted": 2013,
+   "ripe_bunches_est": 198,
+   "overripe_share": 0.21,
+   "bunches_per_harvester_day": 120,
+   "ndvi_z": -0.73
   }
  ]
 }

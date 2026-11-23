@@ -45,7 +45,9 @@ def conn() -> sqlite3.Connection:
             C.ensure_dirs()
             _conn = sqlite3.connect(C.DB_PATH, check_same_thread=False, isolation_level=None)
             _conn.row_factory = sqlite3.Row
-            _conn.execute("PRAGMA journal_mode=WAL")
+            # S-19: WAL needs shared memory, which network file systems (App Service /home is an SMB share)
+            # do not provide → use rollback journal in cloud mode.
+            _conn.execute("PRAGMA journal_mode=" + ("DELETE" if C.CLOUD else "WAL"))
             _conn.executescript(SCHEMA)
             cols = {r[1] for r in _conn.execute("PRAGMA table_info(readings)")}
             if "captured_at" not in cols:   # migrate DBs created before v0.2.2

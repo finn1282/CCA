@@ -4,11 +4,13 @@
 >
 > **Result:** two files, `src/static/precomputed/satellite.json` and `satellite_ndvi.png`. The dashboard's "1 · Satellite" panel and the screening cascade then show **real Sentinel-2 data** instead of the SIMULATED placeholder.
 >
-> **What it computes:** for a 4 km × 4 km oil-palm area in Johor, divided into 16 blocks of 1 km²:
+> **What it computes:** for a 4 km × 4 km oil-palm area in Johor, divided into 9 blocks (3 × 3, about 1.3 km each). The blocks are named like the demo estate (`DEMO-A1, A2, A3, B1 … C3`), so the satellite, drone and harvest panels all refer to the same blocks (S-24):
 > - monthly NDVI over the last 24 months, using only oil-palm pixels (mask from Descals et al. 2021) and clear-sky pixels (Cloud Score+);
 > - a z-score of the latest month against each block's own history.
 >
 > Blocks with z ≤ −1.5 are flagged for drone survey.
+
+**Windows users:** replace `.venv/bin/…` with `.venv\Scripts\…` in every command below (for example `.venv\Scripts\python gee\ndvi_estate.py`), and use the PowerShell lines where given (S-25).
 
 ## 0. What you need
 - Your Earth Engine **Cloud project ID**, for example `sawitsense-ee`. You already have one.
@@ -68,5 +70,6 @@
 | `Too few cloud-free months` | Malaysia is cloudy. Run with `--months 36` or `--cs 0.5` |
 | Many `None` values in the series | The AOI has little oil palm. Move `--lon/--lat` to a plantation area |
 | Thumbnail download fails | Re-run. The PNG URL expires after a few minutes |
+| No block flagged | A healthy area may have no anomaly. That is a valid result. For the cascade demo, re-run with another `--lon/--lat`, or show the threshold with `GET /api/v1/screening?z=-1.0` |
 
 **Licence note:** the dashboard footer already includes "Contains modified Copernicus Sentinel data" and the Descals et al. (2021) CC BY 4.0 credit. Keep them in any screenshots used in the report or slides (COPERNICUS-LEGAL; GEE-OILPALM).

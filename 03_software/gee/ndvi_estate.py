@@ -4,7 +4,8 @@ What it does
   1. AOI: a 4 km x 4 km oil-palm area in Johor (default, editable with --lon/--lat/--size-km).
   2. Masks to industrial/smallholder oil palm (Descals et al. 2021, BIOPAMA/GlobalOilPalm/v1, CC BY 4.0).
   3. Sentinel-2 L2A (COPERNICUS/S2_SR_HARMONIZED) cloud-masked with Cloud Score+ → monthly median NDVI.
-  4. Splits the AOI into a grid of "blocks" (default 4x4 = 16 blocks of 1 km²), named B01..B16.
+  4. Splits the AOI into a 3x3 grid of blocks named like the demo estate (S-24): rows A/B/C, columns 1–3,
+     with A1 = DEMO-A1 → DEMO-A1, A2, A3, B1, B2, B3, C1, C2, C3 (same IDs as estate_blocks.json and the cascade).
   5. Per block: monthly mean NDVI series; z-score of the latest month vs the block's own history.
   6. Writes for the dashboard (03_software/src/static/precomputed/):
        satellite.json        — blocks, months, estate series, z-scores (read by /api/v1/satellite and the cascade)
@@ -31,6 +32,12 @@ import ee
 OUT = Path(__file__).resolve().parents[1] / "src" / "static" / "precomputed"
 
 
+def block_id(r: int, c: int) -> str:
+    """Grid cell → estate block ID (S-24): row letter + column number; A1 is the demo block."""
+    bid = f"{chr(ord('A') + r)}{c + 1}"
+    return "DEMO-A1" if bid == "A1" else bid
+
+
 def month_starts(n_months: int) -> list[str]:
     today = date.today().replace(day=1)
     y, m = today.year, today.month
@@ -48,7 +55,7 @@ def main() -> None:
     ap.add_argument("--lon", type=float, default=103.30, help="AOI centre longitude (default: Kluang district, Johor)")
     ap.add_argument("--lat", type=float, default=1.96, help="AOI centre latitude")
     ap.add_argument("--size-km", type=float, default=4.0)
-    ap.add_argument("--grid", type=int, default=4, help="blocks per side")
+    ap.add_argument("--grid", type=int, default=3, help="blocks per side (3 → IDs match the demo estate)")
     ap.add_argument("--months", type=int, default=24)
     ap.add_argument("--cs", type=float, default=0.60, help="Cloud Score+ clear threshold")
     ap.add_argument("--drive", action="store_true", help="also export latest NDVI GeoTIFF to Google Drive")
@@ -80,7 +87,7 @@ def main() -> None:
     feats = []
     for r in range(a.grid):
         for c in range(a.grid):
-            bid = f"B{r * a.grid + c + 1:02d}"
+            bid = block_id(r, c)
             g = ee.Geometry.Rectangle([x0 + c * step, y0 - (r + 1) * step, x0 + (c + 1) * step, y0 - r * step])
             feats.append(ee.Feature(g, {"block_id": bid}))
     blocks = ee.FeatureCollection(feats)

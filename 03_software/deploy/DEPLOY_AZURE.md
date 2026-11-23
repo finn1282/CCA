@@ -7,7 +7,7 @@
 
 **Result:**
 - A public HTTPS URL, `https://<app-name>.azurewebsites.net`, for the dashboard and API.
-- The ripeness model is stored in Blob Storage.
+- The ripeness model ships **inside the deploy zip** (S-18). A Blob Storage container is used only as an optional backup of the evidence database.
 - Device keys and the admin token are set as App Service settings, never in the repo.
 
 ## 0. Before you start
@@ -45,27 +45,13 @@ az webapp create -g $RG -p $PLAN -n $APP --runtime "PYTHON:3.12"
 ```
 If `malaysiawest` is refused (student subscriptions restrict regions), delete the group with `az group delete -n $RG -y`, set `LOC=southeastasia` and repeat step 2. This affects the demo only; the report keeps Malaysia West.
 
-## 3. Blob Storage for the model
+## 3. (Optional) Blob Storage for backups
+The model is now packed into the zip by `deploy/make_package.sh`, so **this step is optional**. It only creates a private container where you can copy the evidence database after the demo.
 ```bash
 az storage account create -g $RG -n $ST -l $LOC --sku Standard_LRS --allow-blob-public-access false
-az storage container create --account-name $ST -n models --auth-mode login
-az storage blob upload --account-name $ST -c models -f models/m1_ripeness.onnx -n m1_ripeness.onnx --auth-mode login
-az storage blob upload --account-name $ST -c models -f models/m1_ripeness.json -n m1_ripeness.json --auth-mode login
+az storage container create --account-name $ST -n backups --auth-mode login
 ```
-If `--auth-mode login` gives a permission error, give yourself the "Storage Blob Data Contributor" role:
-```bash
-az role assignment create --role "Storage Blob Data Contributor" \
-  --assignee $(az ad signed-in-user show --query id -o tsv) \
-  --scope $(az storage account show -n $ST --query id -o tsv)
-```
-Wait one minute after assigning the role, then retry.
-
-Next, create **read-only SAS links valid for 60 days**. The app downloads the model with them once.
-```bash
-EXP=$(date -u -d "+60 days" +%Y-%m-%dT%H:%MZ 2>/dev/null || date -u -v+60d +%Y-%m-%dT%H:%MZ)
-MODEL_URL=$(az storage blob generate-sas --account-name $ST -c models -n m1_ripeness.onnx --permissions r --expiry $EXP --auth-mode login --as-user --full-uri -o tsv)
-META_URL=$(az storage blob generate-sas --account-name $ST -c models -n m1_ripeness.json --permissions r --expiry $EXP --auth-mode login --as-user --full-uri -o tsv)
-```
+If you ever host the model in Blob instead, note that SAS links created with `--as-user` (user-delegation SAS) last **at most 7 days**. Use an expiry of 6 days or less, and deploy within that window. The app downloads the model once to `/home/data` via `SAWIT_MODEL_URL` / `SAWIT_MODEL_META_URL`.
 
 ## 4. App settings (secrets live only here)
 ```bash
@@ -74,30 +60,32 @@ az webapp config appsettings set -g $RG -n $APP --settings \
   SAWIT_DEVICE_KEYS="soilnode-01:$SOIL_KEY,cam-01:$CAM_KEY" \
   SAWIT_ADMIN_TOKEN="$ADMIN_TOKEN" \
   SAWIT_RUNTIME_DIR=/home/data \
-  SAWIT_MODEL=/home/data/models/m1_ripeness.onnx \
-  SAWIT_MODEL_URL="$MODEL_URL" \
-  SAWIT_MODEL_META_URL="$META_URL" \
   SCM_DO_BUILD_DURING_DEPLOYMENT=true \
   WEBSITES_ENABLE_APP_SERVICE_STORAGE=true
-az webapp config set -g $RG -n $APP --startup-file "startup.sh" --always-on true --http20-enabled true
+az webapp config set -g $RG -n $APP --always-on true --http20-enabled true \
+  --startup-file "python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1 --proxy-headers"
 az webapp update -g $RG -n $APP --https-only true
 ```
 - `SAWIT_MODE=cloud` switches the server to **fail-closed**. The demo keys are disabled, and the admin token is required for dashboard reads and writes (D-12, S-08).
-- `/home/data` is persistent App Service storage, so the evidence log survives restarts.
+- `/home/data` is persistent App Service storage, so the evidence log survives restarts. In cloud mode SQLite uses a rollback journal (not WAL), because `/home` is a network share (S-19).
+- The startup command runs **one** worker. That is required, because SQLite and the in-process lock assume a single process.
 
 ## 5. Build and deploy the code
 ```bash
 bash deploy/make_package.sh
 az webapp deploy -g $RG -n $APP --src-path deploy/sawitsense.zip --type zip
 ```
-The first deploy installs the requirements on the server, which takes 3–6 minutes.
+The first deploy installs the requirements on the server, which takes 3–6 minutes. Before deploying, make sure `models/m1_ripeness.onnx` and `.json` exist: the package script warns if they are missing. In the log (`az webapp log tail -g $RG -n $APP`), a healthy start ends with:
+```
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+```
 
 ## 6. Smoke-check the URL
 ```bash
 URL=https://$APP.azurewebsites.net
 curl -s $URL/api/v1/health
 ```
-Expect `{"status":"ok","version":"0.2.6","mode":"cloud","ripeness_model":"m1-effb0-0.1",...}`. The first call can take about 20 s while the model downloads from Blob.
+Expect `{"status":"ok","version":"0.2.6","mode":"cloud","ripeness_model":"m1-effb0-0.1",...}`. The model loads from the zip on the first ripeness call.
 
 Then send one simulated reading with the **real** key:
 ```bash

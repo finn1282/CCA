@@ -12,7 +12,9 @@ HEATMAP_DIR = RUNTIME_DIR / "heatmaps"
 IMAGE_DIR = RUNTIME_DIR / "images"
 STATIC_DIR = SRC_DIR / "static"
 ASSETS_DIR = Path(__file__).resolve().parent / "assets"
-MODEL_PATH = Path(os.getenv("SAWIT_MODEL", SW_DIR / "models" / "m1_ripeness.onnx"))
+# Model: env var, else models/ next to app/ (deploy zip), else 03_software/models (repo checkout)
+_pkg_model = SRC_DIR / "models" / "m1_ripeness.onnx"
+MODEL_PATH = Path(os.getenv("SAWIT_MODEL", _pkg_model if _pkg_model.exists() else SW_DIR / "models" / "m1_ripeness.onnx"))
 MODEL_META_PATH = MODEL_PATH.with_suffix(".json")
 
 # Device credentials: "soilnode-01:key1,cam-01:key2". Default keys are for the local demo only.
