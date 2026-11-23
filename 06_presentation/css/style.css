@@ -31,9 +31,9 @@
 html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
 body { font-family: var(--font); color: var(--ink); }
 
-#viewport { position: fixed; inset: 0; display: grid; place-items: center; background: #050d08; }
+#viewport { position: fixed; inset: 0; background: #050d08; overflow: hidden; }
 #stage {
-  width: 1920px; height: 1080px; position: relative; overflow: hidden; transform-origin: center center;
+  width: 1920px; height: 1080px; position: absolute; left: 50%; top: 50%; overflow: hidden; transform-origin: center center;
   background:
     radial-gradient(ellipse at 15% 110%, rgba(123,83,53,.45), transparent 55%),
     radial-gradient(ellipse at 100% 0%, rgba(166,210,90,.10), transparent 50%),
@@ -85,7 +85,7 @@ h2 { font-size: 64px; }
 /* ---------- scene 1 hook ---------- */
 .counters { display: flex; gap: 40px; margin-top: 60px; }
 .counter { flex: 1; padding: 40px; border-left: 10px solid var(--ffb); }
-.counter .num { font-size: 120px; font-weight: 900; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.counter .num { white-space: nowrap; font-size: 104px; font-weight: 900; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
 .counter .lbl { font-size: 34px; color: var(--muted); margin-top: 14px; }
 .counter:nth-child(2) { border-color: var(--gold); } .counter:nth-child(3) { border-color: var(--ffb-red); }
 .title-card { margin-top: 70px; }
