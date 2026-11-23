@@ -16,15 +16,19 @@ MODEL_PATH = Path(os.getenv("SAWIT_MODEL", SW_DIR / "models" / "m1_ripeness.onnx
 MODEL_META_PATH = MODEL_PATH.with_suffix(".json")
 
 # Device credentials: "soilnode-01:key1,cam-01:key2". Default keys are for the local demo only.
-_DEFAULT_KEYS = "soilnode-01:demo-soil-key,cam-01:demo-cam-key,sim-01:demo-sim-key"
+# Where this server runs; shown on the dashboard ("cloud" on Azure, "local" on the laptop).
+DEPLOYMENT_MODE = os.getenv("SAWIT_MODE", "local")
+CLOUD = DEPLOYMENT_MODE == "cloud"
+# Demo keys are active ONLY in local mode (D-12). In cloud mode keys must come from SAWIT_DEVICE_KEYS;
+# if it is unset, every device request is rejected (fail closed).
+_DEFAULT_KEYS = "" if CLOUD else "soilnode-01:demo-soil-key,cam-01:demo-cam-key,sim-01:demo-sim-key"
 DEVICE_KEYS: dict[str, str] = dict(
     pair.split(":", 1) for pair in os.getenv("SAWIT_DEVICE_KEYS", _DEFAULT_KEYS).split(",") if ":" in pair
 )
-REQUIRE_DEVICE_KEY = os.getenv("SAWIT_REQUIRE_DEVICE_KEY", "1") == "1"
-# Optional token for dashboard write actions (calibration, commands, reviews). Empty = open (local demo).
+REQUIRE_DEVICE_KEY = CLOUD or os.getenv("SAWIT_REQUIRE_DEVICE_KEY", "1") == "1"
+# Token for dashboard write actions (calibration, commands, reviews). Local: empty = open.
+# Cloud: required — if unset, write actions are refused (fail closed).
 ADMIN_TOKEN = os.getenv("SAWIT_ADMIN_TOKEN", "")
-# Where this server runs; shown on the dashboard ("cloud" on Azure, "local" on the laptop).
-DEPLOYMENT_MODE = os.getenv("SAWIT_MODE", "local")
 
 # Device → estate block mapping for devices that do not send block_id (camera).
 DEVICE_BLOCKS = {"cam-01": "DEMO-A1"}
@@ -38,7 +42,7 @@ PH_TYPICAL_TOP = 5.5
 PH_HIGH = 6.5
 TDS_DEFAULT_MARGIN = 0.30
 
-# Harvest round interval (days) used in harvest advice. ASSUMPTION pending research R1(e).
+# Harvest round interval (days): recommended 7–13 [AHMAD2020], optimum 10–12 [MPOB-NEWS2020].
 HARVEST_ROUND_DAYS = int(os.getenv("SAWIT_HARVEST_ROUND_DAYS", "10"))
 
 

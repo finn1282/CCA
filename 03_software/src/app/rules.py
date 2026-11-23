@@ -158,7 +158,7 @@ def recommend(reading: dict, tds_baseline: float | None = None, tds_margin: floa
         top = f_sorted[0]
         action, reason = top.action, top.reason
         cf = "Would be OK if " + " and ".join(f.counterfactual for f in f_sorted)
-        oled = [action.upper()[:16], top.oled[:16]]
+        oled = [action.upper().replace("_", " ")[:16], top.oled[:16]]
     elif len(r.missing) == 3:
         action, reason, cf = "ok", "No sensor data — all sensors returned null", ""
         oled = ["NO DATA", "check sensors"]

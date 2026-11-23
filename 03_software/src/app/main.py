@@ -1,7 +1,7 @@
 """SawitSense backend (FastAPI) — actual build of the ingestion, cognitive and application layers.
 
 Run locally:  uvicorn app.main:app --host 0.0.0.0 --port 8000   (from 03_software/src)
-Contract:     00_lead/INTERFACES.md v0.2.1, full spec in 03_software/05_api_spec.md
+Contract:     00_lead/INTERFACES.md v0.2.2, full spec in 03_software/05_api_spec.md
 """
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 
 from . import analytics, config as C, db, evidence, inference, recommender
 
-APP_VERSION = "0.2.1"
+APP_VERSION = "0.2.2"
 app = FastAPI(title="SawitSense API", version=APP_VERSION,
               description="Smart palm oil plantation decision support — explain-to-audit build")
 # The presentation embeds the dashboard/API from another origin (06_presentation).
@@ -34,7 +34,9 @@ def device_auth(x_device_id: str | None = Header(None), x_device_key: str | None
 
 
 def admin_auth(request: Request, x_admin_token: str | None = Header(None)) -> None:
-    """Dashboard write actions. Open when SAWIT_ADMIN_TOKEN is unset (local demo)."""
+    """Dashboard write actions. Open when SAWIT_ADMIN_TOKEN is unset in local mode; refused in cloud mode."""
+    if C.CLOUD and not C.ADMIN_TOKEN:
+        raise HTTPException(403, "Server misconfigured: SAWIT_ADMIN_TOKEN must be set in cloud mode")
     if C.ADMIN_TOKEN and (x_admin_token or request.query_params.get("token")) != C.ADMIN_TOKEN:
         raise HTTPException(403, "Admin token required")
 
@@ -63,6 +65,7 @@ class SoilReading(BaseModel):
     air_temp_c: float | None = None
     air_rh_pct: float | None = None
     rssi_dbm: int | None = None
+    age_s: int | None = Field(None, ge=0)     # v0.2.2: seconds between capture and send
     cal_id: str | None = None
     fw_version: str | None = None
 
@@ -96,21 +99,24 @@ def post_reading(r: SoilReading, device: str = Depends(device_auth)) -> dict:
         payload["ec_us_cm"] = round(payload["tds_ppm"] / 0.5, 1)   # approximation (DFR-SEN0244)
     payload["ec_derived"] = ec_derived
     received = db.now()
+    # v0.2.2: capture time = device ts if given, else received_at − age_s (else received_at)
+    captured = r.ts or db.shift(received, -(r.age_s or 0))
+    payload["captured_at"] = captured
     dev = db.get_device(device)
     rec = recommender.recommend(payload, dev.get("tds_baseline"), dev.get("tds_margin"))
     record = {
-        "input": payload, "received_at": received,
+        "input": payload, "received_at": received, "captured_at": captured,
         "calibration": {"device_cal_id": r.cal_id, "tds_baseline_ppm": dev.get("tds_baseline"),
                         "tds_margin": dev.get("tds_margin"), "tds_cal_id": dev.get("cal_id")},
-        "output": rec, "rules_version": "INTERFACES-v0.2.1",
+        "output": rec, "rules_version": "INTERFACES-v0.2.2",
     }
     ev = evidence.append("soil_recommendation", record, device, r.block_id)
-    db.x("INSERT INTO readings(device_id, block_id, seq, ts, received_at, buffered, payload, recommendation, evidence_id)"
-         " VALUES(?,?,?,?,?,?,?,?,?)",
-         (device, r.block_id, r.seq, r.ts, received, int(r.buffered), db.dumps(payload), db.dumps(rec), ev))
+    db.x("INSERT INTO readings(device_id, block_id, seq, ts, received_at, captured_at, buffered, payload, recommendation,"
+         " evidence_id) VALUES(?,?,?,?,?,?,?,?,?,?)",
+         (device, r.block_id, r.seq, r.ts, received, captured, int(r.buffered), db.dumps(payload), db.dumps(rec), ev))
     db.touch_device(device, r.rssi_dbm, r.fw_version)
     out = {k: rec[k] for k in ("action", "reason", "confidence", "actions", "counterfactual", "simulated")}
-    out.update(evidence_id=ev, oled=rec["oled"], led=rec["led"], received_at=received)
+    out.update(evidence_id=ev, oled=rec["oled"], led=rec["led"], received_at=received, captured_at=captured)
     return out
 
 
@@ -119,8 +125,10 @@ def list_readings(device_id: str | None = None, limit: int = Query(120, le=2000)
     sql, args = "SELECT * FROM readings", []
     if device_id:
         sql += " WHERE device_id=?"; args.append(device_id)
-    rows = db.q(sql + " ORDER BY id DESC LIMIT ?", (*args, limit))
+    # Order by capture time so buffered replays fall into their true place on the chart.
+    rows = db.q(sql + " ORDER BY captured_at DESC, id DESC LIMIT ?", (*args, limit))
     return [{"id": x["id"], "device_id": x["device_id"], "received_at": x["received_at"], "seq": x["seq"],
+             "captured_at": x["captured_at"],
              "buffered": bool(x["buffered"]), "evidence_id": x["evidence_id"], **json.loads(x["payload"]),
              "action": json.loads(x["recommendation"])["action"]} for x in reversed(rows)]
 
@@ -217,12 +225,21 @@ def _latest_ripeness() -> dict | None:
 
 @app.get("/api/v1/latest")
 def latest() -> dict:
-    rows = db.q("SELECT * FROM readings WHERE id IN (SELECT MAX(id) FROM readings GROUP BY device_id) ORDER BY id DESC")
+    # D-04 / v0.2.2: "latest" = the NON-buffered reading with the highest seq per device, so a
+    # buffered replay arriving after a fresh reading never replaces it. Devices that have sent only
+    # buffered rows fall back to their newest row.
+    rows = db.q("""SELECT r.* FROM readings r JOIN (
+                     SELECT d.device_id, COALESCE(
+                       (SELECT f.id FROM readings f WHERE f.device_id=d.device_id AND f.buffered=0
+                        ORDER BY f.seq IS NULL, f.seq DESC, f.id DESC LIMIT 1),
+                       (SELECT MAX(g.id) FROM readings g WHERE g.device_id=d.device_id)) AS pick
+                     FROM (SELECT DISTINCT device_id FROM readings) d) p ON r.id = p.pick
+                   ORDER BY r.id DESC""")
     soil = []
     for x in rows:
         ev = evidence.get(x["evidence_id"])
         soil.append({"device_id": x["device_id"], "block_id": x["block_id"], "received_at": x["received_at"],
-                     "seq": x["seq"], "reading": json.loads(x["payload"]), "recommendation": json.loads(x["recommendation"]),
+                     "captured_at": x["captured_at"], "buffered": bool(x["buffered"]), "seq": x["seq"], "reading": json.loads(x["payload"]), "recommendation": json.loads(x["recommendation"]),
                      "evidence_id": x["evidence_id"], "reviews": [r["record"] for r in evidence.reviews_for(x["evidence_id"])],
                      "calibration": ev["record"]["calibration"] if ev else None})
     devices = [dict(d) for d in db.q("SELECT device_id, last_seen, last_rssi, fw_version, tds_baseline, tds_margin, cal_id FROM devices")]

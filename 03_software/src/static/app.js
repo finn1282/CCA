@@ -157,7 +157,7 @@ async function renderMspo() {
 
 // ---------- harvest
 async function renderHarvest() {
-  const h = await get(`/harvest/plan?crew=${+$("crew").value || 12}`);
+  const h = await get(`/harvest/plan?crew=${+$("crew").value || 30}`);
   if (!h.available) return;
   $("hv-sum").textContent = `${h.bunches_at_risk_total} bunches at risk · ${h.unassigned_harvesters} harvesters spare · ${h.method}`;
   $("hv-tbl").querySelector("tbody").innerHTML = h.blocks.map((b) =>

@@ -155,3 +155,57 @@ def test_ripeness_endpoint(client):
     assert j["label"] in j["probs"] and abs(sum(j["probs"].values()) - 1) < 0.01
     assert client.get(j["heatmap_url"]).status_code == 200
     assert client.post("/api/v1/infer/ripeness", content=b"notajpeg", headers=CAM).status_code == 400
+
+
+# ---------------- verification pass 1 fixes + INTERFACES v0.2.2
+def test_latest_ignores_buffered_replay(client):
+    """D-04: fresh seq 1550 then buffered replays 1545–1549 → /latest must show 1550."""
+    client.post("/api/v1/readings", json=reading(seq=1550, soil_moisture_pct=55), headers=SOIL)
+    for s in range(1545, 1550):
+        client.post("/api/v1/readings", json=reading(seq=s, buffered=True, age_s=(1550 - s) * 10, soil_moisture_pct=20), headers=SOIL)
+    soil = client.get("/api/v1/latest").json()["soil"][0]
+    assert soil["seq"] == 1550 and soil["buffered"] is False and soil["recommendation"]["action"] == "ok"
+    # and the chart orders buffered rows by capture time, before the fresh one
+    rows = client.get("/api/v1/readings?device_id=soilnode-01").json()
+    assert [r["seq"] for r in rows] == [1545, 1546, 1547, 1548, 1549, 1550]
+
+
+def test_latest_only_buffered_falls_back(client):
+    client.post("/api/v1/readings", json=reading(seq=7, buffered=True, age_s=30), headers=SOIL)
+    assert client.get("/api/v1/latest").json()["soil"][0]["seq"] == 7
+
+
+def test_age_s_sets_captured_at(client):
+    from app import db as _db
+    r = client.post("/api/v1/readings", json=reading(ts=None, age_s=120), headers=SOIL).json()
+    assert r["captured_at"] == _db.shift(r["received_at"], -120)
+    r2 = client.post("/api/v1/readings", json=reading(ts="2026-12-10T09:00:00Z", age_s=120), headers=SOIL).json()
+    assert r2["captured_at"] == "2026-12-10T09:00:00Z"
+    r3 = client.post("/api/v1/readings", json=reading(ts=None), headers=SOIL).json()
+    assert r3["captured_at"] == r3["received_at"]
+    assert client.post("/api/v1/readings", json=reading(age_s=-5), headers=SOIL).status_code == 422
+
+
+def test_cloud_mode_rejects_default_keys():
+    """D-12: demo keys are inactive in cloud mode; missing admin token fails closed."""
+    import subprocess
+    code = ("import os,sys; sys.path.insert(0,'.'); from app import config as C; "
+            "print(len(C.DEVICE_KEYS), C.REQUIRE_DEVICE_KEY)")
+    env = {**os.environ, "SAWIT_MODE": "cloud"}
+    env.pop("SAWIT_DEVICE_KEYS", None)
+    out = subprocess.run([sys.executable, "-c", code], cwd=Path(__file__).resolve().parents[1], env=env,
+                         capture_output=True, text=True, check=True).stdout.split()
+    assert out == ["0", "True"]
+    env["SAWIT_DEVICE_KEYS"] = "soilnode-01:s3cret"
+    out = subprocess.run([sys.executable, "-c", code], cwd=Path(__file__).resolve().parents[1], env=env,
+                         capture_output=True, text=True, check=True).stdout.split()
+    assert out == ["1", "True"]
+
+
+def test_cloud_mode_admin_fail_closed(client, monkeypatch):
+    from app import config as C
+    monkeypatch.setattr(C, "CLOUD", True)
+    monkeypatch.setattr(C, "ADMIN_TOKEN", "")
+    assert client.post("/api/v1/devices/cam-01/commands", json={"cmd": "capture"}).status_code == 403
+    monkeypatch.setattr(C, "ADMIN_TOKEN", "tok")
+    assert client.post("/api/v1/devices/cam-01/commands", json={"cmd": "capture"}, headers={"X-Admin-Token": "tok"}).status_code == 200

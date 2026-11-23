@@ -35,23 +35,25 @@ def harvest_plan(crew: int | None = None, live_ripeness: dict | None = None) -> 
             # A live camera grade nudges the block's urgency (demo of data fusion).
             if live_ripeness["label"] in ("ripe", "overripe"):
                 over = min(1.0, over + (0.1 if live_ripeness["label"] == "overripe" else 0.03))
-        need = math.ceil(ripe / cap) if ripe else 0
-        # Urgency: share at risk of over-ripening first (loose fruit, FFA), then volume.
-        blocks.append({**b, "overripe_share": round(over, 2), "harvester_days_needed": need,
-                       "urgency": round(over * 100 + ripe / 100, 1)})
+        bcap = b.get("bunches_per_harvester_day", cap)   # tall old palms are slower to harvest [AHMAD2020]
+        need = math.ceil(ripe / bcap) if ripe else 0
+        # Priority = ripe bunches one harvester can save today, weighted up where fruit is close to
+        # over-ripening (loose fruit, FFA). Tall ageing blocks score low → flags them for replanting (P2).
+        blocks.append({**b, "_cap": bcap, "overripe_share": round(over, 2), "harvester_days_needed": need,
+                       "urgency": round(bcap * (1 + 2 * over), 1)})
     blocks.sort(key=lambda b: b["urgency"], reverse=True)
     left = crew
     for b in blocks:
         give = min(left, b["harvester_days_needed"])
         b["assigned_harvesters"] = give
         b["status"] = "covered" if give >= b["harvester_days_needed"] else ("partial" if give else "deferred")
-        b["bunches_at_risk"] = max(0, b["ripe_bunches_est"] - give * cap)
+        b["bunches_at_risk"] = max(0, b["ripe_bunches_est"] - give * b.pop("_cap"))
         left -= give
     return {
         "available": True, "simulated": True, "crew": crew, "bunches_per_harvester_day": cap,
         "unassigned_harvesters": left, "blocks": blocks,
         "bunches_at_risk_total": sum(b["bunches_at_risk"] for b in blocks),
-        "method": "Greedy allocation by over-ripening risk then ripe volume (SIMULATED estate data)",
+        "method": "Greedy allocation by bunches saved per harvester, weighted by over-ripening risk (SIMULATED estate data)",
         "assumptions": est.get("assumptions", []),
     }
 

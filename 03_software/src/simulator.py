@@ -1,6 +1,6 @@
 """SawitSense soil-node simulator — lets the demo run without hardware.
 
-Emits INTERFACES v0.2.1 payloads with realistic drift and noise. Scenarios:
+Emits INTERFACES v0.2.2 payloads with realistic drift and noise. Scenarios:
   normal | dry | wet | acidic | low_nutrient | over_fertilised | sensor_fault | cycle (walks through all)
 Examples (from 03_software/src):
   python simulator.py --scenario cycle --interval 2
@@ -52,8 +52,8 @@ class Node:
             "soil_ph": None if fault else round(self.ph, 2),       # failed sensor → null (INTERFACES §2)
             "tds_ppm": round(max(0, self.tds)), "ec_us_cm": None,
             "soil_temp_c": round(self.t, 1), "air_temp_c": round(self.t + 2.5 + random.gauss(0, 0.3), 1),
-            "air_rh_pct": round(78 + random.gauss(0, 2), 1), "rssi_dbm": random.randint(-72, -55),
-            "cal_id": datetime.now().strftime("%Y-%m-%d"), "fw_version": "sim-0.2.1",
+            "air_rh_pct": round(78 + random.gauss(0, 2), 1), "rssi_dbm": random.randint(-72, -55), "age_s": 0,
+            "cal_id": datetime.now().strftime("%Y-%m-%d"), "fw_version": "sim-0.2.2",
         }
 
 

@@ -1,35 +1,37 @@
 """M7 — MSPO compliance knowledge base and coverage reasoner (O4, D28).
 
-Maps each kind of evidence record to the MSPO MS 2530:2022 requirements it supports, then checks
-which requirements a block has evidence for in a period. Criterion numbers are placeholders until
-Research wave 2 (request R1b) returns the clause numbers; requirement themes follow [MPOCC-P21]
-and [MSPO-EFI2025].
+Maps each kind of evidence record to the MSPO MS 2530:2022 clauses it supports (clause numbers from
+MPOCC guidance documents [MPOCC-P31] [MPOCC-P21], research file 06 §b), then checks which clauses a
+block has evidence for in a period.
 """
 from __future__ import annotations
 
 # key → (short title, what evidence satisfies it, citation placeholder)
 CRITERIA: dict[str, dict] = {
-    "SOIL_FERTILITY": {"title": "Soil fertility monitoring & records",
+    "SOIL_FERTILITY": {"title": "SOP records: soil-fertility management",
                        "evidence": "Dated soil readings (pH, moisture, nutrient proxy) per block with calibration ID",
-                       "ref": "MS 2530:2022 [criterion TBC — R1b] (MPOCC-P21)"},
-    "FERTILISER_RECORDS": {"title": "Fertiliser application justified & recorded",
+                       "ref": "MS 2530:2022 4.1.3.1 (MPOCC-P31)"},
+    "FERTILISER_RECORDS": {"title": "SOP records: fertilising",
                            "evidence": "Fertilise / skip / lime decisions with the reason, approver and block",
-                           "ref": "MS 2530:2022 [criterion TBC — R1b] (MPOCC-P21)"},
-    "GHG_N2O": {"title": "GHG awareness — N₂O from fertiliser",
+                           "ref": "MS 2530:2022 4.1.3.1 (MPOCC-P31)"},
+    "GHG_N2O": {"title": "GHG emissions — N₂O from fertiliser",
                 "evidence": "Avoided or reduced fertiliser rounds (skip_fertiliser) logged per block",
-                "ref": "MS 2530:2022 [criterion TBC — R1b] (MPOCC-P21)"},
-    "PEST_DISEASE": {"title": "Pest & disease (Ganoderma) monitoring",
+                "ref": "MS 2530:2022 4.5.4 (MPOCC-P31)"},
+    "PEST_DISEASE": {"title": "Integrated Pest Management (Ganoderma)",
                      "evidence": "Screening results (satellite/drone/ground) and follow-up actions",
-                     "ref": "MS 2530:2022 [criterion TBC — R1b] (MPOCC-P21)"},
-    "HARVEST_QUALITY": {"title": "FFB harvesting standards / quality",
+                     "ref": "MS 2530:2022 4.1.3.5 (MPOCC-P31)"},
+    "HARVEST_QUALITY": {"title": "SOP records: FFB harvesting",
                         "evidence": "Ripeness grades at harvest with model version",
-                        "ref": "MS 2530:2022 [criterion TBC — R1b] (MPOCC-P21)"},
-    "TRACEABILITY": {"title": "Traceability & block geolocation",
+                        "ref": "MS 2530:2022 4.1.3.1 (MPOCC-P31)"},
+    "TRACEABILITY": {"title": "Traceability + block reference system",
                      "evidence": "Every record tied to an estate block ID (geolocated) — EUDR-ready",
-                     "ref": "MS 2530:2022 [criterion TBC — R1b] (MSPO-EFI2025)"},
+                     "ref": "MS 2530:2022 4.2.2, 4.1.3.4 (MPOCC-P31)"},
+    "WATER_MGMT": {"title": "Water resources management",
+                   "evidence": "Irrigation / drainage advice logged per block",
+                   "ref": "MS 2530:2022 4.5.5 (MPOCC-P31)"},
     "HUMAN_OVERSIGHT": {"title": "Management review of AI decisions",
                         "evidence": "Human approve/override records on AI recommendations",
-                        "ref": "MS 2530:2022 [criterion TBC — R1b] (MPOCC-P21)"},
+                        "ref": "MS 2530:2022 4.1.3 — records of implementation (MPOCC-P31)"},
 }
 
 
@@ -40,8 +42,10 @@ def criteria_for(kind: str, record: dict) -> list[str]:
         acts = {a["action"] for a in record.get("output", {}).get("actions", [])}
         if acts & {"fertilise", "skip_fertiliser", "lime"}:
             tags.append("FERTILISER_RECORDS")
-        if "skip_fertiliser" in acts:
+        if "skip_fertiliser" in acts or "fertilise" in acts:
             tags.append("GHG_N2O")
+        if acts & {"irrigate", "drain"}:
+            tags.append("WATER_MGMT")
     elif kind == "ripeness":
         tags.append("HARVEST_QUALITY")
     elif kind == "ganoderma_screening":

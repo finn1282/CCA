@@ -1,11 +1,13 @@
 {
  "simulated": true,
  "estate": "SawitSense demo estate (SIMULATED)",
- "crew_size": 12,
- "bunches_per_harvester_day": 90,
+ "crew_size": 30,
+ "bunches_per_harvester_day": 120,
+ "round_days": "10\u201315 (recommended 7\u201313 [AHMAD2020]; optimum 10\u201312, \u226512\u201315 to avoid over-ripening [MPOB-NEWS2020])",
  "assumptions": [
   "Block ripe-bunch estimates are SIMULATED (in production: aggregated M1 grades + M2 schedule).",
-  "Harvester productivity 90 bunches/day and crew of 12 are placeholders pending research R1(e).",
+  "Harvester productivity by palm age from [AHMAD2020] (per-harvester values derived from 2-person team figures; mid-age interpolated).",
+  "Crew of 30 per round is an assumption for the demo estate.",
   "~136 palms/ha planting density is an assumption."
  ],
  "blocks": [
@@ -13,27 +15,30 @@
    "block_id": "DEMO-A1",
    "area_ha": 37.5,
    "palms": 5100,
-   "planted": 2009,
-   "ripe_bunches_est": 758,
+   "planted": 2013,
+   "ripe_bunches_est": 690,
    "overripe_share": 0.07,
+   "bunches_per_harvester_day": 120,
    "ndvi_z": -0.61
   },
   {
    "block_id": "A2",
    "area_ha": 42.5,
    "palms": 5776,
-   "planted": 2013,
+   "planted": 2017,
    "ripe_bunches_est": 292,
    "overripe_share": 0.21,
+   "bunches_per_harvester_day": 250,
    "ndvi_z": -0.64
   },
   {
    "block_id": "A3",
    "area_ha": 34.4,
    "palms": 4672,
-   "planted": 2005,
-   "ripe_bunches_est": 389,
+   "planted": 2017,
+   "ripe_bunches_est": 376,
    "overripe_share": 0.08,
+   "bunches_per_harvester_day": 250,
    "ndvi_z": -1.04
   },
   {
@@ -43,24 +48,27 @@
    "planted": 2005,
    "ripe_bunches_est": 529,
    "overripe_share": 0.25,
+   "bunches_per_harvester_day": 40,
    "ndvi_z": -0.61
   },
   {
    "block_id": "B2",
    "area_ha": 37.4,
    "palms": 5092,
-   "planted": 2009,
-   "ripe_bunches_est": 808,
+   "planted": 2005,
+   "ripe_bunches_est": 375,
    "overripe_share": 0.06,
+   "bunches_per_harvester_day": 40,
    "ndvi_z": -2.1
   },
   {
    "block_id": "B3",
    "area_ha": 37.3,
    "palms": 5066,
-   "planted": 2005,
+   "planted": 2017,
    "ripe_bunches_est": 277,
    "overripe_share": 0.03,
+   "bunches_per_harvester_day": 250,
    "ndvi_z": -0.37
   },
   {
@@ -68,17 +76,19 @@
    "area_ha": 34.3,
    "palms": 4668,
    "planted": 2017,
-   "ripe_bunches_est": 704,
+   "ripe_bunches_est": 556,
    "overripe_share": 0.14,
+   "bunches_per_harvester_day": 250,
    "ndvi_z": -1.58
   },
   {
    "block_id": "C2",
    "area_ha": 30.0,
    "palms": 4073,
-   "planted": 2013,
+   "planted": 2017,
    "ripe_bunches_est": 208,
    "overripe_share": 0.06,
+   "bunches_per_harvester_day": 250,
    "ndvi_z": -0.93
   }
  ]

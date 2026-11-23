@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 import sqlite3
 import threading
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from . import config as C
 
@@ -14,7 +14,7 @@ _conn: sqlite3.Connection | None = None
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS readings (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  device_id TEXT NOT NULL, block_id TEXT, seq INTEGER, ts TEXT, received_at TEXT NOT NULL,
+  device_id TEXT NOT NULL, block_id TEXT, seq INTEGER, ts TEXT, received_at TEXT NOT NULL, captured_at TEXT,
   buffered INTEGER DEFAULT 0, payload TEXT NOT NULL, recommendation TEXT, evidence_id TEXT
 );
 CREATE INDEX IF NOT EXISTS ix_readings_dev ON readings(device_id, id);
@@ -47,7 +47,15 @@ def conn() -> sqlite3.Connection:
             _conn.row_factory = sqlite3.Row
             _conn.execute("PRAGMA journal_mode=WAL")
             _conn.executescript(SCHEMA)
+            cols = {r[1] for r in _conn.execute("PRAGMA table_info(readings)")}
+            if "captured_at" not in cols:   # migrate DBs created before v0.2.2
+                _conn.execute("ALTER TABLE readings ADD COLUMN captured_at TEXT")
         return _conn
+
+
+def shift(iso: str, seconds: int) -> str:
+    t = datetime.fromisoformat(iso.replace("Z", "+00:00")) + timedelta(seconds=seconds)
+    return t.isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
 def reset_for_tests(path) -> None:
