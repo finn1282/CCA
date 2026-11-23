@@ -17,6 +17,7 @@ Deliverables: Markdown report (Parts 1–3 + progress report), interactive prese
 | `00_lead/INTERFACES.md` | HW↔SW data contract |
 | `00_lead/PROJECT_PLAN.md` | Team, phases, gates, working rules |
 | `00_lead/PROJECT_OVERVIEW.md` | Live status + rubric tracker + risks |
+| `00_lead/briefs/` | Exact prompts for each team member (to relaunch subagents in a new session) |
 | `0X_<team>/README.md` | Each team's status, inputs, outputs, open issues |
 
 ## 3. How to continue
@@ -26,6 +27,8 @@ Deliverables: Markdown report (Parts 1–3 + progress report), interactive prese
 4. Continue that phase following `PROJECT_PLAN.md` working rules (commit + push after every step).
 4a. Check each team's `PLAN.md` Proposals table for rows with no Lead ruling — rule on them first (see PROJECT_PLAN.md "Team plans & change proposals").
 5. When a phase finishes, run the Lead checklist in `PROJECT_PLAN.md`, update OVERVIEW, SPEC §8 and this file.
+
+**Subagents do not survive the session that launched them.** A new session must relaunch members using the saved prompts in `00_lead/briefs/` (see `briefs/README.md`); each member resumes from its folder's README/PLAN. Any member that was mid-task when the old session ended has at most one unpushed file lost.
 
 If using Claude Code: start a session in this repo and say *"You are the project lead. Read 00_lead/HANDOFF.md and continue from the current phase."*
 
@@ -38,6 +41,7 @@ If using Claude Code: start a session in this repo and say *"You are the project
 ## 5. Phase log
 | Date | Event |
 |---|---|
+| 2026-11-23 | Member briefs saved to `00_lead/briefs/` for cross-session relaunch |
 | 2026-11-23 | Team PLAN.md + proposal/ruling process added (D13) |
 | 2026-11-23 | Baseline research must finish before other teams start (D12) |
 | 2026-11-23 | Switched to parallel pipeline + on-demand research + citations in every section (D10, D11) |
