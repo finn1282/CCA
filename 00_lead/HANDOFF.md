@@ -32,8 +32,8 @@ Deliverables: Markdown report (Parts 1–3 + progress report), interactive prese
 
 If using Claude Code: start a session in this repo and say *"You are the project lead. Read 00_lead/HANDOFF.md and continue from the current phase."*
 
-## 4. Current state (paused 2026-11-23 — usage limit)
-All members were **stopped mid-task** to pause cleanly. Each pushes per file, so resume from its folder README/PLAN + `git log -- <folder>`. Uncommitted leftovers (if any) are listed by `git status`; review before committing.
+## 4. Current state (resumed 2026-11-23 after pause)
+All members below were resumed from their stop points (table = where each stopped). If the session ends again, use this table. Each pushes per file, so resume from its folder README/PLAN + `git log -- <folder>`. Uncommitted leftovers (if any) are listed by `git status`; review before committing.
 | Member | Where it stopped | Resume with |
 |---|---|---|
 | Hardware (Step 2) | Firmware + docs 01–04 pushed; was writing `06_assembly_guide_beginner.md` (05_demo_plan status: check folder); compile with arduino-cli in progress | `briefs/hardware.md` + resume preamble; Step 1 done & ruled |
