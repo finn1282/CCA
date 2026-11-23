@@ -125,7 +125,15 @@ def main() -> int:
 
     # evaluation, two preprocessing paths
     exif_rot = 0
-    for name, use_exif in (("A_serving_no_exif", False), ("B_training_exif", True)):
+    sys.path.insert(0, str(SW / "src" / "app"))
+    try:
+        import preprocess as PP  # the API's shared preprocessing (S-16 fix, Pass 3)
+    except ImportError:
+        PP = None
+    paths = [("A_legacy_serving_no_exif", "legacy", False), ("B_legacy_exif", "legacy", True)]
+    if PP:
+        paths.append(("C_shared_serving_path", "shared", False))
+    for name, mode, use_exif in paths:
         y, p, lat, cam_centre, names = [], [], [], [], []
         for f, c in test:
             im = Image.open(f)
@@ -133,7 +141,10 @@ def main() -> int:
                 o = im.getexif().get(0x0112, 1)
                 exif_rot += int(o not in (1, None))
                 im = exif_t(im)
-            x = preprocess(im.convert("RGB"), meta)
+            if mode == "shared":
+                x = PP.eval_array(im)[0][None]
+            else:
+                x = preprocess(im.convert("RGB"), meta)
             t0 = time.perf_counter()
             logits, feats = sess.run(["logits", "features"], {"input": x})
             lat.append(time.perf_counter() - t0)
@@ -150,7 +161,11 @@ def main() -> int:
         rep[name] = m
     rep["exif_rotated_test_images"] = exif_rot
 
-    rep["reported"] = json.loads(METRICS.read_text()).get("d2_malaysia_test") if METRICS.exists() else None
+    mj = json.loads(METRICS.read_text()) if METRICS.exists() else {}
+    rep["reported"] = mj.get("d2_malaysia_test")
+    rep["reported_serving_path"] = (mj.get("serving_path") or {}).get("d2_malaysia_test")
+    if rep["reported"] is not None:
+        rep["reported"]["_dropped"] = mj.get("d2_test_duplicates_removed", [])
 
     # leakage across the provided split
     md5 = lambda f: hashlib.md5(f.read_bytes()).hexdigest()  # noqa: E731
@@ -163,11 +178,20 @@ def main() -> int:
         best = min(((bin(h ^ g).count("1"), t) for g, t in tr_h), key=lambda z: z[0])
         if best[0] <= 6:
             near.append((str(f.relative_to(D2)), str(best[1].relative_to(D2)), best[0]))
+    od = {"FFBtest/" + d["test"] for d in (rep["reported"] or {}).get("_dropped", [])}
+    mine = {a for a, *_ in near} | {a for a, _ in exact}
+    rep["owner_dedupe_covers_mine"] = {"covered": sorted(mine & od), "missing": sorted(mine - od), "owner_extra": sorted(od - mine)}
     rep["leakage"] = {"exact_md5_pairs": exact, "near_dup_pairs_hamming_le6": near,
                       "n_exact": len(exact), "n_near": len(near)}
 
     leaked = {a for a, *_ in near} | {a for a, _ in exact}
-    for name in ("A_serving_no_exif", "B_training_exif"):
+    owner = {"FFBtest/" + d["test"] for d in (rep["reported"] or {}).get("_dropped", [])}
+    for name, *_ in paths:
+        pr = rep[name]["_pred"]
+        if owner:
+            keep = [(y, p) for n, y, p in pr if n not in owner]
+            rep[name]["owner_dedup_test"] = {k: v for k, v in metrics([y for y, _ in keep], [p for _, p in keep], classes).items()
+                                             if k != "per_class"}
         pr = rep[name].pop("_pred")
         keep = [(y, p) for n, y, p in pr if n not in leaked]
         rep[name]["dedup_test"] = {k: v for k, v in metrics([y for y, _ in keep], [p for _, p in keep], classes).items() if k != "per_class"}
