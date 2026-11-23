@@ -36,7 +36,7 @@ If using Claude Code: start a session in this repo and say *"You are the project
 | Member | Status | Next action on resume |
 |---|---|---|
 | Research | Waves 1–3 done (101 sources). Idle | Only on new `01_research/REQUESTS.md` rows |
-| Hardware | Docs 01–06 + firmware pushed; stopped (D43) before compile. Pass-1 fixes + v0.2.3/v0.2.4 changes: check `git log -- 02_hardware` and README for which landed | Resume `briefs/hardware.md`: confirm D-01/D-02/D-03 + v0.2.3 (NO DATA, rounding, shared keys) are in the code/docs; **no compile here** — compile happens on stakeholder's machine (assembly guide step 1) |
+| Hardware | ✅ Docs 01–06 + firmware with all pass-1 fixes (54eea6c) and v0.2.3 changes (873a615). Only the compile was skipped (D43) | Resume `briefs/hardware.md`: confirm D-01/D-02/D-03 + v0.2.3 (NO DATA, rounding, shared keys) are in the code/docs; **no compile here** — compile happens on stakeholder's machine (assembly guide step 1) |
 | Software | ✅ Step 2 complete (D42): docs 01–05, 32/32 tests, provisional M1 (not reportable), run guides `training/RUN_ON_KAGGLE.md`, `deploy/DEPLOY_AZURE.md`, `deploy/ALTERNATIVES.md`, `gee/RUN_EARTH_ENGINE.md`, `06_implementation_guide_beginner.md`, `07_actual_build_vs_target.md` | Only if stretch drone YOLO wanted, or fixes from SW verif pass 2 |
 | HW Verification | Pass 1 ✅ (2 major/10 minor) | Pass 2 (deferred): static re-check of fixes vs v0.2.4; compile is a stakeholder build step (D43) |
 | SW Verification | Pass 1 ✅ (132/154; 2 major/13 minor — all fixed by SW in 9bd2e04) | **Pass 2 (deferred):** re-test fixes, provisional M1 endpoint + heatmap, docs 01–05 vs D20/D23/D32, run guides for beginner correctness |
