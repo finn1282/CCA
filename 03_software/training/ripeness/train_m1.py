@@ -18,6 +18,7 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import random
 import re
@@ -95,7 +96,7 @@ class ImgDS(Dataset):
     def _open(self, p: Path) -> Image.Image:
         # Cache a 288-px copy: D2 originals are up to 5 MB, decoding them every epoch is slow on CPU.
         if self.cache:
-            cp = self.cache / (str(abs(hash(str(p)))) + ".jpg")
+            cp = self.cache / (hashlib.md5(str(p).encode()).hexdigest() + ".jpg")
             if cp.exists():
                 return Image.open(cp).convert("RGB")
         img = ImageOps.exif_transpose(Image.open(p)).convert("RGB")

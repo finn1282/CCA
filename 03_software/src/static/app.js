@@ -6,7 +6,7 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 
 async function get(path) {
-  const r = await fetch(API + path, { cache: "no-store" });
+  const r = await fetch(API + path, { cache: "no-store", headers: TOKEN ? { "X-Admin-Token": TOKEN } : {} });
   if (!r.ok) throw new Error(`${r.status} ${path}`);
   return r.json();
 }
@@ -26,7 +26,7 @@ let soilDevice = null, currentEv = null, lastRipenessEv = null, chart = null, nd
 // ---------- live soil + recommendation
 const TILES = [
   ["soil_moisture_pct", "Soil moisture", "%"], ["soil_ph", "Soil pH", ""], ["tds_ppm", "TDS", " ppm"],
-  ["ec_us_cm", "EC (≈TDS/0.5)", " µS/cm"], ["soil_temp_c", "Soil temp", " °C"], ["air_temp_c", "Air temp", " °C"],
+  ["ec_us_cm", "EC", " µS/cm"], ["soil_temp_c", "Soil temp", " °C"], ["air_temp_c", "Air temp", " °C"],
   ["air_rh_pct", "Air RH", " %"],
 ];
 
@@ -34,7 +34,8 @@ function renderSoil(s) {
   $("soil-dev").textContent = `${s.device_id} · block ${s.block_id} · seq ${s.seq ?? "—"} · ${s.received_at}`;
   $("tiles").innerHTML = TILES.map(([k, l, u]) => {
     const v = s.reading[k];
-    return `<div class="tile ${v == null ? "null" : ""}"><div class="v">${v == null ? "sensor offline" : esc(v) + u}</div><div class="l">${l}</div></div>`;
+    const lab = k === "ec_us_cm" && s.reading.ec_derived ? "EC (≈TDS/0.5)" : l;
+    return `<div class="tile ${v == null ? "null" : ""}"><div class="v">${v == null ? "sensor offline" : esc(v) + u}</div><div class="l">${lab}</div></div>`;
   }).join("");
   const r = s.recommendation;
   currentEv = s.evidence_id;
@@ -139,7 +140,7 @@ async function renderEvidence() {
     const o = e.record.output || {};
     const d = o.action || o.label || e.record.decision || "";
     const why = o.reason || o.explanation || "";
-    return `<tr><td class="mono"><a href="${API}/evidence/${e.evidence_id}" target="_blank">${e.evidence_id}</a></td><td>${e.created_at.slice(5, 19).replace("T", " ")}</td>
+    return `<tr><td class="mono"><a href="${API}/evidence/${e.evidence_id}${TOKEN ? "?token=" + encodeURIComponent(TOKEN) : ""}" target="_blank">${e.evidence_id}</a></td><td>${e.created_at.slice(5, 19).replace("T", " ")}</td>
       <td>${esc(e.kind)}</td><td>${esc(e.block_id ?? "—")}</td><td class="wrap"><b>${esc(d)}</b> ${o.simulated ? '<span class="badge sim">SIM</span>' : ""} <span class="muted">${esc(why)}</span></td>
       <td class="small">${e.mspo.join(", ")}</td><td class="mono">${e.hash.slice(0, 10)}</td></tr>`;
   }).join("");
@@ -167,9 +168,11 @@ async function renderHarvest() {
 $("crew").onchange = renderHarvest;
 
 // ---------- cascade
+let cascadeLoaded = false;
 async function renderCascade() {
   const c = await get("/screening");
   if (!c.available) return;
+  cascadeLoaded = true;
   const s1 = c.stage1_satellite, s2 = c.stage2_drone, s3 = c.stage3_ground;
   $("sat-src").textContent = `${s1.source} · ${s1.flagged.length}/${s1.blocks_total} blocks below z ${s1.threshold_z}`;
   $("sat-flag").innerHTML = s1.flagged.map((b) => `<li>Block ${esc(b.block_id)}: NDVI z = ${b.ndvi_z}${b.ndvi != null ? ` (NDVI ${b.ndvi})` : ""} → drone survey</li>`).join("") || "<li>No anomalous blocks</li>";
@@ -211,11 +214,15 @@ async function tick() {
   }
 }
 let n = 0;
+if (TOKEN) {  // carry the token on links opened in new tabs (cloud mode protects reads)
+  $("export").href += "?token=" + encodeURIComponent(TOKEN);
+  document.querySelector('a[href="/harvester"]').href += "?token=" + encodeURIComponent(TOKEN);
+}
 async function loop() {
   await tick();
   if (n % 2 === 0) renderEvidence().catch(() => {});
   if (n % 8 === 0) { renderMspo().catch(() => {}); renderHarvest().catch(() => {}); }
-  if (n === 0) renderCascade().catch(() => {});
+  if (!cascadeLoaded && n % 5 === 0) renderCascade().catch(() => {});   // retry until the backend answers
   n++;
   setTimeout(loop, 2000);
 }

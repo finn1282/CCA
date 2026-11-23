@@ -1,28 +1,33 @@
 """SawitSense backend (FastAPI) — actual build of the ingestion, cognitive and application layers.
 
 Run locally:  uvicorn app.main:app --host 0.0.0.0 --port 8000   (from 03_software/src)
-Contract:     00_lead/INTERFACES.md v0.2.2, full spec in 03_software/05_api_spec.md
+Contract:     00_lead/INTERFACES.md v0.2.3, full spec in 03_software/05_api_spec.md
 """
 from __future__ import annotations
 
 import json
+import logging
+from datetime import datetime, timedelta, timezone
 from typing import Literal
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from . import analytics, config as C, db, evidence, inference, recommender
 
-APP_VERSION = "0.2.2"
+APP_VERSION = "0.2.3"
+log = logging.getLogger("sawitsense")
 app = FastAPI(title="SawitSense API", version=APP_VERSION,
               description="Smart palm oil plantation decision support — explain-to-audit build")
 # The presentation embeds the dashboard/API from another origin (06_presentation).
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 C.ensure_dirs()
 
+
+COMMAND_TTL_S = 60
 
 # ---------------------------------------------------------------- auth
 def device_auth(x_device_id: str | None = Header(None), x_device_key: str | None = Header(None)) -> str:
@@ -39,6 +44,12 @@ def admin_auth(request: Request, x_admin_token: str | None = Header(None)) -> No
         raise HTTPException(403, "Server misconfigured: SAWIT_ADMIN_TOKEN must be set in cloud mode")
     if C.ADMIN_TOKEN and (x_admin_token or request.query_params.get("token")) != C.ADMIN_TOKEN:
         raise HTTPException(403, "Admin token required")
+
+
+def read_auth(request: Request, x_admin_token: str | None = Header(None)) -> None:
+    """Dashboard reads: open locally; in cloud mode they need the admin token too (S-08)."""
+    if C.CLOUD:
+        admin_auth(request, x_admin_token)
 
 
 def device_or_admin(request: Request, device_id: str, x_device_id: str | None = Header(None),
@@ -69,6 +80,24 @@ class SoilReading(BaseModel):
     cal_id: str | None = None
     fw_version: str | None = None
 
+    @field_validator("ts", mode="before")
+    @classmethod
+    def _iso_utc(cls, v):
+        """v0.2.3: ts must be ISO-8601 UTC; anything unparseable (or >24 h in the future) becomes null."""
+        if v in (None, ""):
+            return None
+        try:
+            t = datetime.fromisoformat(str(v).replace("Z", "+00:00"))
+            if t.tzinfo is None:
+                raise ValueError("no timezone")
+            t = t.astimezone(timezone.utc)
+            if t > datetime.now(timezone.utc) + timedelta(hours=24):
+                raise ValueError("in the future")
+            return t.isoformat(timespec="seconds").replace("+00:00", "Z")
+        except (ValueError, TypeError) as e:
+            log.warning("ignoring invalid ts %r: %s", v, e)
+            return None
+
 
 class Calibration(BaseModel):
     tds_baseline_ppm: float | None = Field(None, gt=0)
@@ -81,10 +110,14 @@ class Command(BaseModel):
     cmd: Literal["capture"] = "capture"
 
 
+SOIL_ACTIONS = ("ok", "irrigate", "drain", "lime", "fertilise", "skip_fertiliser", "watch")
+RIPENESS_CLASSES = ("unripe", "underripe", "ripe", "overripe")
+
+
 class Review(BaseModel):
     decision: Literal["approve", "override"]
-    by: str = "agronomist"
-    note: str = ""
+    by: str = Field("agronomist", max_length=64)
+    note: str = Field("", max_length=500)
     override_action: str | None = None
 
 
@@ -93,7 +126,23 @@ class Review(BaseModel):
 def post_reading(r: SoilReading, device: str = Depends(device_auth)) -> dict:
     if r.device_id != device:
         raise HTTPException(400, "device_id in body does not match X-Device-Id")
+    with db._lock:   # serialise so a retry racing the original cannot double-insert
+        return _ingest(r, device)
+
+
+def _ingest(r: SoilReading, device: str) -> dict:
     payload = r.model_dump()
+    # v0.2.3 / S-06: a repeat POST of the same (device_id, seq) returns the original response, no new evidence.
+    # The sensor values must match too, so a device whose seq restarted after a reboot is not silenced.
+    if r.seq is not None:
+        dup = db.q("SELECT payload, response FROM readings WHERE device_id=? AND seq=? ORDER BY id DESC LIMIT 1",
+                   (device, r.seq))
+        if dup and dup[0]["response"]:
+            old = json.loads(dup[0]["payload"])
+            keys = ("soil_moisture_pct", "soil_ph", "tds_ppm", "soil_temp_c")
+            if all(old.get(k) == payload.get(k) for k in keys):
+                return {**json.loads(dup[0]["response"]), "duplicate": True}
+            log.warning("seq %s reused by %s with different values (device restart?) — stored as new", r.seq, device)
     ec_derived = payload["ec_us_cm"] is None and payload["tds_ppm"] is not None
     if ec_derived:
         payload["ec_us_cm"] = round(payload["tds_ppm"] / 0.5, 1)   # approximation (DFR-SEN0244)
@@ -108,20 +157,21 @@ def post_reading(r: SoilReading, device: str = Depends(device_auth)) -> dict:
         "input": payload, "received_at": received, "captured_at": captured,
         "calibration": {"device_cal_id": r.cal_id, "tds_baseline_ppm": dev.get("tds_baseline"),
                         "tds_margin": dev.get("tds_margin"), "tds_cal_id": dev.get("cal_id")},
-        "output": rec, "rules_version": "INTERFACES-v0.2.2",
+        "output": rec, "rules_version": "INTERFACES-v0.2.3",
     }
     ev = evidence.append("soil_recommendation", record, device, r.block_id)
-    db.x("INSERT INTO readings(device_id, block_id, seq, ts, received_at, captured_at, buffered, payload, recommendation,"
-         " evidence_id) VALUES(?,?,?,?,?,?,?,?,?,?)",
-         (device, r.block_id, r.seq, r.ts, received, captured, int(r.buffered), db.dumps(payload), db.dumps(rec), ev))
-    db.touch_device(device, r.rssi_dbm, r.fw_version)
     out = {k: rec[k] for k in ("action", "reason", "confidence", "actions", "counterfactual", "simulated")}
     out.update(evidence_id=ev, oled=rec["oled"], led=rec["led"], received_at=received, captured_at=captured)
+    db.x("INSERT INTO readings(device_id, block_id, seq, ts, received_at, captured_at, buffered, payload, recommendation,"
+         " evidence_id, response) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+         (device, r.block_id, r.seq, r.ts, received, captured, int(r.buffered), db.dumps(payload), db.dumps(rec), ev,
+          db.dumps(out)))
+    db.touch_device(device, r.rssi_dbm, r.fw_version)
     return out
 
 
 @app.get("/api/v1/readings")
-def list_readings(device_id: str | None = None, limit: int = Query(120, le=2000)) -> list[dict]:
+def list_readings(device_id: str | None = None, limit: int = Query(120, le=2000), _=Depends(read_auth)) -> list[dict]:
     sql, args = "SELECT * FROM readings", []
     if device_id:
         sql += " WHERE device_id=?"; args.append(device_id)
@@ -169,6 +219,10 @@ def set_calibration(device_id: str, c: Calibration, _=Depends(admin_auth)) -> di
 
 @app.post("/api/v1/devices/{device_id}/commands")
 def queue_command(device_id: str, c: Command, _=Depends(admin_auth)) -> dict:
+    pending = db.q("SELECT id FROM commands WHERE device_id=? AND cmd=? AND consumed_at IS NULL AND created_at>=?",
+                   (device_id, c.cmd, db.shift(db.now(), -COMMAND_TTL_S)))
+    if pending:   # S-07: coalesce repeated clicks into the one pending command
+        return {"queued": True, "id": pending[0]["id"], "cmd": c.cmd, "coalesced": True}
     cid = db.x("INSERT INTO commands(device_id, cmd, created_at) VALUES(?,?,?)", (device_id, c.cmd, db.now()))
     return {"queued": True, "id": cid, "cmd": c.cmd}
 
@@ -179,6 +233,9 @@ def poll_command(device_id: str, device: str = Depends(device_auth)) -> dict:
         raise HTTPException(403, "Device may only poll its own commands")
     db.touch_device(device_id)
     with db._lock:
+        # S-07: commands older than COMMAND_TTL_S expire (a stale capture must not fire minutes later)
+        db.x("UPDATE commands SET consumed_at='expired' WHERE device_id=? AND consumed_at IS NULL AND created_at<?",
+             (device_id, db.shift(db.now(), -COMMAND_TTL_S)))
         rows = db.q("SELECT id, cmd FROM commands WHERE device_id=? AND consumed_at IS NULL ORDER BY id LIMIT 1", (device_id,))
         if not rows:
             return {"cmd": "none"}
@@ -224,7 +281,7 @@ def _latest_ripeness() -> dict | None:
 
 
 @app.get("/api/v1/latest")
-def latest() -> dict:
+def latest(_=Depends(read_auth)) -> dict:
     # D-04 / v0.2.2: "latest" = the NON-buffered reading with the highest seq per device, so a
     # buffered replay arriving after a fresh reading never replaces it. Devices that have sent only
     # buffered rows fall back to their newest row.
@@ -249,22 +306,22 @@ def latest() -> dict:
 
 @app.get("/api/v1/evidence")
 def evidence_list(limit: int = Query(50, le=1000), block_id: str | None = None, kind: str | None = None,
-                  non_ok: bool = False) -> list[dict]:
+                  non_ok: bool = False, _=Depends(read_auth)) -> list[dict]:
     return evidence.listing(limit, block_id, kind, non_ok)
 
 
 @app.get("/api/v1/evidence/verify")
-def evidence_verify() -> dict:
+def evidence_verify(_=Depends(read_auth)) -> dict:
     return evidence.verify()
 
 
 @app.get("/api/v1/evidence/export", response_class=PlainTextResponse)
-def evidence_export(block_id: str | None = None, since: str | None = None) -> str:
+def evidence_export(block_id: str | None = None, since: str | None = None, _=Depends(read_auth)) -> str:
     return evidence.audit_pack(block_id, since)
 
 
 @app.get("/api/v1/evidence/{evidence_id}")
-def evidence_get(evidence_id: str) -> dict:
+def evidence_get(evidence_id: str, _=Depends(read_auth)) -> dict:
     e = evidence.get(evidence_id)
     if not e:
         raise HTTPException(404, "No such evidence record")
@@ -279,6 +336,9 @@ def evidence_review(evidence_id: str, rv: Review, _=Depends(admin_auth)) -> dict
         raise HTTPException(404, "No such evidence record")
     if rv.decision == "override" and not rv.override_action:
         raise HTTPException(422, "override_action required when overriding")
+    allowed = RIPENESS_CLASSES if target["kind"] == "ripeness" else SOIL_ACTIONS
+    if rv.override_action is not None and rv.override_action not in allowed:
+        raise HTTPException(422, f"override_action must be one of {list(allowed)} for a {target['kind']} record")
     orig = target["record"].get("output", {})
     rec = {"target": evidence_id, "decision": rv.decision, "by": rv.by, "note": rv.note,
            "original": orig.get("action") or orig.get("label"), "override_action": rv.override_action,
@@ -291,7 +351,7 @@ def evidence_review(evidence_id: str, rv: Review, _=Depends(admin_auth)) -> dict
 
 
 @app.get("/api/v1/compliance/coverage")
-def compliance_coverage(block_id: str | None = None) -> dict:
+def compliance_coverage(block_id: str | None = None, _=Depends(read_auth)) -> dict:
     from . import compliance
     rows = list(reversed(evidence.listing(limit=100000, block_id=block_id)))
     return {"block_id": block_id, "records": len(rows), "criteria": compliance.coverage(rows),
@@ -299,22 +359,22 @@ def compliance_coverage(block_id: str | None = None) -> dict:
 
 
 @app.get("/api/v1/harvest/plan")
-def harvest_plan(crew: int | None = Query(None, ge=1, le=500)) -> dict:
+def harvest_plan(crew: int | None = Query(None, ge=1, le=500), _=Depends(read_auth)) -> dict:
     return analytics.harvest_plan(crew, _latest_ripeness())
 
 
 @app.get("/api/v1/screening")
-def screening(z: float = -1.5, p: float = 0.3) -> dict:
+def screening(z: float = -1.5, p: float = 0.3, _=Depends(read_auth)) -> dict:
     return analytics.cascade(z, p)
 
 
 @app.get("/api/v1/satellite")
-def satellite() -> dict:
+def satellite(_=Depends(read_auth)) -> dict:
     return analytics.satellite()
 
 
 @app.get("/api/v1/meta")
-def meta() -> dict:
+def meta(_=Depends(read_auth)) -> dict:
     return {"app": "SawitSense", "version": APP_VERSION, "mode": C.DEPLOYMENT_MODE,
             "thresholds": {"moisture_low": C.MOISTURE_LOW, "moisture_high": C.MOISTURE_HIGH, "ph_lime": C.PH_LIME,
                            "ph_watch_top": C.PH_WATCH_TOP, "ph_high": C.PH_HIGH, "tds_default_margin": C.TDS_DEFAULT_MARGIN},

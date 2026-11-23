@@ -104,7 +104,7 @@ flowchart LR
 | | Short-term: pilot | Medium-term: scale & integrate | Long-term: optimise & extend |
 |---|---|---|---|
 | **Scope** | One estate (e.g. Johor), 2–3 blocks incl. one with known BSR history | All estates in one region; drone programme quarterly | Whole group; smallholder cooperatives (MSPO Part 2) |
-| **Data** | Install soil nodes; monthly Sentinel-2 pipeline; one drone survey; collect graded bunch images | LoRaWAN + IoT Operations edge per estate; weather and mill feeds; labelled estate data replaces simulated M6 labels | Multispectral drone data; leaf-nutrient lab results; yield history → **yield forecasting model** |
+| **Data** | Install soil nodes; monthly Sentinel-2 pipeline; one drone survey; collect graded bunch images | LoRaWAN + IoT Operations edge per estate; weather and mill feeds; M6 rule-based baseline replaced by estate-trained data | Multispectral drone data; leaf-nutrient lab results; yield history → **yield forecasting model** |
 | **Models** | M1, M5, M6 (rules + tree), M7; M3 as screening trial | Retrain M1/M3 on estate data (AutoML benchmark); M2 learns time-to-ripe from logged grades; drift monitoring live | Satellite nutrient mapping (KOK2021); multispectral BSR detection; LLM audit narrative in 4 languages |
 | **Integration** | Read-only ERP block master; evidence pack exported manually | **SAP work orders** from approved actions; Power BI; Teams alerts; confidential-ledger anchoring | MSPO GHG Calculator export; EUDR geolocation package; partner APIs for cooperatives |
 | **People** | Train 1 manager, 2 mandores, 1 agronomist; human approval required for every action | Review queue only for low confidence or disagreement; champions per estate | Extension officers; multilingual harvester app |

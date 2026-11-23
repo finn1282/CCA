@@ -89,6 +89,8 @@ def audit_pack(block_id: str | None = None, since: str | None = None) -> str:
     cov = compliance.coverage(rows)
     lines = [f"# SawitSense — MSPO evidence pack{' — block ' + block_id if block_id else ''}",
              "", f"Generated {db.now()} · records: {len(rows)} · chain: {'VERIFIED' if v['ok'] else 'BROKEN'} — {v['message']}",
+             "", f"Chain head (quote this as the external anchor; production anchors it in Azure confidential ledger): "
+                 f"`{v.get('head', 'n/a')}`",
              "", "## MSPO criterion coverage", "", "| Criterion | Requirement | Records | Last | Status | Reference |",
              "|---|---|---|---|---|---|"]
     for c in cov:

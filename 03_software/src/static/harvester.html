@@ -20,8 +20,17 @@
 </main>
 <script>
 (async () => {
-  const h = await (await fetch("/api/v1/harvest/plan")).json();
-  const l = await (await fetch("/api/v1/latest")).json();
+  const TOKEN = new URLSearchParams(location.search).get("token") || "";
+  const opt = { headers: TOKEN ? { "X-Admin-Token": TOKEN } : {} };
+  let h, l;
+  try {
+    h = await (await fetch("/api/v1/harvest/plan", opt)).json();
+    l = await (await fetch("/api/v1/latest", opt)).json();
+    if (!h.blocks) throw new Error(h.detail || "no plan");
+  } catch (e) {
+    document.getElementById("ripe").textContent = "Offline — cannot reach SawitSense (" + e.message + "). Pull to refresh.";
+    return;
+  }
   if (l.ripeness) document.getElementById("ripe").innerHTML =
     `Latest bunch check (${l.ripeness.block_id}): <b>${l.ripeness.label}</b> — ${l.ripeness.harvest_advice}`;
   else document.getElementById("ripe").textContent = "No bunch photo graded yet today.";

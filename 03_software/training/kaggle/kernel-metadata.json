@@ -1,0 +1,15 @@
+{
+  "id": "YOUR_KAGGLE_USERNAME/sawitsense-m1-ripeness",
+  "title": "SawitSense M1 ripeness",
+  "code_file": "sawitsense_m1.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "dataset_sources": [],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

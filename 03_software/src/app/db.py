@@ -15,7 +15,7 @@ SCHEMA = """
 CREATE TABLE IF NOT EXISTS readings (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   device_id TEXT NOT NULL, block_id TEXT, seq INTEGER, ts TEXT, received_at TEXT NOT NULL, captured_at TEXT,
-  buffered INTEGER DEFAULT 0, payload TEXT NOT NULL, recommendation TEXT, evidence_id TEXT
+  buffered INTEGER DEFAULT 0, payload TEXT NOT NULL, recommendation TEXT, evidence_id TEXT, response TEXT
 );
 CREATE INDEX IF NOT EXISTS ix_readings_dev ON readings(device_id, id);
 CREATE TABLE IF NOT EXISTS devices (
@@ -50,6 +50,9 @@ def conn() -> sqlite3.Connection:
             cols = {r[1] for r in _conn.execute("PRAGMA table_info(readings)")}
             if "captured_at" not in cols:   # migrate DBs created before v0.2.2
                 _conn.execute("ALTER TABLE readings ADD COLUMN captured_at TEXT")
+            if "response" not in cols:      # v0.2.3 idempotency
+                _conn.execute("ALTER TABLE readings ADD COLUMN response TEXT")
+            _conn.execute("CREATE INDEX IF NOT EXISTS ix_readings_seq ON readings(device_id, seq)")
         return _conn
 
 

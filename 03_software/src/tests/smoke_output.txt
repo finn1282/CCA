@@ -1,82 +1,29 @@
-== health
-{"status":"ok","version":"0.2.2","mode":"local","time":"2026-11-23T06:13:54Z","ripeness_model":null,"fertiliser_model":true}
-== simulator (warm-up, normal)
-[normal         ] seq=   1 m= 54.8 pH=5.0 tds= 584 -> ok              green conf=0.92 ev_000001 | OK / all in range
-[normal         ] seq=   2 m= 55.4 pH=5.06 tds= 594 -> ok              green conf=0.92 ev_000002 | OK / all in range
-[normal         ] seq=   3 m= 53.8 pH=5.02 tds= 603 -> ok              green conf=0.92 ev_000003 | OK / all in range
-== calibrate TDS baseline from current reading
-{"tds_baseline_ppm":603.0,"tds_margin":0.3,"updated_at":"2026-11-23T06:13:55Z","cal_id":"2026-11-23"}
-== simulator (cycle through all scenarios)
-[normal         ] seq=   1 m= 56.5 pH=5.02 tds= 594 -> ok              green conf=0.92 ev_000005 | OK / all in range
-[normal         ] seq=   2 m= 55.4 pH=5.03 tds= 589 -> ok              green conf=0.92 ev_000006 | OK / all in range
-[normal         ] seq=   3 m= 55.1 pH=4.99 tds= 596 -> ok              green conf=0.92 ev_000007 | OK / all in range
-[normal         ] seq=   4 m= 55.6 pH=5.03 tds= 580 -> ok              green conf=0.92 ev_000008 | OK / all in range
-[normal         ] seq=   5 m= 53.6 pH=5.06 tds= 582 -> ok              green conf=0.92 ev_000009 | OK / all in range
-[dry            ] seq=   6 m= 41.5 pH=5.01 tds= 604 -> ok              green conf=0.92 ev_000010 | OK / all in range
-[dry            ] seq=   7 m= 33.8 pH=5.0 tds= 605 -> ok              green conf=0.92 ev_000011 | OK / all in range
-[dry            ] seq=   8 m= 31.5 pH=5.0 tds= 608 -> ok              green conf=0.92 ev_000012 | OK / all in range
-[dry            ] seq=   9 m= 26.9 pH=5.02 tds= 605 -> irrigate        red   conf=0.81 ev_000013 | IRRIGATE / moist 27%<30%
-[dry            ] seq=  10 m= 25.0 pH=5.06 tds= 599 -> irrigate        red   conf=0.84 ev_000014 | IRRIGATE / moist 25%<30%
-[normal         ] seq=  11 m= 36.9 pH=5.0 tds= 603 -> ok              green conf=0.92 ev_000015 | OK / all in range
-[normal         ] seq=  12 m= 42.1 pH=4.99 tds= 591 -> ok              green conf=0.92 ev_000016 | OK / all in range
-[normal         ] seq=  13 m= 46.5 pH=5.03 tds= 593 -> ok              green conf=0.92 ev_000017 | OK / all in range
-[normal         ] seq=  14 m= 49.6 pH=5.02 tds= 611 -> ok              green conf=0.92 ev_000018 | OK / all in range
-[normal         ] seq=  15 m= 51.4 pH=5.02 tds= 615 -> ok              green conf=0.92 ev_000019 | OK / all in range
-[acidic         ] seq=  16 m= 51.8 pH=4.57 tds= 609 -> ok              green conf=0.92 ev_000020 | OK / all in range
-[acidic         ] seq=  17 m= 51.1 pH=4.17 tds= 605 -> watch           amber conf=0.56 ev_000021 | WATCH / pH 4.17 watch
-[acidic         ] seq=  18 m= 50.7 pH=3.99 tds= 618 -> lime            red   conf=0.58 ev_000022 | LIME / pH 3.99<4.0
-[acidic         ] seq=  19 m= 50.8 pH=3.88 tds= 610 -> lime            red   conf=0.85 ev_000023 | LIME / pH 3.88<4.0
-[acidic         ] seq=  20 m= 50.5 pH=3.84 tds= 612 -> lime            red   conf=0.87 ev_000024 | LIME / pH 3.84<4.0
-[low_nutrient   ] seq=  21 m= 51.6 pH=4.23 tds= 508 -> ok              green conf=0.68 ev_000025 | OK / all in range
-[low_nutrient   ] seq=  22 m= 53.2 pH=4.54 tds= 453 -> ok              green conf=0.92 ev_000026 | OK / all in range
-[low_nutrient   ] seq=  23 m= 52.7 pH=4.7 tds= 425 -> ok              green conf=0.92 ev_000027 | OK / all in range
-[low_nutrient   ] seq=  24 m= 52.4 pH=4.81 tds= 403 -> fertilise       amber conf=0.64 ev_000028 | FERTILISE / TDS 403<422
-[low_nutrient   ] seq=  25 m= 51.8 pH=4.85 tds= 369 -> fertilise       amber conf=0.87 ev_000029 | FERTILISE / TDS 369<422
-[over_fertilised] seq=  26 m= 51.1 pH=4.86 tds= 575 -> ok              green conf=0.92 ev_000030 | OK / all in range
-[over_fertilised] seq=  27 m= 52.3 pH=4.87 tds= 703 -> ok              green conf=0.92 ev_000031 | OK / all in range
-[over_fertilised] seq=  28 m= 50.1 pH=4.9 tds= 799 -> skip_fertiliser amber conf=0.57 ev_000032 | SKIP FERTILISER / TDS 799>784
-[over_fertilised] seq=  29 m= 50.2 pH=4.86 tds= 851 -> skip_fertiliser amber conf=0.92 ev_000033 | SKIP FERTILISER / TDS 851>784
-[over_fertilised] seq=  30 m= 52.4 pH=4.88 tds= 883 -> skip_fertiliser amber conf=0.96 ev_000034 | SKIP FERTILISER / TDS 883>784
-[wet            ] seq=  31 m= 64.5 pH=4.99 tds= 767 -> ok              green conf=0.92 ev_000035 | OK / all in range
-[wet            ] seq=  32 m= 72.0 pH=5.03 tds= 687 -> ok              green conf=0.92 ev_000036 | OK / all in range
-[wet            ] seq=  33 m= 77.3 pH=5.01 tds= 646 -> ok              green conf=0.92 ev_000037 | OK / all in range
-[wet            ] seq=  34 m= 81.9 pH=5.08 tds= 628 -> drain           amber conf=0.72 ev_000038 | DRAIN / moist 82%>80%
-[wet            ] seq=  35 m= 83.8 pH=5.11 tds= 597 -> drain           amber conf=0.86 ev_000039 | DRAIN / moist 84%>80%
-[sensor_fault   ] seq=  36 m= 71.9 pH=None tds= 599 -> ok              green conf=0.85 ev_000040 | OK (partial) / no pH reading
-[sensor_fault   ] seq=  37 m= 64.4 pH=None tds= 597 -> ok              green conf=0.85 ev_000041 | OK (partial) / no pH reading
-[sensor_fault   ] seq=  38 m= 60.0 pH=None tds= 585 -> ok              green conf=0.85 ev_000042 | OK (partial) / no pH reading
-[sensor_fault   ] seq=  39 m= 55.9 pH=None tds= 597 -> ok              green conf=0.85 ev_000043 | OK (partial) / no pH reading
-[sensor_fault   ] seq=  40 m= 53.6 pH=None tds= 589 -> ok              green conf=0.85 ev_000044 | OK (partial) / no pH reading
-== calibration GET (as device)
-{"tds_baseline_ppm":603.0,"tds_margin":0.3,"updated_at":"2026-11-23T06:13:55Z","cal_id":"2026-11-23"}
-== latest
-sim-01 53.6 ok evidence: 44
-== verify chain
-{"ok":true,"checked":44,"head":"01c1ce9b93b9147918feb99f8d8badb8068b1ed0f725942276b851860cb5a70b","message":"All 44 records intact (SHA-256 chain)"}
-== audit pack (head)
-# SawitSense — MSPO evidence pack
+PASS health 200 + ok
+PASS normal readings → ok/green
+PASS calibrate from latest
+PASS dry → irrigate/MOIST_LOW/red
+PASS wet → drain/MOIST_HIGH/amber
+PASS acidic → lime/PH_LIME/red
+PASS low_nutrient → fertilise/TDS_LOW/amber
+PASS low_nutrient flagged simulated
+PASS over_fertilised → skip_fertiliser/TDS_HIGH/amber
+PASS over_fertilised flagged simulated
+PASS null pH → OK (partial), no fabricated value
+PASS repeat (device_id, seq) idempotent
+PASS calibration GET as device
+PASS command delivered once
+PASS ripeness without model → 503 (or 400 bad image)
+PASS latest shows sim-01
+PASS evidence chain verified
+     All 22 records intact (SHA-256 chain)
+PASS audit pack VERIFIED + head hash + clauses
+PASS harvest plan
+     harvest: 375 bunches at risk; A2:2, C1:3, A3:2, C2:1, B3:2, DEMO-A1:6, B1:14, B2:0
+PASS screening cascade
+     satellite source: SIMULATED (satellite pre-compute not yet available) | flagged: ['B2', 'C1']
+PASS GET / 200
+PASS GET /harvester 200
+PASS GET /static/app.js 200
+PASS GET /static/vendor/chart.umd.min.js 200
 
-Generated 2026-11-23T06:13:58Z · records: 44 · chain: VERIFIED — All 44 records intact (SHA-256 chain)
-
-## MSPO criterion coverage
-
-| Criterion | Requirement | Records | Last | Status | Reference |
-|---|---|---|---|---|---|
-| SOIL_FERTILITY | SOP records: soil-fertility management | 44 | 2026-11-23T06:13:57Z | evidenced | MS 2530:2022 4.1.3.1 (MPOCC-P31) |
-| FERTILISER_RECORDS | SOP records: fertilising | 8 | 2026-11-23T06:13:57Z | evidenced | MS 2530:2022 4.1.3.1 (MPOCC-P31) |
-| GHG_N2O | GHG emissions — N₂O from fertiliser | 5 | 2026-11-23T06:13:57Z | evidenced | MS 2530:2022 4.5.4 (MPOCC-P31) |
-| PEST_DISEASE | Integrated Pest Management (Ganoderma) | 0 | — | gap | MS 2530:2022 4.1.3.5 (MPOCC-P31) |
-| HARVEST_QUALITY | SOP records: FFB harvesting | 0 | — | gap | MS 2530:2022 4.1.3.1 (MPOCC-P31) |
-| TRACEABILITY | Traceability + block reference system | 44 | 2026-11-23T06:13:57Z | evidenced | MS 2530:2022 4.2.2, 4.1.3.4 (MPOCC-P31) |
-| WATER_MGMT | Water resources management | 4 | 2026-11-23T06:13:57Z | evidenced | MS 2530:2022 4.5.5 (MPOCC-P31) |
-| HUMAN_OVERSIGHT | Management review of AI decisions | 0 | — | gap | MS 2530:2022 4.1.3 — records of implementation (MPOCC-P31) |
-== harvest plan
-at risk 2964 [('B1', 6, 'covered'), ('A2', 4, 'covered'), ('C1', 2, 'partial'), ('DEMO-A1', 0, 'deferred'), ('B2', 0, 'deferred'), ('A3', 0, 'deferred'), ('C2', 0, 'deferred'), ('B3', 0, 'deferred')]
-== screening
-['B2', 'C1'] SIMULATED (satellite pre-compute not yet available)
-== dashboard
-200 /
-200 /harvester
-200 /static/app.js
-200 /static/vendor/chart.umd.min.js
-SMOKE TEST PASSED
+SMOKE TEST PASSED (all assertions)

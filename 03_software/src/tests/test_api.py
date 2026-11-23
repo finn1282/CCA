@@ -177,11 +177,11 @@ def test_latest_only_buffered_falls_back(client):
 
 def test_age_s_sets_captured_at(client):
     from app import db as _db
-    r = client.post("/api/v1/readings", json=reading(ts=None, age_s=120), headers=SOIL).json()
+    r = client.post("/api/v1/readings", json=reading(seq=101, ts=None, age_s=120), headers=SOIL).json()
     assert r["captured_at"] == _db.shift(r["received_at"], -120)
-    r2 = client.post("/api/v1/readings", json=reading(ts="2026-12-10T09:00:00Z", age_s=120), headers=SOIL).json()
-    assert r2["captured_at"] == "2026-12-10T09:00:00Z"
-    r3 = client.post("/api/v1/readings", json=reading(ts=None), headers=SOIL).json()
+    r2 = client.post("/api/v1/readings", json=reading(seq=102, ts="2026-11-20T09:00:00Z", age_s=120), headers=SOIL).json()
+    assert r2["captured_at"] == "2026-11-20T09:00:00Z"
+    r3 = client.post("/api/v1/readings", json=reading(seq=103, ts=None), headers=SOIL).json()
     assert r3["captured_at"] == r3["received_at"]
     assert client.post("/api/v1/readings", json=reading(age_s=-5), headers=SOIL).status_code == 422
 
@@ -209,3 +209,68 @@ def test_cloud_mode_admin_fail_closed(client, monkeypatch):
     assert client.post("/api/v1/devices/cam-01/commands", json={"cmd": "capture"}).status_code == 403
     monkeypatch.setattr(C, "ADMIN_TOKEN", "tok")
     assert client.post("/api/v1/devices/cam-01/commands", json={"cmd": "capture"}, headers={"X-Admin-Token": "tok"}).status_code == 200
+
+
+# ---------------- SW verification pass 1 fixes + INTERFACES v0.2.3
+@pytest.mark.parametrize("ts,expect", [
+    ("2026-11-20T09:00:00Z", "2026-11-20T09:00:00Z"),
+    ("2026-11-20T17:00:00+08:00", "2026-11-20T09:00:00Z"),   # normalised to UTC
+    ("not-a-timestamp", None), ("2026-12-10T09:00:00", None),  # no timezone → null
+    ("2099-01-01T00:00:00Z", None),                          # far future (bad clock) → null
+])
+def test_ts_validation(client, ts, expect):
+    r = client.post("/api/v1/readings", json=reading(ts=ts, seq=None), headers=SOIL)
+    assert r.status_code == 200
+    j = r.json()
+    if expect:
+        assert j["captured_at"] == expect
+    else:
+        assert j["captured_at"] == j["received_at"]
+
+
+def test_idempotent_seq(client):
+    a = client.post("/api/v1/readings", json=reading(seq=42, soil_ph=3.8), headers=SOIL).json()
+    n = client.get("/api/v1/latest").json()["evidence_count"]
+    b = client.post("/api/v1/readings", json=reading(seq=42, soil_ph=3.8), headers=SOIL).json()
+    assert b["evidence_id"] == a["evidence_id"] and b["duplicate"] is True
+    assert client.get("/api/v1/latest").json()["evidence_count"] == n
+    assert len(client.get("/api/v1/readings").json()) == 1
+    # same seq but different values (device restarted) is stored as new, not silenced
+    c = client.post("/api/v1/readings", json=reading(seq=42, soil_ph=5.0), headers=SOIL).json()
+    assert c["evidence_id"] != a["evidence_id"]
+
+
+def test_override_action_validated(client):
+    ev = client.post("/api/v1/readings", json=reading(soil_ph=3.8), headers=SOIL).json()["evidence_id"]
+    bad = client.post(f"/api/v1/evidence/{ev}/review", json={"decision": "override", "override_action": "banana"})
+    assert bad.status_code == 422
+    assert client.post(f"/api/v1/evidence/{ev}/review", json={"decision": "override", "override_action": "ripe"}).status_code == 422
+    assert client.post(f"/api/v1/evidence/{ev}/review", json={"decision": "override", "override_action": "watch"}).status_code == 200
+
+
+def test_command_coalesce_and_expiry(client):
+    a = client.post("/api/v1/devices/cam-01/commands", json={"cmd": "capture"}).json()
+    b = client.post("/api/v1/devices/cam-01/commands", json={"cmd": "capture"}).json()
+    assert b["id"] == a["id"] and b["coalesced"]
+    assert client.get("/api/v1/devices/cam-01/commands", headers=CAM).json()["cmd"] == "capture"
+    assert client.get("/api/v1/devices/cam-01/commands", headers=CAM).json() == {"cmd": "none"}
+    # an old command expires instead of firing late
+    db.x("INSERT INTO commands(device_id, cmd, created_at) VALUES('cam-01','capture','2020-01-01T00:00:00Z')")
+    assert client.get("/api/v1/devices/cam-01/commands", headers=CAM).json() == {"cmd": "none"}
+
+
+def test_cloud_reads_need_token(client, monkeypatch):
+    from app import config as C
+    monkeypatch.setattr(C, "CLOUD", True)
+    monkeypatch.setattr(C, "ADMIN_TOKEN", "tok")
+    assert client.get("/api/v1/latest").status_code == 403
+    assert client.get("/api/v1/latest", headers={"X-Admin-Token": "tok"}).status_code == 200
+    assert client.get("/api/v1/evidence/export?token=tok").status_code == 200
+    assert client.get("/api/v1/devices/soilnode-01/calibration", headers={"X-Admin-Token": "tok"}).status_code == 200
+    assert client.get("/api/v1/health").status_code == 200   # liveness stays public
+
+
+def test_audit_pack_has_head_hash(client):
+    client.post("/api/v1/readings", json=reading(soil_ph=3.8), headers=SOIL)
+    head = client.get("/api/v1/evidence/verify").json()["head"]
+    assert head in client.get("/api/v1/evidence/export").text

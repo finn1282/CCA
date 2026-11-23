@@ -120,7 +120,7 @@
 - **Explainability (D32b).**
   - Rule trace, counterfactual ("would be OK if pH ≥ 4.2"), and per-feature path attributions.
   - In the target design, M6 is an sklearn tabular model registered with MLflow. That makes it **eligible for the Azure Responsible AI dashboard** (global/local importance, DiCE counterfactuals, error analysis, PDF scorecard for MSPO stakeholders) and **built-in drift and data-quality monitoring** (AZ-RAI; AZ-MONITOR).
-- **MLOps.** Agronomist overrides plus pilot outcomes, such as leaf-analysis results, replace the simulated labels. Monitoring alerts are sent through Event Grid and trigger retraining (AZ-MONITOR).
+- **MLOps.** Agronomist overrides plus pilot outcomes, such as leaf-analysis results, become estate-trained data that replaces the rule-based baseline. Monitoring alerts are sent through Event Grid and trigger retraining (AZ-MONITOR).
 
 ## M7 — MSPO compliance reasoner (O4)
 
