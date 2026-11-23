@@ -1,28 +1,26 @@
 # 05_report — README
 
-## Status (23 Nov 2026, after D40)
-**Full draft of REPORT.md complete**, following OUTLINE v3 (approved v2 + D40 changes). No cover page, TOC or formatting (the stakeholder adds them).
+## Status (24 Nov 2026, revision 1 after compliance audit 1)
+REPORT.md has been revised against REPORT_AUDIT_1 (C-01…C-23), research file 10, D49, D50 and D51. OUTLINE.md is at v4.
 
-| Section | Prose words | Table words | Status |
-|---|---|---|---|
-| Executive summary | 153 | — | Drafted |
-| 1 Introduction | 147 | — | Drafted |
-| 1.1 Case | 288 | — | Drafted |
-| 1.2 Problems (Table 1) | 515 | 96 | Drafted |
-| 1.3 Capabilities (Table 2) | 460 | 98 | Drafted |
-| 2.1 SawitSense | 238 | — | Drafted |
-| 2.2 Technologies (Figure 1) | 399 (incl. ~75 in Mermaid) | — | Drafted |
-| 2.3 Platforms (Table 3) | 454 | 104 | Drafted |
-| 2.4 Integration and roadmap (Table 4) | 212 | 148 | Drafted |
-| 2.5 Risks (Table 5) | 59 | 242 | Drafted |
-| 3.1 Novelty | 349 | — | Drafted |
-| 3.2 Extension | 158 | — | Drafted |
-| Conclusion | 152 | — | Drafted |
-| **Total body** | **≈3,580** | **≈690** | **≈4,270 words, inside the D35 budget (≈4,300)** |
-| References | 26 Harvard entries, cited only | | |
-| Appendix A | Timeline + contribution tables, placeholders | | ≤1 page |
+| Section | Prose words | Table words |
+|---|---|---|
+| Executive summary | 175 | — |
+| 1 Introduction | 158 | — |
+| 1.1 | 353 | — |
+| 1.2 (Table 1) | 511 | 98 |
+| 1.3 (Table 2) | 445 | 103 |
+| 2.1 | 231 | — |
+| 2.2 (Figure 1, ≈80 words in Mermaid not counted) | 242 | — |
+| 2.3 (Table 3) | 468 | 108 |
+| 2.4 (Table 4) | 276 | 156 |
+| 2.5 (Table 5) | 58 | 237 |
+| 3.1 | 324 | — |
+| 3.2 | 202 | — |
+| Conclusion | 151 | — |
+| **Body total** | **3,594** | **702** → **≈4,300 (≈4,380 with Figure 1)** |
 
-Six captioned tables and figures: Tables 1–5 and Figure 1.
+The body is within D49 (about 4,300–4,700 words; references and appendix excluded). There are 32 references.
 
 ## Inputs used
 Assignment PDF; `00_lead/` SPEC, DECISIONS D1–D40, PROJECT_PLAN, `briefs/report.md`; `01_research/` 00, 01, 02, 06, 07, 08, 09 and `sources.md`; `03_software/` docs 01–05.
@@ -35,9 +33,15 @@ Assignment PDF; `00_lead/` SPEC, DECISIONS D1–D40, PROJECT_PLAN, `briefs/repor
 | `RUBRIC_MAP.md` | Sub-task → section cross-reference (internal, moved out of the report per D40) |
 | `PLAN.md` | Original plan and proposals REP-P1–P3 (P1 and P2 accepted in D34) |
 
-## Core reference list (26). Reuse only these
-In-text form → `sources.md` key:
-- Amazon (2024) → AWS-MYREGION
+## Core reference list (32). Reuse only these
+The assembler mapping is fixed. In-text form → key:
+- Abdul Hadi et al. (2026) → MPOB-TT698
+- Ahmad et al. (2020) → AHMAD2020
+- Amazon Web Services (2025) → AWS-REGTABLE
+- Amazon Web Services (n.d.a) → AWS-CLARIFY
+- Amazon Web Services (n.d.b) → AWS-APPFLOW-SAP
+- Amazon Web Services (n.d.c) → AWS-GG
+- BSI Services Malaysia (2023) → BSI-SDG-RSPO2023
 - Che Hassan et al. (2026) → HASSAN2026
 - Chong (2026) → STAR-FERT2026
 - Clark (2022) → REG-WIOT
@@ -45,24 +49,26 @@ In-text form → `sources.md` key:
 - Google Cloud (2026) → GCP-REGIONS
 - Google Cloud (n.d.) → GCP-IOTCORE
 - Google Earth Engine (n.d.) → GEE-S2
-- IOI Corporation Berhad (2026) → IOI2026
+- IOI Corporation Berhad (2020) → IOI-S4HANA2020
 - Khoo and Chong (2023) → KHOO2023
 - Kwang et al. (2025) → KWANG2025
-- Ma (n.d.) → MA-POEB
 - MPOB (2026) → MPOB2025
-- MPOCC (2023) → MPOCC-P31
+- MPOCC (2023a) → MPOCC-P32
+- MPOCC (2023b) → MPOCC-P41
 - MSPO and EFI (2025) → MSPO-EFI2025
 - Mayer Brown (2025) → MAYER-PDPA2025
 - Microsoft (2025) → AZ-RAI
-- Microsoft (2026a) → AZ-AOAI-MODELS
-- Microsoft (2026b) → AZ-REGIONS
-- Microsoft (2026c) → AZ-IOTOPS
-- Microsoft (n.d.) → AZ-SAP
+- Microsoft (2026a) → AZ-PRICES-API
+- Microsoft (2026b) → AZ-IOTOPS
+- Microsoft (n.d.a) → AZ-SAP
+- Microsoft (n.d.b) → AZ-ACL-RES
 - New Straits Times (2019) → NST-FELDA2019
 - Ramendran (2026) → STAR-LAB2026
 - The Edge Malaysia (2025) → EDGE-SDG2025
 - The Edge Malaysia (2026) → EDGE-LAB2026
 - The Edge Malaysia (n.d.) → EDGE-FELDA
+
+Dropped in revision 1: Ma (n.d.), IOI2026, Amazon (2024), AZ-REGIONS, AZ-AOAI-MODELS, MPOCC-P31.
 
 ## Compliance notes
 - D20/D40: no Kaggle, Colab, student, prototype or "simulated" wording. Validation is described as a planned step.
@@ -71,6 +77,8 @@ In-text form → `sources.md` key:
 - RM2.2 bn is labelled as the authors' calculation and RM7.5–20 bn as an employer estimate.
 
 ## Open issues for Lead
-1. Placeholders remain: [GroupNo], [Lecturer name], [Member n], [ID], and the roles and contributions in Table A2. Timeline owners in Table A1 are illustrative and need the stakeholder's real allocation.
-2. Azure confidential ledger is named in 2.4 and 3.1 without its own citation, because AZ-ACL-RES was left out to stay at 26. Swap it in for one reference if you want the "replicates to a paired region" point cited.
-3. The 2.3 AWS caveat (C7 researched in less depth) is stated openly, as research file 08 recommends.
+1. **C-05:** member contributions and the Appendix A placeholders need the stakeholder.
+2. **MSPO clause numbering:** research confirms 4.1.3, 4.2.2, 4.5.4 and 4.5.5 in Part 3-2. Sub-indicators 4.1.3.4 (block reference) and 4.1.3.5 (IPM) are confirmed only in Part 3-1. I listed them in 3.1 to match the code's audit pack (D45). A quick check against the Part 3-2 guidance would settle it.
+3. **Residency evidence:** Malaysia West availability is cited to the Azure Retail Prices API, which is indicative only (research file 10). The text therefore says placement follows Microsoft's products-by-region listing at deployment.
+4. **C-08:** resolved by removing the uncited pH numbers. The counterfactual example now refers to the knowledge base's band, so KANANG2026 was not needed.
+5. **C-09:** "export Mermaid as an image" is for the stakeholder at the formatting stage.
