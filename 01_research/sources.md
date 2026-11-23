@@ -39,6 +39,9 @@
 
 | [OMAR2024] | Omar, Z., P P Abdul Majeed, A., Rosbi, M., Ghazalli, S.A. and Selamat, H. (2024) 'Outdoor oil palm fruit ripeness dataset', *Data in Brief*, 55, 110667. doi:10.1016/j.dib.2024.110667 (Accessed: 23 November 2026). |
 | [RAMLI2026] | Ramli, M.R., Abdul Hammid, A.N. and Yaakub, Z. (2026) 'Processing of under and overripe oil palm fruits and its effects on yield and oil quality', *Journal of Oil Palm Research*, 38(2), pp. 384–390. doi:10.21894/jopr.2025.0033 (Accessed: 23 November 2026). |
+| [AHMADI2023] | Ahmadi, P., Mansor, S.B., Ahmadzadeh Araji, H. and Lu, B. (2023) 'Convolutional SVM networks for detection of *Ganoderma boninense* at early stage in oil palm using UAV and multispectral Pleiades images', *ISPRS Annals of the Photogrammetry, Remote Sensing and Spatial Information Sciences*, X-4/W1-2022, pp. 25–30. doi:10.5194/isprs-annals-X-4-W1-2022-25-2023 (Accessed: 23 November 2026). |
+| [KWANG2025] | Kwang, C.S., Razak, S.F.A., Yogarayan, S., Bin Muhammad, A.M.M., Ling, C.A., Bakar, S.A. and Abidin, H. (2025) 'Ganoderma detection in oil palm plantations using UAV hyperspectral imaging and AI', *TENCON 2025 – IEEE Region 10 Conference*, Kota Kinabalu, 27–30 October. Available at: https://shdl.mmu.edu.my/15767/ (Accessed: 23 November 2026). |
+| [KOK2021] | Kok, Z.H., Shariff, A.R.B.M., Khairunniza-Bejo, S., Kim, H.-T., Ahamed, T., Cheah, S.S. and Wahid, S.A.A. (2021) 'Plot-based classification of macronutrient levels in oil palm trees with Landsat-8 images and machine learning', *Remote Sensing*, 13(11), 2029. doi:10.3390/rs13112029 (Accessed: 23 November 2026). |
 
 ## Datasets
 | Key | Harvard entry |
