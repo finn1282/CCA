@@ -2,6 +2,8 @@
 
 > Research wave 2, 23 Nov 2026. Replaces the matrix in `04_cloud_platforms.md` §(b) **for report use**. Student credits, free tiers and pricing are removed as criteria. Cost appears in the report only as an enterprise vendor & cost **risk**. Keys → `sources.md`.
 
+> **⚠ Superseded by `10_audit_wave.md` §1 (wave 4):** after rescoring AWS from official docs and correcting Azure's Malaysia-West residency score, **AWS 89 vs Azure 85** (base). Lead decision required.
+
 ## Result
 **Azure still ranks first**: Azure 88, AWS 79, Google 67, IBM 49. It also stays first under two sensitivity checks, equal weights and a geospatial-heavy weighting. The gap to AWS is real but moderate, about 9 points. The Report should present AWS as a credible runner-up, not as a weak option.
 
