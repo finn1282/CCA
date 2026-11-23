@@ -33,6 +33,8 @@
 
 ## Part (b) — Enterprise platform comparison (report Part 2, 5 marks)
 
+> **Superseded for report use by `08_platform_comparison_capability.md`** (capability-only criteria per D23: Azure 88, AWS 79, Google 67, IBM 49). Part (a) remains internal build guidance only (D20/D23).
+
 ### Platform facts relevant to this case
 
 | Criterion | Microsoft Azure | AWS | Google Cloud | IBM watsonx |

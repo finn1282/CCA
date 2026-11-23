@@ -50,6 +50,8 @@
 | [ANZUM2022] | Anzum, R., Habaebi, M.H., Islam, M.R., Hakim, G.P.N., Khandaker, M.U., Osman, H., Alamri, S. and AbdElrahim, E. (2022) 'A multiwall path-loss prediction model using 433 MHz LoRa-WAN frequency to characterize foliage's influence in a Malaysian palm oil plantation environment', *Sensors*, 22(14), 5397. doi:10.3390/s22145397 (Accessed: 23 November 2026). |
 | [RUSLAN2021] | Ruslan, A.A., Salleh, S.M., Hatta, S.F.W.M. and Sajak, A.A.B. (2021) 'IoT soil monitoring based on LoRa module for oil palm plantation', *International Journal of Advanced Computer Science and Applications*, 12(5). Available at: https://knova.um.edu.my/research_publications_2021_2025/12058 (Accessed: 23 November 2026). |
 | [BORRERO2020] | Borrero, J.D. and Zabalo, A. (2020) 'An autonomous wireless device for real-time monitoring of water needs', *Sensors*, 20(7), 2078. doi:10.3390/s20072078 (Accessed: 23 November 2026). |
+| [HASSAN2026] | Che Hassan, C.A.Z., Muhammad Razif, M.R., Mohd, M.N., Abd Halim, A., Mohd Mustapha, N.H. and Azman, M.N. (2026) 'Real-time oil palm fresh fruit bunch drone image classification using YOLO11 architecture', *Journal of Oil Palm Research* (article in press, published online 17 August). doi:10.21894/jopr.2026.0033 (Accessed: 23 November 2026). |
+| [DARANAGAMA2025] | Daranagama, D.A.S. and Takeuchi, W. (2025) 'Smartphone application for detecting and visualizing basal stem rot disease stages in oil palm', *Frontiers in Remote Sensing*, 6, 1553844. doi:10.3389/frsen.2025.1553844 (Accessed: 23 November 2026). |
 
 ## Datasets
 | Key | Harvard entry |

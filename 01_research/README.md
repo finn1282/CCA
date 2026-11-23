@@ -1,7 +1,7 @@
 # 01_research — README
 
 ## Status
-**Research wave 1 complete (23 Nov 2026).** All files committed. Further research on demand via `REQUESTS.md`.
+**Wave 1 complete; wave 2 complete (23 Nov 2026)** — R1, R-HW1, R2 answered. Further research on demand via `REQUESTS.md`.
 
 ## Inputs used
 `00_lead/SPEC.md`, `PROJECT_PLAN.md`, `DECISIONS.md`, `INTERFACES.md`, `components.md`, `CCA Group Assignment.pdf` (rubric p.9); web research (official/vendor pages, journals, MPOB/MSPO documents, dataset repository APIs) — all opened 23 Nov 2026.
@@ -11,11 +11,14 @@
 |---|---|
 | `00_baseline_brief.md` | Evidence-based direction per team (Hardware, Software, Report, Presentation, Verification) |
 | `01_problem_evidence.md` | Malaysian palm oil context, stakeholders, validated & prioritised problems, why cognitive > conventional, mapping to O1–O4 and inputs |
-| `02_cognitive_capabilities.md` | Short v1: state of the art + reported accuracies per outcome |
+| `02_cognitive_capabilities.md` | v2: one primary capability per problem (D19 order), evidence, why it beats conventional methods, limits |
 | `03_datasets.md` | Verified datasets (URL, licence, size, classes) ranked per model; gaps and simulated proxies |
-| `04_cloud_platforms.md` | (a) student credits available in Malaysia 2026; (b) 4-platform enterprise comparison with weighted matrix + recommendations |
+| `04_cloud_platforms.md` | (a) student credits (internal build only); (b) original matrix — superseded by 08 for report use |
 | `05_hardware_notes.md` | ESP32/sensor facts, oil-palm soil thresholds, optional parts (MYR) |
-| `sources.md` | 64 Harvard entries with stable keys, grouped by type |
+| `06_azure_services_and_compliance.md` | R1(a–c): verified Azure service capabilities/caveats, MS 2530:2022 clause numbers, PDPA s129 (2024 amendment) |
+| `07_field_evidence_and_naming.md` | R1(d–e) Ganoderma spread & harvest productivity; R-HW1 LoRaWAN/NB-IoT field nodes; SawitSense name check |
+| `08_platform_comparison_capability.md` | Capability-only platform matrix for the report (D23) + sensitivity checks + caveats |
+| `sources.md` | 95 Harvard entries with stable keys, grouped by type |
 | `REQUESTS.md` | Request log for on-demand research waves |
 | `PLAN.md` | Approach, ideas, conflicts, proposals (R-P1…R-P8) for Lead ruling |
 
@@ -43,3 +46,13 @@
 3. Stakeholder decisions: buy pH buffers (essential) and any optional parts; ask lecturer about Google Cloud education credits / IBM SkillsBuild.
 4. Add the demo thresholds (R-P5) to `INTERFACES.md` so Hardware and Software share them.
 5. EUDR: EU = 6.8 % of exports — Report should lead P3 with MSPO, EUDR as accelerator.
+
+## Wave 2 findings (must-know)
+1. Capability-only matrix: **Azure 88 > AWS 79 > Google 67 > IBM 49**; Azure first under equal and geospatial-heavy weights too. Lead over AWS rests mainly on enterprise integration (SAP connector) — AWS cells less researched.
+2. Azure caveats to state: RAI dashboard & built-in monitoring are **tabular-only**; AutoML images needs GPU; **Azure OpenAI not offered in Malaysia West**; **confidential ledger always replicates to a paired region and Malaysia West has none** → host in Southeast Asia, store hashes only.
+3. MSPO clauses: 4.1.3 (SOPs/records incl. fertilising), 4.1.3.4 (block reference), 4.2.2 (traceability), 4.5.4 (GHG, N₂O from fertiliser), 4.5.5 (water).
+4. PDPA s129 replaced (Amendment Act 2024): "substantially similar law / adequate protection" test, TIA, transfer records; CBPDT Guidelines 29 Apr 2025.
+5. Ganoderma spreads via root contact (roots reach 4 rows) and airborne spores → neighbour-risk weighting is justified, but blanket screening still needed.
+6. Harvest: rounds 7–13 days recommended, 20–25 days under labour shortage; ≈1 t FFB/harvester/day; 50–90 bunches/day on palms >12 m.
+7. LoRa in Malaysian oil palm: 5–9 dB loss per canopy, 5–7.6 dB per trunk; LoRaWAN soil nodes with EC, AS923, multi-year battery; TTS→Azure IoT Hub integration exists.
+8. "SawitSense": no clash found (MyIPO not checked); nearby names MySawit/Tekno Sawit (MPOB).
