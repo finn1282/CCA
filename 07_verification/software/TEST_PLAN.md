@@ -2,22 +2,23 @@
 
 > Owner: SW Verification & Testing. Scope: the `03_software` backend, rule engine, evidence chain, dashboard, datasets, models, docs and run guides. It also covers the device side of the HW↔SW contract (`02_hardware/firmware/*.ino`).
 > Contract under test: **`00_lead/INTERFACES.md` v0.2.6**. That is v0.2.2 `age_s`/`captured_at`, plus v0.2.3 ts validation, idempotent seq, NO DATA and 1-dp rounding, plus the v0.2.4 seq-reuse rule, plus v0.2.6 `/latest` = most recently captured non-buffered row.
-> Rolling passes (D10): Pass 1 = M1 backend; **Pass 2 = M2–M4** (model, design docs, run guides).
+> Rolling passes (D10): Pass 1 = M1 backend; Pass 2 = M2–M4 (model, design docs, run guides); **Pass 3 = retest of S-16…S-25 + D50**.
 > Status values: **pass**, **fail**, **blocked** and **pass (obs)**. "pass (obs)" means the contract is met but something is worth noting.
 > Evidence:
-> - `tests/pass2_results.md`: per-check output of `tests/contract_test.py`
-> - `tests/pass2_eval_m1.md`: output of `tests/eval_m1.py`
+> - `tests/pass3_results.md`: per-check output of `tests/contract_test.py` (latest)
+> - `tests/pass3_eval_m1.md`: output of `tests/eval_m1.py` (latest)
+> - `tests/pass2_results.md`, `tests/pass2_eval_m1.md`: Pass 2 runs
 > - `tests/pass1_results.md`: the earlier Pass 1 run
 >
-> Defect IDs (S-xx) are listed in `PASS_1_REPORT.md` (S-01…15, all closed) and `PASS_2_REPORT.md` (S-16…25).
+> Defect IDs (S-xx) are listed in `PASS_1_REPORT.md` (S-01…15, all closed) and `PASS_2_REPORT.md` (S-16…25, all closed in Pass 3) and `PASS_3_REPORT.md` (S-26).
 
-Last run: **Pass 2, 23 Nov 2026**, repo HEAD `345ec07` (software `1ad0560`), existing `03_software/.venv` (D43/D44), port 8833.
+Last run: **Pass 3, 24 Nov 2026**, repo HEAD `3cce551` (software `2252139`), existing `03_software/.venv` (D43/D44), port 8833. Contract suite: 156 pass, 0 fail, 8 obs.
 
 ## A. Owner's own suite
 
 | ID | Area | Test | Method | Expected | Status | Evidence |
 |---|---|---|---|---|---|---|
-| OWN-01 | Backend | `pytest` | `03_software/.venv`, `SAWIT_RUNTIME_DIR` in scratch, `-p no:cacheprovider` | All pass | pass | 33 passed |
+| OWN-01 | Backend | `pytest` | `03_software/.venv`, `SAWIT_RUNTIME_DIR` in scratch, `-p no:cacheprovider` | All pass | pass | 34 passed |
 | OWN-02 | Backend | `smoke_test.sh` (asserted, `tests/smoke_e2e.py`) | `PY=../.venv/bin/python PORT=8833` | "SMOKE TEST PASSED (all assertions)" | pass | S-09 closed |
 
 ## B. Backend and contract (black-box HTTP, `tests/contract_test.py`)
@@ -41,7 +42,7 @@ Last run: **Pass 2, 23 Nov 2026**, repo HEAD `345ec07` (software `1ad0560`), exi
 | AD-01…14 | Cloud mode | Key override; writes need the token; **reads need the token** (10 endpoints 403 without, 200 with `?token=`); shell and `/health` public; dashboard `get()` sends the token; `SAWIT_MODE=cloud` without secrets fails closed | 3 server instances | 401/403/200 as stated | pass | S-01, S-08, D-12 closed |
 | RI-01…03 | Ripeness | No auth 401, empty 400, >5 MB 413 | POST | As stated | pass | RI-* |
 | RI-04…11 | Ripeness + model | SVGA JPEG from D2 test → 200; 8 §3 fields and types; probs sum to 1; label = argmax; heat-map PNG 448×224 at `/static/heatmaps/<ev>.png`; image served; non-image 400; cam parser; p95 < 2 s; override vocabulary for ripeness; `/health` model_version | POST/GET | §3 | pass | Cold 0.22 s; warm **p50 0.082 s / p95 0.083 s** |
-| RI-12…14 | Ripeness | Underripe column; soil POST during inference; full-size D2 original | — | — | pass (obs) | p(underripe) 0.002 (untrained); soil waits about 0.17 s; 8.6 MB → 413 (S-23) |
+| RI-12…14 | Ripeness | Underripe column; soil POST during inference; full-size D2 original | — | — | pass (obs) | Untrained underripe column; soil waits about 0.17 s; raw 8.6 MB → 413 by design (the simulator shrinks it first, S-23 closed) |
 
 ## C. Firmware ↔ backend (exact device payloads, firmware v0.2.3+)
 
@@ -73,7 +74,7 @@ Last run: **Pass 2, 23 Nov 2026**, repo HEAD `345ec07` (software `1ad0560`), exi
 | DS-02 | Licence | CC BY 4.0 credits (dashboard, model meta, Copernicus year) | Read | Present | pass | — |
 | DS-03 | Harmonisation | My folder→class mapping vs `train_m1.map_class` / `split_of` on all 312 local D2 files; D1 names | `eval_m1.py` | 0 mismatches | pass | Immature→unripe, Partially Ripe→underripe, Fully Ripe/Mature→ripe, Overripe/Decayed→overripe |
 | DS-04 | Split | Provisional: D2-train 85/15 → D2-test; final: D1 split → D2 test; head fine-tune on D2-train | Code review | No test file in training | pass (static) | — |
-| DS-05 | Leakage | Cross-split exact (MD5) and near (dHash ≤ 6) duplicates, D2 train × test, plus visual confirmation | `eval_m1.py` | 0 | **fail** | 6/89 test images duplicate train (S-17) |
+| DS-05 | Leakage | Cross-split duplicates, D2 train × test; owner dedupe covers my list | `eval_m1.py` (`owner_dedupe_covers_mine`) + visual | Every leaked test image excluded from reported metrics | pass | Owner drops 8 (my 6 + 2 genuine extras); S-17 closed |
 | DS-06 | Class balance | Counts per split | `eval_m1.py` | Documented | pass (obs) | Local D2 test 34/41/14, train 40/123/60 (partial copy); provisional train 34/105/51 |
 | DS-07 | D4 split | Geographic split preserved | — | — | blocked | M3 not built (stretch, D42) |
 | DS-08, DS-09 | Labelling | M6 SIMULATED; provisional M1 labelled `-provisional` everywhere (`/health`, meta, README, 03 §9) | Read + RI-11 | Labelled | pass | — |
@@ -83,8 +84,8 @@ Last run: **Pass 2, 23 Nov 2026**, repo HEAD `345ec07` (software `1ad0560`), exi
 | ID | Area | Test | Method | Expected | Status | Evidence |
 |---|---|---|---|---|---|---|
 | MD-01a | M1 | Reproduce the reported D2-test metric with the training pipeline | Own torchvision path + ONNX | = 0.9326 | pass | Identical CM |
-| MD-01b | M1 | Same metric on the **serving** path (`inference._preprocess`) | `eval_m1.py` | Within ±0.5 pp of reported | **fail** | 0.8989 (−3.4 pp) (S-16) |
-| MD-01c | M1 | Deduplicated D2 test (S-17 removed) | `eval_m1.py` | Report it | pass (obs) | 0.8916, n = 83 |
+| MD-01b | M1 | Reported metric on the **serving** path (the API's `src/app/preprocess.py`, path C), owner-deduped set | `eval_m1.py` | Equal to `serving_path` in the metrics file | pass | 0.9136, n = 81, identical CM (S-16 closed) |
+| MD-01c | M1 | All 89 D2-test images on the serving path | `eval_m1.py` | Report it | pass (obs) | 0.9213 (includes leaked images; not for reporting) |
 | MD-02 | M1 | Confusion matrix sane | `eval_m1.py` | Errors adjacent | pass (obs) | All errors unripe→ripe (adjacent in D2's 3 classes; costly direction) |
 | MD-03 | M1 | ONNX loads in the endpoint; `/health` model_version | RI-04/RI-11 | Loaded | pass | — |
 | MD-04 | M1 | CAM heat-map focused on the bunch | RI-06 + visual check + CAM centre mass | On the fruit | pass | Centre mass 0.82 |
@@ -97,11 +98,13 @@ Last run: **Pass 2, 23 Nov 2026**, repo HEAD `345ec07` (software `1ad0560`), exi
 | ID | Area | Test | Method | Expected | Status | Evidence |
 |---|---|---|---|---|---|---|
 | CL-01 | Kaggle | Notebook equals `train_m1.py`; URLs; GPU/internet/private metadata; `KAGGLE_API_TOKEN` env/file outside the repo; output `-p models`; post-run health | Review + HEAD | Runs as written | pass (obs) | `/kaggle/tmp` vs documented `/kaggle/temp`; step 4 may hit 413 (S-23) |
-| CL-02 | Azure | Resources, region fallback, app settings, startup, health version 0.2.6, token URL, clean-up | Review | Complete for a beginner | **fail** | SAS 60 d vs 7 d limit (S-18); SQLite WAL on `/home` (S-19); bare `startup.sh` (S-20) |
-| CL-03 | Earth Engine | `EE_PROJECT` env, auth token outside the repo, outputs committed, attribution | Review | Runs as written | pass (obs) | Block-ID mismatch with estate (S-24); no Windows path note (S-25) |
+| CL-02 | Azure | Resources, region fallback, app settings, startup, health version 0.2.6, token URL, clean-up; **package built from a scratch copy and run with the guide's inline startup in cloud mode** | Review + local run | Complete for a beginner | pass | Model in zip; DELETE journal; uvicorn starts; 9 MB photo graded (S-18…S-20, S-23 closed). `/home` SMB only on Azure (R-03b) |
+| CL-03 | Earth Engine | `EE_PROJECT` env, auth token outside the repo, outputs committed, attribution, block IDs = estate | Review + `block_id()` check | Runs as written | pass | 3×3 grid gives DEMO-A1…C3 = `estate_blocks.json`; Windows note (S-24, S-25 closed) |
 | CL-04 | Alternatives | Fallback ladder, keys, one backend | Review | Consistent with D39 | pass | — |
-| DOC-01 | D20/D23/D32 | Docs 01–05: residency split, RAI tabular-only / Grad-CAM for images, no student/price reasons | Grep + read | Compliant | **fail** (minor) | D32 ✔ throughout; build/demo/cost wording in 02/03 (S-22); 05 stale (S-21) |
-| DOC-02 | Internal | 06 beginner guide, 07 build-vs-target, README | Read | Accurate | pass (obs) | S-23 |
+| DOC-01 | D20/D23/D32/D50 | Docs 01–05: residency (D50 layout), RAI tabular-only / Grad-CAM for images, no student/price/demo wording, MSPO MS 2530-3-2/4-1 | Grep + read | Compliant | pass | S-21, S-22 closed |
+| DOC-03 | Consistency | Code-side MSPO labels (dashboard panel, audit pack) match the docs and report | Dashboard + `compliance.py` | MS 2530-3-2:2022 / 4-1:2022 | **fail** (minor) | Code still says "MS 2530:2022" (S-26) |
+| DOC-02 | Internal | 06 beginner guide, 07 build-vs-target, README | Read | Accurate | pass | — |
+| UI-01 | Dashboard (browser, D53) | Visual check on localhost, cloud mode `?token=`: all panels, calibration populated, heat-map, Verify chain ✔, footer credits, no console errors; backend stopped → "offline" with last values kept | Chrome, own tab, closed afterwards | Renders and degrades gracefully | pass (obs) | Probability bars alphabetical; empty NDVI area while SIMULATED |
 
 ## H. Presentation-day end-to-end rehearsal checklist
 
