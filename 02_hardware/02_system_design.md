@@ -56,7 +56,7 @@ sequenceDiagram
   A-->>C: {label, confidence, heatmap_url...}
   D->>A: GET /latest (dashboard shows result + heatmap)
 ```
-Note: the `GET .../calibration` read-back by the node is an assumption (INTERFACES §5 lists only POST) — raised as an open issue for the Lead. If absent, LOCAL mode skips TDS rules (allowed by INTERFACES §4).
+Note: `GET /api/v1/devices/{id}/calibration` returns `{tds_baseline_ppm, tds_margin, updated_at}` (INTERFACES v0.2.1, D30). Until a baseline has been received, LOCAL mode skips TDS rules (INTERFACES §4).
 
 ## 3. Pin map — NodeMCU ESP32 (38-pin DevKit)
 | GPIO | Direction | Connected to | Notes |

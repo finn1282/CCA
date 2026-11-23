@@ -1,6 +1,6 @@
 /*
   SawitSense soil node — NodeMCU ESP32 (ESP32-WROOM-32)
-  Firmware 0.2.0 — conforms to 00_lead/INTERFACES.md v0.2
+  Firmware 0.2.0 — conforms to 00_lead/INTERFACES.md v0.2.1
 
   Sensors: capacitive moisture (GPIO34), pH PO via 10k/20k divider (GPIO35), TDS (GPIO32, powered from GPIO25),
            DS18B20 (GPIO4), DHT22 (GPIO16). OLED SSD1306 I2C (21/22). LEDs G/A/R (18/19/23), status LED (2).
@@ -332,7 +332,7 @@ bool applyCloudResponse(const String& resp) {
   return true;
 }
 void fetchCalibration() {
-  // Assumed read-back of the backend's per-device TDS calibration (open issue in README).
+  // Per-device TDS calibration read-back (INTERFACES v0.2.1, D30): {tds_baseline_ppm, tds_margin, updated_at}
   if (WiFi.status() != WL_CONNECTED) return;
   String resp, used;
   int code = requestAny(String("/api/v1/devices/") + DEVICE_ID + "/calibration", "GET", "", resp, used);
