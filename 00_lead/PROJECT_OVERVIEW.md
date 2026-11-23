@@ -9,8 +9,8 @@
 | 0 Setup | Lead | 23 Nov | ✅ Done | Lead files pushed |
 | 1 Baseline research wave (then on demand) | Research | 26 Nov | ✅ Wave 1 done 23 Nov | ✅ Passed (D14) — 4 proposals awaiting stakeholder |
 | 2 Build (HW ∥ SW, parallel with on-demand research) | Hardware, Software | 3 Dec | 🟡 Building (plans ruled 23 Nov) | PLAN gate ✅ |
-| 3 Verify (rolling passes per milestone) | HW/SW testers | 6 Dec | 🟡 HW pass 1 running (firmware pushed) | — |
-| 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | ⚪ Not started | — |
+| 3 Verify (rolling passes per milestone) | HW/SW testers | 6 Dec | 🟡 HW pass 1 + SW pass 1 running (SW smoke test 17/17 ✅) | — |
+| 4 Outputs (Tech summary, Report, Presentation) | Report, Presentation | 10 Dec | 🟡 Report Part 1 drafting | — |
 | 5 Rubric audit & fixes | Compliance | 12 Dec | ⚪ Not started | — |
 
 > Workflow is a parallel pipeline (D10) — see diagram in `PROJECT_PLAN.md`.

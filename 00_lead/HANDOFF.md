@@ -35,7 +35,8 @@ If using Claude Code: start a session in this repo and say *"You are the project
 ## 4. Current state
 - Research wave 1 gated (D14–D18); stakeholder rulings D19–D23; HW/SW plans ruled (D24–D29); **INTERFACES v0.2 agreed**.
 - Running in parallel: **Hardware Step 2** (design docs + firmware), **Software Step 2** (backend/simulator/dashboard → M1 training → design docs), **Research wave 2** (REQUESTS R1, R-HW1, name check, capability-only platform matrix, deeper capabilities).
-- Next: Verification passes start when HW firmware is pushed and SW smoke test passes / M1 trained (briefs to be added to `00_lead/briefs/`). Then Technical summary → Report ∥ Presentation → Compliance audit.
+- Also running: HW verification pass 1, SW verification pass 1, Report (Part 1 + skeleton). Research wave 2 done (D32).
+- Next: SW M1 model → SW verification pass 2; HW/SW docs → Technical summary → Report Parts 2–3 ∥ Presentation → Compliance audit.
 - Waiting on stakeholder: Kaggle account, Azure for Students subscription + deploy access, Earth Engine project (D29). Software uses CPU/local/Copernicus fallbacks meanwhile.
 - Relaunch note: if this session ended, relaunch HW/SW/Research from `00_lead/briefs/` with the "resume" preamble; tell them Step 1 (PLAN) is done and ruled.
 
