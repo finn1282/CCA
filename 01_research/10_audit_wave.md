@@ -60,3 +60,15 @@ This is an **indicative** check, not an official availability statement. It stil
 3. **Present a weighted tie with a decision rule.** Not recommended, because the rubric asks for a single recommendation.
 
 Research's view: **Option 2 is viable if §2's SAP evidence is accepted. Otherwise use Option 1.** Either way, the report must drop the claim that Azure hosts IoT Hub and ML in Malaysia West, unless Microsoft's official products-by-region page confirms it.
+
+## 2. C-03: Which ERP do the case companies run?
+| Company | Evidence | Strength | Key |
+|---|---|---|---|
+| **IOI Corporation** | Rolled out **SAP S/4HANA** to its corporate office, mills, refinery **and estates** (implementation partners HCL Technologies and Wilmar Consultancy Services). Fiori front end; SAP Cloud Platform links satellite apps to S/4HANA. | **Strong**: IOI's own news page republishing NST (29 Jul 2020), also on MPOB Palm News | [IOI-S4HANA2020] |
+| **SD Guthrie** (ex-Sime Darby Plantation) | A BSI RSPO certification audit report (2023) states estate hectarage "taken from SEMUA Field – Master listing in **SAP System**". The same report verifies RSPO metrics against the "**SAP accounting system**". The SAP product/version is not stated. | **Medium–strong**: independent certification-body audit document | [BSI-SDG-RSPO2023] |
+| SD Guthrie (version) | A vendor-tracking database lists "SAP ERP ECC 6.0 for ERP Financial". | **Weak**: lead-generation site, unsourced. Do not cite in the report. | — |
+| **FELDA / FGV** | FGV Prodata Systems, an FGV Holdings subsidiary that grew out of FELDA's IT unit, is an **SAP Silver partner** offering "ERP – SAP solutions". The profile does **not** say FGV itself runs SAP. | **Indirect only** | [SAP-FGVPRODATA] |
+
+**Conclusion:** at least **two of the three named producers (IOI, SD Guthrie) run SAP**. The report can say: "major Malaysian planters such as IOI (SAP S/4HANA across estates and mills) and SD Guthrie (SAP-based estate master data and accounting) run SAP ERP". FGV is unconfirmed; the report should not claim it. This supports **Option 2** in §1e (Azure Logic Apps SAP connector with IDoc/BAPI/RFC as a deciding integration criterion). Note that IOI is on S/4HANA, which AWS can also reach via OData (AppFlow) or the SDK for SAP ABAP. Azure's advantage is breadth (IDoc/BAPI/RFC) and in-region availability, not exclusivity.
+
+Naming note: MPOB has a mill-grading system called **SawitSCAN** (June 2026) [MPOB-TT698]. "SawitSense" does not clash with it, but the report could mention SawitSCAN as related work.
