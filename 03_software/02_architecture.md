@@ -1,6 +1,6 @@
 # 02 — SawitSense Architecture
 
-> Report-facing (Part 2: underlying technologies; integration). The target deployment is fully Azure-native (D15, D20). Choices are justified by capability (D23), the residency layout follows D50, and the explainability limits follow D32. Regional availability is confirmed per Microsoft products-by-region at deployment. Keys refer to `01_research/sources.md`.
+> Report-facing (Part 2: underlying technologies; integration). The target deployment is fully Azure-native (D15, D20). Choices are justified by capability (D23), the residency layout follows D50 and D57, and the explainability limits follow D32. Regional availability is confirmed per Microsoft products-by-region at deployment. Keys refer to `01_research/sources.md`.
 
 ## 1. Layered architecture (assignment Fig. 4, adapted to oil palm)
 
@@ -27,7 +27,7 @@ flowchart TB
     C5["Analytics & visualisation<br/>NDVI trends · KPIs · Azure Maps"]
   end
   subgraph L2["2 · Data ingestion & big data layer"]
-    I1["Event Grid MQTT broker (in-country)<br/>+ IoT Hub Standard / DPS (fleet mgmt)"]
+    I1["Event Grid MQTT broker (Malaysia West)<br/>certificate-based client registration"]
     I2["Event Hubs (Kafka-compatible)<br/>streaming"]
     I3["Data Lake Storage Gen2<br/>bronze / silver / gold"]
     I4["Planetary Computer STAC<br/>Sentinel-2 L2A ingest"]
@@ -53,7 +53,7 @@ flowchart TB
 | Layer | Oil-palm-specific design decision | Capability justification |
 |---|---|---|
 | 1 Sources | The three inputs in the brief (satellite, UAV, IoT soil) plus bunch images, ERP and MSPO texts. Satellite screens first because it is the only source that covers every block every ~5 days; drone and ground checks follow only where it flags an anomaly. | Sentinel-2: 10 m, ~5-day revisit, archive since 2015 (MPC-S2; GEE-S2). The global oil-palm map masks non-palm pixels (GEE-OILPALM). |
-| 2 Ingestion | **Event Grid MQTT broker in Malaysia West** is the in-country ingestion path: the estate edge publishes telemetry and receives recommendations over MQTT (AZ-PRICES-API). **IoT Hub Standard** (Southeast Asia) handles fleet management, because pushing configuration and recommendations back to nodes needs cloud-to-device messaging and device twins, which the Basic tier lacks (AZ-IOTHUB-SCALE). It carries only device IDs and readings keyed to pseudonymous blocks. DPS provides zero-touch, X.509-attested provisioning of a large node fleet (AZ-DPS). Event Hubs is Kafka-compatible for the ERP and weather streams (AZ-EVENTHUBS). ADLS Gen2 adds hierarchical, file-level security for the image lake (AZ-ADLS). | First-party IoT platform with a live roadmap. Google Cloud IoT Core and IBM Watson IoT are retired (GCP-IOTCORE; REG-WIOT). |
+| 2 Ingestion | **Event Grid MQTT broker in Malaysia West** is the single ingestion path (D57). The estate edge and gateways connect as MQTT clients registered with **X.509 certificates** (certificate-based client registration). They publish telemetry, and receive recommendations and configuration on per-device topics, so all device traffic stays in-country (AZ-PRICES-API). No IoT Hub or DPS is used. Event Hubs is Kafka-compatible for the ERP and weather streams (AZ-EVENTHUBS). ADLS Gen2 adds hierarchical, file-level security for the image lake (AZ-ADLS). | First-party managed MQTT broker in-country. Google Cloud IoT Core and IBM Watson IoT are retired (GCP-IOTCORE; REG-WIOT). |
 | 3 Cognitive | Seven models (M1–M7, `03_ai_models.md`). They combine perception (vision), anomaly detection (NDVI), knowledge (MPOB thresholds, MSPO clauses), reasoning (cascade, allocation, counterfactuals) and NLP. | Matches the primary capability per problem in `01_research/02_cognitive_capabilities.md` v2. |
 | 4 Cloud | Azure ML managed endpoints with blue/green traffic split and mirroring for safe model updates (AZ-ENDPOINTS). Model monitoring for drift and data quality, with Event Grid triggering retraining (AZ-MONITOR). **IoT Operations at the estate edge**: an MQTT broker keeps processing locally during outages, with recovery validated after up to 45 days offline (AZ-IOTOPS). | Remote estates have patchy links; even IOI's estate-wide 4G rollout is recent (IOI2026). |
 | 5 Application | Each user gets their own surface (`01_solution_overview.md` §3). Approvals and overrides are written back as evidence. | Human-in-the-loop review is part of Fig. 4. |
@@ -71,7 +71,7 @@ flowchart LR
     GW --> EB
   end
   subgraph Cloud["Azure Malaysia West (in-country; personal data allowed)"]
-    MQ["Event Grid MQTT broker<br/>+ Event Hubs"]
+    MQ["Event Grid MQTT broker<br/>(X.509 client registration)<br/>+ Event Hubs"]
     API["SawitSense API<br/>(App Service / AKS)"]
     RE["Rule engine + M6<br/>(explanations, counterfactual)"]
     SAT["Satellite pipeline<br/>(STAC → NDVI → z-score, M5)"]
@@ -82,7 +82,6 @@ flowchart LR
     EV["Evidence service"]
   end
   subgraph SEA["Azure Southeast Asia (non-personal / hashed data only)"]
-    IOT["IoT Hub Standard + DPS<br/>(fleet management)"]
     EP["Azure ML managed endpoints<br/>M1 · M3/M4"]
     ACL[("Azure confidential ledger<br/>record hashes")]
     AOAI["Azure OpenAI<br/>multilingual text"]
@@ -93,7 +92,6 @@ flowchart LR
     ERP["Estate ERP (SAP)"]
   end
   EB --> MQ --> API
-  EB -. "twins, config" .- IOT
   CAM --> API
   UAV --> LAKE
   API --> RE --> KB
@@ -113,7 +111,7 @@ flowchart LR
   MQ -- "MQTT: recommendation" --> EB
 ```
 
-Field soil nodes use LoRaWAN (AS923) and connect through a LoRaWAN network server. That server integrates natively with IoT Hub for fleet management: uplinks become telemetry, decoded payloads update device twins, and downlinks are scheduled from desired properties (TTS-AZURE). Gateway spacing should be planned for oil-palm foliage loss of 5–9 dB per canopy, not open-field range (ANZUM2022).
+Field soil nodes use LoRaWAN (AS923) and connect through a LoRaWAN network server at the estate edge. The network server and the IoT Operations broker bridge decoded uplinks to the Event Grid MQTT broker as registered MQTT clients, and downlinks (recommendations, configuration) travel back on per-device topics. Gateway spacing should be planned for oil-palm foliage loss of 5–9 dB per canopy, not open-field range (ANZUM2022).
 
 ## 3. Data flow (soil reading → explained, audited decision)
 
@@ -148,16 +146,15 @@ flowchart TB
   end
   subgraph MY["Azure Malaysia West (KL) — personal / identifiable data allowed"]
     direction LR
-    EG["Event Grid MQTT broker<br/>(in-country ingestion)"]
+    EG["Event Grid MQTT broker<br/>(in-country ingestion,<br/>X.509 client registration)"]
     EH["Event Hubs · Functions"]
     APP["App Service / AKS:<br/>API, dashboard"]
     ADLS[("Storage / Data Lake Gen2:<br/>images, readings,<br/>worker & smallholder records")]
     ADX[("Data Explorer / Fabric")]
     LA["Logic Apps (SAP IDoc/BAPI/RFC)"]
   end
-  subgraph SG["Azure Southeast Asia (Singapore) — non-personal / hashed data only, s129 safeguards"]
+  subgraph SG["Azure Southeast Asia (Singapore) — Azure ML, ledger, OpenAI only; non-personal / hashed data, s129 safeguards"]
     direction LR
-    HUB["IoT Hub + DPS<br/>(single-region DPS, private endpoint)"]
     AML["Azure ML: training,<br/>registry, endpoints"]
     ACLs[("Confidential ledger:<br/>record digests")]
     AOAIs["Azure OpenAI:<br/>block IDs + readings + rule text"]
@@ -165,7 +162,6 @@ flowchart TB
   EDGE -- "MQTT over private link / VPN" --> EG --> EH --> APP
   APP --> ADLS --> ADX
   APP --> LA
-  EDGE -. "device identity, twins (pseudonymous IDs)" .-> HUB
   ADLS -- "de-identified training sets" --> AML
   APP -- "images for inference (no personal data)" --> AML
   APP -- "digest only" --> ACLs
@@ -174,9 +170,8 @@ flowchart TB
 
 **Residency rules (D50, superseding D32a).**
 1. **Malaysia West holds all personal or identifiable data:** worker and smallholder names, IC numbers, and plot geolocation linked to individuals.
-   - In-country services: Event Grid (MQTT broker, the in-country ingestion option), Event Hubs, Functions, App Service, Storage/Data Lake, Data Explorer/Fabric, Logic Apps and AKS. **IoT Operations** runs on the estate edge (AZ-PRICES-API; AZ-IOTOPS).
-2. **Southeast Asia hosts IoT Hub/DPS, Azure ML, confidential ledger and Azure OpenAI,** which are not evidenced in Malaysia West (AZ-PRICES-API; AZ-AOAI-MODELS; AZ-ACL-RES). They receive **only non-personal or hashed data**:
-   - IoT Hub/DPS: device IDs and readings keyed to pseudonymous block IDs. DPS uses the single-region option with a private endpoint (AZ-DPS).
+   - In-country services: Event Grid (MQTT broker with certificate-based client registration, the only ingestion path; no IoT Hub or DPS), Event Hubs, Functions, App Service, Storage/Data Lake, Data Explorer/Fabric, Logic Apps and AKS. **IoT Operations** runs on the estate edge (AZ-PRICES-API; AZ-IOTOPS).
+2. **Southeast Asia hosts only Azure ML, confidential ledger and Azure OpenAI,** which are not evidenced in Malaysia West (AZ-PRICES-API; AZ-AOAI-MODELS; AZ-ACL-RES). They receive **only non-personal or hashed data**:
    - Azure ML: de-identified images and readings.
    - Confidential ledger: SHA-256 digests; the full records stay in Malaysia West (AZ-ACL).
    - Azure OpenAI: block IDs, readings and rule text, never names.

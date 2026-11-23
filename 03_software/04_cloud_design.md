@@ -2,7 +2,7 @@
 
 > Report-facing (Part 2: technologies 3 marks, platform 5, integration + phased plan 3, risks 2).
 > - Platform per D15. Capability-only reasoning per D23: cost appears only as a vendor & cost **risk** (§7).
-> - Residency, explainability, DPS and AutoML scope per D32.
+> - Residency per D50/D57 (in-country MQTT ingestion, no IoT Hub/DPS); explainability and AutoML scope per D32.
 > - The demonstration build and its mapping to these services are internal (`07_actual_build_vs_target.md`, D20).
 > - Keys refer to `01_research/sources.md`.
 
@@ -24,14 +24,14 @@ The margin is 3–4 points, which is within the subjectivity of 1–5 scoring. *
 2. **Weeks-offline operation under canopy.** Azure IoT Operations has validated recovery after **up to 45 days offline** (AZ-IOTOPS). AWS Greengrass "acts locally", but no validated offline duration was found (AWS-GG).
 3. **MSPO-audit-ready explanations.** The Responsible AI dashboard adds DiCE counterfactuals ("what would change this decision") and an exportable PDF scorecard for the fertiliser model (AZ-RAI). Clarify offers SHAP and partial-dependence plots, without counterfactuals (AWS-CLARIFY).
 
-**AWS is the strong runner-up and the named lock-in fallback (§7).** It hosts IoT Core, Greengrass, SageMaker and Rekognition **in its Malaysian region** (AWS-REGTABLE; AWS-MYREGION). It offers fleet provisioning comparable to DPS (AWS-FLEETPROV), low-data vision training with Rekognition Custom Labels (AWS-RCL), and **image** explainability through Clarify (AWS-CLARIFY). An estate that is not on SAP, or that needs its ML hosted in-country, could reasonably choose AWS.
+**AWS is the strong runner-up and the named lock-in fallback (§7).** It hosts IoT Core, Greengrass, SageMaker and Rekognition **in its Malaysian region** (AWS-REGTABLE; AWS-MYREGION). It offers fleet provisioning comparable to Azure's certificate-based device onboarding (AWS-FLEETPROV), low-data vision training with Rekognition Custom Labels (AWS-RCL), and **image** explainability through Clarify (AWS-CLARIFY). An estate that is not on SAP, or that needs its ML hosted in-country, could reasonably choose AWS.
 
 **The other two platforms:**
 - **Google Cloud** leads on geospatial work and vision AutoML. However, it has no Malaysian region (GCP-REGIONS) and retired IoT Core in 2023 (GCP-IOTCORE).
 - **IBM** retired Watson IoT without a replacement (REG-WIOT).
 
 **Azure limitations, stated openly:**
-- IoT Hub, Azure ML, confidential ledger and Azure OpenAI are **not evidenced in Malaysia West**, so they run in Southeast Asia on non-personal data (§3) (AZ-PRICES-API; AZ-AOAI-MODELS; AZ-ACL-RES).
+- Azure IoT Hub is **not evidenced in Malaysia West**, so device ingestion uses the in-country Event Grid MQTT broker instead (D57). Azure ML, confidential ledger and Azure OpenAI are not evidenced there either, so they run in Southeast Asia on non-personal data only (§3) (AZ-PRICES-API; AZ-AOAI-MODELS; AZ-ACL-RES).
 - The Responsible AI dashboard and built-in monitoring are tabular-only (AZ-RAI; AZ-MONITOR).
 - AutoML for images needs GPU compute (AZ-AUTOML-IMG).
 
@@ -44,9 +44,7 @@ Service availability per region is confirmed **per Microsoft products-by-region 
 | Layer (Fig. 4) | Azure service | Role in SawitSense | Capability that justifies it | Region (D32a) |
 |---|---|---|---|---|
 | 1 Sources → 2 | **Azure IoT Operations** on Arc-enabled Kubernetes (estate edge) | Edge MQTT broker; local rule engine during outages; data flows to Event Hubs/ADLS | Offline processing, 45-day recovery validated (AZ-IOTOPS) | Estate (on-premises) |
-| 2 Ingestion | **Event Grid MQTT broker** | **In-country ingestion**: the estate edge publishes soil telemetry and receives recommendations over MQTT | Managed MQTT broker in Event Grid, listed for Malaysia West (AZ-PRICES-API) | **Malaysia West** |
-| 2 | **IoT Hub Standard** | Fleet device management: per-device identity, **device twins + cloud-to-device**, firmware/config. Carries device IDs and readings keyed to pseudonymous block IDs only | Standard tier needed for twins/C2D; 400k msgs/day per S1 unit (AZ-IOTHUB-SCALE) | **Southeast Asia**, non-personal data only |
-| 2 | **Device Provisioning Service** | Zero-touch X.509 provisioning of the node fleet | Attestation, allocation policies (AZ-DPS) | **Southeast Asia**, single-region data residency + private endpoint (D32c) |
+| 2 Ingestion | **Event Grid MQTT broker** | **The only ingestion path (D57)**: estate edge clients are registered with X.509 certificates (certificate-based client registration). They publish soil telemetry and receive recommendations and configuration on per-device topics | Managed MQTT broker in Event Grid, listed for Malaysia West (AZ-PRICES-API) | **Malaysia West** |
 | 2 | **Event Hubs** | Streams from weather feeds, ERP change events, drone upload notifications | Kafka-compatible, millions of events/s (AZ-EVENTHUBS) | **Malaysia West** |
 | 2 | **Data Lake Storage Gen2** | Bronze/silver/gold lake: raw readings, images, orthomosaics, NDVI rasters, curated training sets | Hierarchical namespace, file-level ACLs (AZ-ADLS) | **Malaysia West** |
 | 2 | **Planetary Computer STAC** (+ Planetary Computer Pro GeoCatalog when GA) | Sentinel-2 L2A search and ingest; estate geospatial catalogue | Global L2A archive, STAC standard (MPC-S2; AZ-MPCPRO) | Data source / Malaysia West copy |
@@ -54,7 +52,7 @@ Service availability per region is confirmed **per Microsoft products-by-region 
 | 3 | **AutoML for images** (enterprise design only, D32d) | Benchmark/accelerate M1 and M3 against custom models | Classification, detection, segmentation with sweeps; needs NC/ND GPU (AZ-AUTOML-IMG) | Southeast Asia (as Azure ML) |
 | 3 | **Responsible AI dashboard** (M6 only) + **RAI Toolbox (open source)** for images | Interpretability, DiCE counterfactuals, error analysis, PDF scorecard (M6); Grad-CAM for M1/M3 | Dashboard is tabular/sklearn only (AZ-RAI) | — |
 | 3 | **Azure OpenAI** | Multilingual rewording of structured explanations; audit-pack narrative | Model availability in Southeast Asia (AZ-AOAI-MODELS) | **Southeast Asia**, non-personal prompts only |
-| 3 | **Azure Maps** | Block maps, satellite basemap, **matrix routing** for crew movement | Multipoint optimisation, matrix routing, geofencing (AZ-MAPS) | Southeast Asia; block geometry only, no personal data |
+| 3 | **Azure Maps** | Block maps, satellite basemap, **matrix routing** for crew movement | Multipoint optimisation, matrix routing, geofencing (AZ-MAPS) | Used with block geometry only (no personal data); region per products-by-region at deployment |
 | 4 Deployment | **Azure ML managed online endpoints** | Real-time M1/M3 inference | Blue/green split, traffic mirroring, autoscale, private network (AZ-ENDPOINTS) | **Southeast Asia**; receives bunch/drone images, no personal data |
 | 4 | **Azure App Service** (API, rule engine, M6, reasoners) or **AKS** at group scale, + **Azure Functions** (event handlers) | SawitSense API and dashboard back-end | Managed web hosting / Kubernetes; event-driven functions | **Malaysia West** |
 | 4 | **Azure Data Explorer / Microsoft Fabric** | Time-series of readings, latest state per block/device, evidence records, KPIs for Power BI | Fast time-series analytics over the lake | **Malaysia West** |
@@ -72,13 +70,12 @@ The 2024 amendment replaced the old s129 "whitelist" with a test: the destinatio
 
 | Region | Services | Data allowed |
 |---|---|---|
-| **Malaysia West** (in-country) | Event Grid MQTT broker (in-country ingestion), Event Hubs, Functions, App Service, Storage / Data Lake Gen2, Data Explorer / Fabric, Logic Apps (SAP), AKS; **IoT Operations** on the estate edge | All data, including **personal or identifiable** data: worker and smallholder identities, IC numbers, individually linked plot locations, ERP extracts |
-| **Southeast Asia** (Singapore) | IoT Hub + DPS, Azure ML (training, registry, endpoints), confidential ledger, Azure OpenAI, Azure Maps | **Only non-personal or hashed data**, under PDPA s129 safeguards |
+| **Malaysia West** (in-country) | Event Grid MQTT broker (certificate-based client registration; the only ingestion path, no IoT Hub or DPS), Event Hubs, Functions, App Service, Storage / Data Lake Gen2, Data Explorer / Fabric, Logic Apps (SAP), AKS; **IoT Operations** on the estate edge | All data, including **personal or identifiable** data: worker and smallholder identities, IC numbers, individually linked plot locations, ERP extracts |
+| **Southeast Asia** (Singapore) | **Only** Azure ML (training, registry, endpoints), confidential ledger, Azure OpenAI | **Only non-personal or hashed data**, under PDPA s129 safeguards |
 
 **Integration constraints that follow:**
 1. **Personal data never leaves Malaysia West.** Purview classifies these fields, and the ERP mapping from pseudonyms to people stays in-country.
 2. **What each Southeast Asia service receives:**
-   - IoT Hub/DPS: device IDs and readings keyed to pseudonymous block IDs. DPS uses the single-region option with a private endpoint (AZ-DPS).
    - Azure ML: de-identified training sets (bunch and drone images, soil readings).
    - Confidential ledger: SHA-256 digests only.
    - Azure OpenAI: block IDs, readings and rule text, never names.
@@ -93,7 +90,7 @@ Cost was **not** a selection criterion (D23). The table only shows which design 
 |---|---|---|
 | GPU training (AutoML for images, M1/M3 fine-tunes) | NC/ND compute required (AZ-AUTOML-IMG) | Scheduled retrains triggered by drift only; low-priority compute; custom transfer learning before AutoML sweeps |
 | Online endpoints (always-on instances) | ≥3 instances recommended for HA (AZ-ENDPOINTS) | Autoscale on schedule (harvest hours); batch scoring for drone tiles |
-| IoT message volume | Units are sized by messages per day (AZ-IOTHUB-SCALE) | Edge aggregation in IoT Operations (send changes and anomalies, not every sample) |
+| MQTT message volume | Broker throughput units scale with message rate | Edge aggregation in IoT Operations (send changes and anomalies, not every sample) |
 | Image/orthomosaic storage | Drone surveys are large | Lifecycle tiers in ADLS (hot → cool → archive) |
 | Azure OpenAI calls | Per-request usage | Cache per rule ID and language; LLM only for user-facing text |
 
@@ -107,7 +104,7 @@ Cost was **not** a selection criterion (D23). The table only shows which design 
 | **MPOB e-submission** (monthly returns) | Production figures pre-filled from ERP + SawitSense KPIs | Out | Report export; manual submission retained |
 | **Microsoft 365 / Power BI** | Management reporting, Teams alerts ("Block B2 flagged") | Out | Power BI dataset on gold layer; Logic Apps → Teams |
 | **Existing drone vendor** | Orthomosaics uploaded to ADLS; detection results returned as GeoJSON | In/Out | SAS-scoped upload; STAC catalogue |
-| **Estate network** (4G/LTE where available (IOI2026); LoRaWAN for sensors) | LoRaWAN network server → IoT Hub integration (TTS-AZURE) | In | Device twins, downlinks |
+| **Estate network** (4G/LTE where available (IOI2026); LoRaWAN for sensors) | LoRaWAN network server → edge broker → Event Grid MQTT broker | In/Out | Telemetry up; recommendations and config down on per-device topics |
 
 ## 6. Phased implementation plan (Fig. 6 structure)
 
@@ -137,6 +134,6 @@ Each risk is scored likelihood × impact (1–3); the highest are listed first.
 | 4 | **Technical: connectivity at remote blocks** | 2×3 | IoT Operations edge with local rules and buffering (AZ-IOTOPS). LoRaWAN planned with plantation-specific canopy loss of 5–9 dB (ANZUM2022). Store-and-forward with capture timestamps | IoT engineer |
 | 5 | **Vendor & cost: lock-in** | 2×2 | Open formats: ONNX models, STAC catalogues, Kafka protocol on Event Hubs, MLflow. Containerised API. AWS identified as fallback (Malaysian region + IoT Core) (AWS-MYREGION; AWS-IOTCORE) | Architecture board |
 | 6 | **Vendor & cost: enterprise spend growth** (GPU training, always-on endpoints, message volume; §4) | 2×2 | Budgets and alerts per resource group; edge aggregation; autoscale schedules; drift-triggered rather than calendar retraining; a quarterly FinOps review | Finance + IT |
-| 7 | **Vendor & cost: service availability and residency.** IoT Hub, Azure ML, confidential ledger and OpenAI are not evidenced in Malaysia West; Planetary Computer Pro is in preview (AZ-PRICES-API; AZ-AOAI-MODELS; AZ-ACL-RES; AZ-MPCPRO) | 2×2 | Residency split (§3): in-country ingestion via the Event Grid MQTT broker; only non-personal or hashed data in Southeast Asia. Re-check products-by-region at each phase gate and move services in-country as they arrive. Template-text fallback when the LLM is unavailable. Local SHA-256 chain remains verifiable without the ledger. STAC access via the open Planetary Computer API until Pro reaches GA | Architecture board |
+| 7 | **Vendor & cost: service availability and residency.** IoT Hub, Azure ML, confidential ledger and OpenAI are not evidenced in Malaysia West (ingestion therefore uses the in-country Event Grid MQTT broker); Planetary Computer Pro is in preview (AZ-PRICES-API; AZ-AOAI-MODELS; AZ-ACL-RES; AZ-MPCPRO) | 2×2 | Residency split (§3): in-country ingestion via the Event Grid MQTT broker, with no IoT Hub/DPS; only non-personal or hashed data in Southeast Asia. Re-check products-by-region at each phase gate and move services in-country as they arrive. Template-text fallback when the LLM is unavailable. Local SHA-256 chain remains verifiable without the ledger. STAC access via the open Planetary Computer API until Pro reaches GA | Architecture board |
 | 8 | **Operational: workflow disruption during harvest peaks** | 1×3 | Go-live outside peak months. Allocation suggestions are advisory in phase 1. Rollback via blue/green endpoints (AZ-ENDPOINTS) | Estate manager |
 | 9 | **Operational/compliance: PDPA cross-border transfer** | 1×3 | Residency split; TIA and transfer records (MAYER-PDPA2025); Purview classification; DPO sign-off before phase 2 | DPO |
