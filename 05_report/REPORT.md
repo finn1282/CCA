@@ -1,15 +1,12 @@
 ## Executive Summary
 
-Malaysia's palm oil sector produced record output in 2025 (MPOB, 2026). That output rests on scarce harvesters, healthy palm stands and certified practice. This report analyses the case of FELDA, SD Guthrie and IOI and ranks three problems:
-- **P1** labour shortage and harvest losses;
-- **P2** declining stand productivity, driven mainly by *Ganoderma* basal stem rot;
-- **P3** MSPO compliance and fertiliser efficiency.
+Malaysia produced record palm oil output in 2025 (MPOB, 2026), but that output rests on scarce harvesters, healthy stands and certified practice. Analysing FELDA, SD Guthrie and IOI, this report ranks three problems: (P1) labour shortage and harvest losses; (P2) declining stand productivity driven by *Ganoderma* basal stem rot; and (P3) MSPO compliance and fertiliser efficiency.
 
-It proposes **SawitSense**, a cognitive decision-support application. SawitSense fuses satellite, drone and IoT soil-sensor data through computer vision, multisource anomaly detection and knowledge-based reasoning, so that estates can plan harvests, screen for disease and act on explained fertiliser advice.
+It proposes **SawitSense**, which applies computer vision, multisource anomaly detection and knowledge-based reasoning to satellite, drone and soil-sensor data. The system plans harvests, screens for disease and gives explained fertiliser advice.
 
-Four enterprise platforms were compared on seven capability criteria. AWS scores marginally highest (89 vs Azure 85). However, Microsoft Azure is recommended because it best meets the case's three deciding constraints: estates that run SAP, weeks of offline operation, and audit-ready explanations.
+AWS scores marginally highest on generic capability (89 vs 85). Microsoft Azure is nevertheless recommended, because it meets all three case-critical requirements: SAP-run estates, long outages on remote blocks and audit-ready explanations.
 
-A three-phase roadmap moves from a one-estate pilot to group-wide use. The main novelty is an explain-to-audit evidence log that turns every decision into tamper-evident MSPO and EUDR evidence.
+A three-phase roadmap scales from a one-estate pilot to group-wide use. The main novelty is an explain-to-audit evidence log that turns every decision into tamper-evident MSPO and EUDR evidence.
 
 ---
 
@@ -29,8 +26,9 @@ The report is in three parts. Part 1 analyses the case and ranks the problems. P
 
 **Organisations.**
 - **FELDA**, the national land-settlement agency, controls about 870,000 ha. Around 490,000 ha are worked by settlers, and about 330,000 ha of commercial estates are run by FGV, which FELDA has taken private (The Edge Malaysia, n.d.). The scheme supports 112,635 settler families (New Straits Times, 2019).
-- **SD Guthrie** (formerly Sime Darby Plantation) has raised its land-to-labour ratio from 10.7 to 13–13.5 ha per worker, and its target is 15 ha by 2028. It states that harvesting still has no mechanised solution (The Edge Malaysia, 2025). Its estate master data and accounting run on SAP (BSI Services Malaysia, 2023).
+- **SD Guthrie** (formerly Sime Darby Plantation) has raised its land-to-labour ratio from 10.7 to 13–13.5 ha per worker, and its target is 15 ha by 2028. It states that harvesting still has no mechanised solution (The Edge Malaysia, 2025). Its estate master data are held in SAP (BSI Services Malaysia, 2023).
 - **IOI** has rolled out SAP S/4HANA across its estates, mills and refinery (IOI Corporation Berhad, 2020).
+- **Connectivity.** IOI had to build more than 100 private 4G/LTE sites across more than 100 estates to connect them for IoT and data-led management (IOI Corporation Berhad, 2026). Estate connectivity is therefore something producers must engineer themselves and cannot assume, and remote blocks remain exposed to outages.
 
 These are three distinct operating models: a settler scheme, a multinational estate group and a digitising estate group. A useful solution must work for smallholders as well as for ERP-integrated estates.
 
@@ -152,7 +150,7 @@ Figure 1 adapts the assignment's layered reference architecture to the plantatio
 ```mermaid
 flowchart TB
   L1["<b>1 Data sources</b><br/>Sentinel-2 imagery · drone RGB/multispectral · IoT soil sensors (LoRaWAN) · bunch photos · SAP ERP · MSPO standards"]
-  L2["<b>2 Ingestion & big data</b><br/>Event Grid MQTT broker + Device Provisioning · Event Hubs · Data Lake Storage · STAC imagery catalogue"]
+  L2["<b>2 Ingestion & big data</b><br/>Event Grid MQTT broker (certificate-based client registration) · Event Hubs · Data Lake Storage · STAC imagery catalogue"]
   L3["<b>3 Cognitive services</b><br/>Vision models (ripeness, crown detection) · NDVI anomaly detection · fertiliser recommender · MSPO knowledge base & reasoning · NLP explanations"]
   L4["<b>4 Cloud & deployment</b><br/>Azure ML training, registry, endpoints, monitoring · Functions/App Service API · IoT Operations at the estate edge"]
   L5["<b>5 Application</b><br/>Manager dashboard & Power BI · mandore mobile app · agronomist review queue · MSPO audit pack · SAP work orders"]
@@ -167,14 +165,17 @@ flowchart TB
 - **Ingestion and big data.** An MQTT broker handles device telemetry and commands, Event Hubs streams events, and the data lake stores raw and curated imagery and readings. Azure IoT Operations feeds these services from each estate (Microsoft, 2026b).
 - **Cognitive services.** Convolutional detectors suit ripeness grading (Che Hassan et al., 2026). Anomaly detection over NDVI time series suits a disease that is invisible early (Khoo and Chong, 2023). A rule-constrained recommender with a knowledge base suits a regulated decision.
 - **Cloud and deployment.** Azure Machine Learning provides managed training, versioned models and monitored endpoints. Its Responsible AI dashboard gives interpretability and counterfactuals for the tabular fertiliser model only (Microsoft, 2025), so the image models use Grad-CAM.
-- **Edge.** IoT Operations keeps processing locally during outages and has been validated after up to 45 days offline (Microsoft, 2026b). This matters for remote blocks under the canopy.
-- **NLP.** A language model rewrites the structured explanations into Bahasa Malaysia and English. It receives only non-personal text and never makes the decision.
+- **Edge.** IoT Operations keeps processing locally during outages and has been validated after up to 45 days offline (Microsoft, 2026b). This matters for remote blocks where connectivity fails (Section 1.1).
+- **NLP.** A language model rewrites the structured explanations into Bahasa Malaysia and English. It runs outside Malaysia (indicative: Microsoft, 2026a), so it receives only non-personal text, and it never makes the decision.
 
 ## 2.3 Evaluation of Enterprise Platforms and Recommendation
 
-Four platforms were compared: Microsoft Azure, Amazon Web Services (AWS), Google Cloud's Gemini platform (formerly Vertex AI) and IBM watsonx. Seven criteria were derived from the Part 1 problems and scored from 1 to 5 against vendor documentation (Table 3). Price was excluded; at enterprise scale, cost is managed as a risk (Section 2.5).
+Four platforms were compared: Microsoft Azure, Amazon Web Services (AWS), Google Cloud's Gemini platform (formerly Vertex AI) and IBM watsonx. Price was excluded, because at enterprise scale cost is managed as a risk (Section 2.5). The evaluation has two stages:
 
-*Table 3: Weighted capability matrix (scores 1–5; total = Σ score × weight ÷ 5). Sensitivity: equal weights; geospatial-heavy = C4 30, C1/C2/C5/C7 10, C3/C6 15*
+- **Stage 1 measures capability breadth.** Seven criteria derived from the Part 1 problems are scored 1–5 against vendor documentation and weighted (Table 3).
+- **Stage 2 tests case-critical requirements.** It checks the requirements that a weighted sum cannot trade off, because failing any one of them blocks the use case regardless of the score elsewhere (Table 4).
+
+*Table 3: Stage 1 — weighted capability matrix (scores 1–5; total = Σ score × weight ÷ 5). Sensitivity: equal weights; geospatial-heavy = C4 30, C1/C2/C5/C7 10, C3/C6 15*
 
 | Criterion (weight) | Linked problem | Azure | AWS | Google | IBM |
 |---|---|---|---|---|---|
@@ -188,38 +189,46 @@ Four platforms were compared: Microsoft Azure, Amazon Web Services (AWS), Google
 | **Total /100 (base)** | | **85** | **89** | **67** | **49** |
 | Equal weights / geospatial-heavy | | 86 / 80 | 89 / 84 | 66 / 75 | 49 / 50 |
 
-**Reading the matrix honestly.** On breadth of capability, AWS ranks first under every weighting, and its lead over Azure is 3–4 points, within the subjectivity of 1–5 scoring. AWS is a strong runner-up on three counts:
-- its Malaysian region hosts IoT Core, Greengrass, SageMaker and Rekognition (Amazon Web Services, 2025);
-- SageMaker Clarify explains image classifiers and detectors as well as tabular models (Amazon Web Services, n.d.a);
-- for Azure, IoT Hub and Azure ML do not currently appear in the Malaysia West regional listings (Microsoft, 2026a).
+**Stage 1 result.** AWS ranks first on breadth under every weighting, 3–4 points ahead of Azure. That margin is within the subjectivity of 1–5 scoring. AWS is a strong runner-up for two reasons:
+- Its Malaysian region hosts IoT Core, Greengrass, SageMaker and Rekognition (Amazon Web Services, 2025). By contrast, Azure's IoT Hub and Azure ML do not appear in the Malaysia West listings (indicative: Microsoft, 2026a).
+- SageMaker Clarify explains image models as well as tabular ones (Amazon Web Services, n.d.a). This is why AWS scores higher on C6, which measures *breadth* of explainability.
 
-Google leads on vision and geospatial data, but it retired Cloud IoT Core in 2023 (Google Cloud, n.d.) and lists no Malaysian region (Google Cloud, 2026). IBM retired its Watson IoT Platform (Clark, 2022). Both would leave the soil-sensor fleet without first-party device management.
+Google leads on vision and geospatial data, but it retired Cloud IoT Core (Google Cloud, n.d.) and lists no Malaysian region (Google Cloud, 2026). IBM retired its Watson IoT Platform (Clark, 2022). Both would leave the soil-sensor fleet without first-party device management.
 
-**Recommendation: Microsoft Azure, on case fit.** A generic score weights every capability equally. The case, however, has three constraints from Part 1 that any solution must meet, and Azure meets them best:
+*Table 4: Stage 2 — case-critical requirements (✔ met · ◐ partial)*
 
-1. **SAP-run estates (P1, P3).** IOI runs SAP S/4HANA across its estates and mills (IOI Corporation Berhad, 2020), and SD Guthrie keeps its estate master data on SAP (BSI Services Malaysia, 2023). Harvest plans and fertiliser actions are only useful if they become ERP work orders.
-   - Azure's Logic Apps SAP connector supports IDoc, BAPI and RFC on both ECC and S/4HANA (Microsoft, n.d.a).
-   - AWS AppFlow connects only through OData (Amazon Web Services, n.d.b) and is not offered in AWS's Malaysian region (Amazon Web Services, 2025).
-2. **Weeks offline under the canopy (P1–P3).** Azure IoT Operations is validated to recover after up to 45 days offline (Microsoft, 2026b). The Greengrass documentation describes local action but states no validated offline duration (Amazon Web Services, n.d.c).
-3. **MSPO-audit-ready explanations (P3).** Azure's Responsible AI dashboard adds counterfactual what-if explanations and a PDF scorecard that compliance staff can file (Microsoft, 2025). Clarify offers feature attributions without counterfactuals (Amazon Web Services, n.d.a).
+| Requirement (Part 1 link) | Azure | AWS |
+|---|---|---|
+| R1 Native integration with SAP-run estates (P1, P3) | ✔ IDoc/BAPI/RFC, ECC and S/4HANA | ◐ OData only; AppFlow not in Malaysian region |
+| R2 Resilience to long outages on remote blocks (P1–P3) | ✔ validated after 45 days offline | ◐ local action, no validated duration |
+| R3 Audit-ready counterfactuals for tabular decisions (P3) | ✔ counterfactuals + PDF scorecard | ◐ attributions, no counterfactuals |
 
-**What choosing Azure costs.** Azure ML, Azure OpenAI and the ledger run in Southeast Asia (Singapore), under the residency safeguards in Section 2.4. Image models are explained with Grad-CAM rather than a managed service. If an estate group did not run SAP, or had reliable connectivity, AWS would be the better choice. The recommendation is therefore conditional on the case, and it is stated as such.
+**Stage 2 evidence.**
+1. **SAP-run estates (P1, P3).** IOI runs SAP S/4HANA across its estates and mills (IOI Corporation Berhad, 2020), and SD Guthrie holds its estate master data in SAP (BSI Services Malaysia, 2023). Harvest plans and fertiliser actions only take effect once they become ERP work orders. Azure's Logic Apps SAP connector supports IDoc, BAPI and RFC on ECC and S/4HANA (Microsoft, n.d.b), and Logic Apps is listed in Malaysia West (indicative: Microsoft, 2026a). AWS's managed SAP connector, AppFlow, uses OData only (Amazon Web Services, n.d.b) and is not offered in AWS's Malaysian region (Amazon Web Services, 2025).
+2. **Long outages on remote blocks (P1–P3).** Estates must build their own connectivity (IOI Corporation Berhad, 2026). Azure IoT Operations is validated to recover after up to 45 days offline (Microsoft, 2026b). The Greengrass documentation describes local action but gives no validated offline duration (Amazon Web Services, n.d.c).
+3. **Audit-ready explanations (P3).** MSPO decisions are tabular: soil readings lead to an action. Azure's Responsible AI dashboard gives counterfactual what-if explanations and a PDF scorecard that compliance staff can file (Microsoft, 2025). Clarify gives attributions without counterfactuals (Amazon Web Services, n.d.a).
+
+**Recommendation: Microsoft Azure, on case fit.** Azure meets all three case-critical requirements, whereas AWS meets each only partially. Choosing Azure has costs:
+- Azure ML, Azure OpenAI and the ledger run in Southeast Asia (Singapore), under the safeguards in Section 2.4.
+- Image models are explained with Grad-CAM rather than a managed service.
+
+For an estate group without SAP, or with reliable connectivity, AWS would be the better choice. The recommendation is therefore explicitly conditional on this case.
 
 ## 2.4 Integration with Existing IT and Phased Implementation Plan
 
 **Integration.** SawitSense connects to the systems estates already run:
-- **SAP.** The SAP connector (Microsoft, n.d.a) seeds the MSPO block reference from the SAP block master. Approved fertiliser and lime actions become SAP work orders, and harvest tickets close the yield loop. For FGV, the same pattern applies to its estate ERP.
+- **SAP.** The SAP connector (Microsoft, n.d.b) seeds the MSPO block reference from the SAP block master. Approved fertiliser and lime actions become SAP work orders, and harvest tickets close the yield loop. For FGV, the same pattern applies to its estate ERP.
 - **Mill grading.** Mill grading results return as ripeness feedback and OER KPIs.
 - **MSPO reporting.** Evidence packs and fertiliser quantities flow out for traceability (4.2.2) and GHG (4.5.4) reporting (MPOCC, 2023a; 2023b).
 - **Microsoft 365.** Power BI dashboards and Teams alerts serve management.
 - **Field devices.** Soil sensors reach the cloud through a LoRaWAN network server and an IoT Operations edge cluster on the estate network (Microsoft, 2026b).
 
-**PDPA residency split.** Service placement follows Microsoft's products-by-region listing at deployment (Microsoft, 2026a).
-- **Malaysia West** holds every service that touches personal data, such as worker and smallholder identities and individually linked plots: the Event Grid MQTT broker, Event Hubs, Functions, App Service, Storage and Data Lake, Data Explorer/Fabric, Logic Apps and AKS. The IoT Operations edge stays on the estate.
-- **Southeast Asia** runs Azure ML, Device Provisioning, the confidential ledger and Azure OpenAI. These receive only non-personal or hashed data. This matters for the ledger in particular, because it always replicates to a paired region (Microsoft, n.d.b).
+**PDPA residency split.** Service placement follows Microsoft's products-by-region listing at deployment; the split below is indicative (Microsoft, 2026a).
+- **Malaysia West** holds every service that touches personal data, such as worker and smallholder identities and individually linked plots: the Event Grid MQTT broker (devices registered by certificate), Event Hubs, Functions, App Service, Storage and Data Lake, Data Explorer/Fabric, Logic Apps and AKS. The IoT Operations edge stays on the estate.
+- **Southeast Asia** runs Azure ML, the confidential ledger and Azure OpenAI. These receive only non-personal or hashed data. This matters for the ledger in particular, because it always replicates to a paired region (Microsoft, n.d.c).
 - **Safeguards.** Any personal-data transfer relies on the amended PDPA section 129 safeguards: a transfer impact assessment and a record of each transfer (Mayer Brown, 2025).
 
-*Table 4: Phased implementation plan*
+*Table 5: Phased implementation plan*
 
 | Phase | Scope | Functions and models | Integration | Success measure |
 |---|---|---|---|---|
@@ -231,18 +240,18 @@ The success measures reuse the harvest-round evidence from Part 1 (Ahmad et al.,
 
 ## 2.5 Integration and Implementation Risks and Mitigation
 
-Risks were scored on likelihood × impact (each 1–3). Table 5 lists them in priority order, grouped into the assignment's three categories.
+Risks were scored on likelihood × impact (each 1–3). Table 6 lists them in priority order, grouped into the assignment's three categories.
 
-*Table 5: Prioritised risk register*
+*Table 6: Prioritised risk register*
 
 | # | Category | Risk | L×I | Mitigation | Owner |
 |---|---|---|---|---|---|
 | 1 | Technical | Cold start: no labelled estate data at launch; early-BSR accuracy only 64–84 % in research (Kwang et al., 2025) | 3×3 | Rule-based agronomic baseline with human review; *Ganoderma* framed as screening with ground confirmation; cross-country validation before go-live; retraining on pilot data when drift is detected | Data science lead |
 | 2 | Operational | Low adoption and trust among a largely foreign, mixed-literacy workforce (Ramendran, 2026) | 3×2 | Multilingual counterfactual explanations; one-tap approve/override; *mandore* champions; paper fallback in pilot | Estate manager |
-| 3 | Technical | Legacy SAP customisation and weak coverage on remote blocks | 2×3 | Read-only integration first, write-back in phase 2 (Microsoft, n.d.a); block-master clean-up; edge buffering with local rules (Microsoft, 2026b) | IT lead |
+| 3 | Technical | Legacy SAP customisation and weak coverage on remote blocks | 2×3 | Read-only integration first, write-back in phase 2 (Microsoft, n.d.b); block-master clean-up; edge buffering with local rules (Microsoft, 2026b) | IT lead |
 | 4 | Vendor & cost | Platform lock-in | 2×2 | Open formats (ONNX, STAC, Kafka protocol, MLflow); containerised API; AWS documented as fallback with in-country IoT and ML (Amazon Web Services, 2025) | Architecture board |
 | 5 | Vendor & cost | Enterprise spend growth from GPU training, always-on endpoints and message volume | 2×2 | Budgets and alerts; edge aggregation; scheduled autoscale; drift-triggered rather than calendar retraining; quarterly FinOps review | Finance and IT |
-| 6 | Vendor & cost (service availability) | Key services not offered in Malaysia West; PDPA cross-border transfer | 2×2 | Residency split with only non-personal or hashed data offshore (Microsoft, 2026a); template text if the LLM is unavailable; DPO sign-off before phase 2 (Mayer Brown, 2025) | Data protection officer |
+| 6 | Vendor & cost (service availability) | Key services not offered in Malaysia West; PDPA cross-border transfer | 2×2 | Residency split with only non-personal or hashed data offshore (indicative availability: Microsoft, 2026a); template text if the LLM is unavailable; DPO sign-off before phase 2 (Mayer Brown, 2025) | Data protection officer |
 
 The two highest risks concern data and people rather than technology. The pilot therefore keeps a human in every decision and treats its first six months as a data-collection phase.
 
@@ -261,7 +270,7 @@ An off-the-shelf implementation would deploy separate point tools: a ripeness cl
    - the block geolocation;
    - the MSPO criteria it supports, namely site-management SOP records (4.1.3.1), block reference (4.1.3.4), integrated pest management (4.1.3.5), traceability (4.2.2), GHG (4.5.4) and water (4.5.5) (MPOCC, 2023a).
 
-   Record digests are anchored in Azure confidential ledger, an append-only, tamper-evident store, so any later edit is detectable (Microsoft, n.d.b). One click produces an audit pack per block and period. Compliance therefore stops being parallel paperwork and becomes a by-product of operations. The log also addresses the gaps in plot geolocation and traceability that the EUDR assessment identified (MSPO and EFI, 2025).
+   Record digests are anchored in Azure confidential ledger, an append-only, tamper-evident store, so any later edit is detectable (Microsoft, n.d.a). One click produces an audit pack per block and period. Compliance therefore stops being parallel paperwork and becomes a by-product of operations. The log also addresses the gaps in plot geolocation and traceability that the EUDR assessment identified (MSPO and EFI, 2025).
 2. **Counterfactual, plain-language explanations.** An example: "Lime first: soil is more acidic than the knowledge base allows; inside the optimal band the advice would be to fertilise." A supervisor can read and challenge this in their own language, whereas standard feature-importance charts are written for data scientists (Microsoft, 2025).
 3. **A multiscale screening cascade.** Satellite, drone and ground evidence are linked by spatial reasoning about root-contact spread (Khoo and Chong, 2023). The cascade directs scarce experts to the right palms even though model accuracy is only moderate (Kwang et al., 2025).
 4. **Decisions, not just detections.** Ripeness grades become crew assignments, so the system acts on the labour constraint itself.
@@ -269,7 +278,7 @@ An off-the-shelf implementation would deploy separate point tools: a ripeness cl
 
 ## 3.2 Future Extension to the Organisation and Other Sectors
 
-The extension follows the roadmap in Table 4.
+The extension follows the roadmap in Table 5.
 - **Medium term, within the organisation.** Logged harvest and fertiliser data enable yield forecasting and automatic GHG inputs for MSPO criterion 4.5.4 (MPOCC, 2023a). Mills join through the traceability criterion of MS 2530-4-1 (MPOCC, 2023b).
 - **Long term, smallholders.** A simplified co-operative app extends the same advice and evidence log to FELDA's 112,635 settler families (New Straits Times, 2019), supporting group certification.
 - **Long term, new knowledge.** Pooled, anonymised override records from many estates show where agronomists and models disagree, by soil, region and season. Together they would form the first sector-wide benchmark of AI-assisted agronomy, which MPOB or MSPO could use to refine thresholds and guidance.
@@ -285,7 +294,7 @@ Malaysia's record palm oil output rests on fragile foundations: scarce harvester
 
 SawitSense applies three capabilities. Computer vision plans harvests, multisource anomaly detection screens for *Ganoderma*, and knowledge-based reasoning gives explained fertiliser advice. All three feed an explain-to-audit evidence log.
 
-The platform evaluation was reported transparently. AWS leads narrowly on generic capability, but Microsoft Azure best fits this case because of SAP integration, long offline operation and audit-ready explanations (Microsoft, 2025; 2026b; n.d.a). A phased plan that begins with human review and a rule-based baseline contains the main risks, cold-start data and user trust. Beyond palm oil, the design offers EUDR-ready traceability for rubber and cocoa (European Commission, 2026).
+The platform evaluation was reported transparently. AWS leads narrowly on generic capability, but Microsoft Azure best fits this case because it meets the case-critical requirements of SAP integration, resilience to long outages and audit-ready explanations (Microsoft, 2025; 2026b; n.d.b). A phased plan that begins with human review and a rule-based baseline contains the main risks, cold-start data and user trust. Beyond palm oil, the design offers EUDR-ready traceability for rubber and cocoa (European Commission, 2026).
 
 ---
 
@@ -321,6 +330,8 @@ Google Earth Engine (n.d.) *Harmonized Sentinel-2 MSI: MultiSpectral Instrument,
 
 IOI Corporation Berhad (2020) *IOI Corp enhances operational efficiencies with S/4HANA* (republished from New Straits Times, 29 July). Available at: https://www.ioigroup.com/news/ioi-corp-enhances-operational-efficiencies-with-s4hana (Accessed: 23 November 2026).
 
+IOI Corporation Berhad (2026) *IOI accelerates digital transformation across our plantations with estate-wide high-speed connectivity* [Media release], 15 January. Available at: https://www.ioigroup.com/media-releases/ioi-accelerates-digital-transformation-across-our-plantations-with-estate-wide-high-speed-connectivity (Accessed: 23 November 2026).
+
 Khoo, Y.W. and Chong, K.P. (2023) '*Ganoderma boninense*: general characteristics of pathogenicity and methods of control', *Frontiers in Plant Science*, 14, 1156869. doi:10.3389/fpls.2023.1156869 (Accessed: 23 November 2026).
 
 Kwang, C.S., Razak, S.F.A., Yogarayan, S., Bin Muhammad, A.M.M., Ling, C.A., Bakar, S.A. and Abidin, H. (2025) 'Ganoderma detection in oil palm plantations using UAV hyperspectral imaging and AI', in *Proceedings of TENCON 2025 – IEEE Region 10 Conference*. Kota Kinabalu, 27–30 October. Available at: https://shdl.mmu.edu.my/15767/ (Accessed: 23 November 2026).
@@ -337,13 +348,15 @@ Mayer Brown (2025) *From legislative reform to practical guidance: key amendment
 
 Microsoft (2025) *Assess AI systems and make data-driven decisions with Azure Machine Learning Responsible AI dashboard*. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/machine-learning/concept-responsible-ai-dashboard (Accessed: 23 November 2026).
 
-Microsoft (2026a) *Azure Retail Prices REST API* (queried for armRegionName 'malaysiawest' and 'southeastasia'). Available at: https://prices.azure.com/api/retail/prices (Accessed: 23 November 2026).
+Microsoft (2026a) *Azure Retail Prices REST API* (used as a regional service-availability index; queried for armRegionName 'malaysiawest' and 'southeastasia'). Available at: https://prices.azure.com/api/retail/prices (Accessed: 23 November 2026).
 
 Microsoft (2026b) *What is Azure IoT Operations?* Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/iot-operations/overview-iot-operations (Accessed: 23 November 2026).
 
-Microsoft (n.d.a) *Access SAP from workflows* (Azure Logic Apps SAP connector). Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-using-sap-connector (Accessed: 23 November 2026).
+Microsoft (n.d.a) *About Azure confidential ledger*. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/confidential-ledger/overview (Accessed: 23 November 2026).
 
-Microsoft (n.d.b) *Data residency for Azure confidential ledger*. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/confidential-ledger/data-residency (Accessed: 23 November 2026).
+Microsoft (n.d.b) *Access SAP from workflows* (Azure Logic Apps SAP connector). Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-using-sap-connector (Accessed: 23 November 2026).
+
+Microsoft (n.d.c) *Data residency for Azure confidential ledger*. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/confidential-ledger/data-residency (Accessed: 23 November 2026).
 
 New Straits Times (2019) 'Felda seeking investors for hitech agriculture and cash cropping', 25 February; republished by MPOB Palm News. Available at: https://prestasisawit.mpob.gov.my/en/palmnews/news/27078 (Accessed: 23 November 2026).
 
@@ -353,7 +366,7 @@ The Edge Malaysia (2025) 'Cover Story: Positioning SD Guthrie for next stage of 
 
 The Edge Malaysia (2026) 'Cover Story 1: Can Malaysian planters avert another migrant worker crunch?', *The Edge Malaysia Weekly*, 9–15 November. Available at: https://theedgemalaysia.com/node/825330 (Accessed: 23 November 2026).
 
-The Edge Malaysia (n.d.) 'Felda's road ahead in the spotlight', *The Edge Malaysia*, 6 October. Available at: https://theedgemalaysia.com/node/820636 (Accessed: 23 November 2026).
+The Edge Malaysia (n.d.) 'Felda's road ahead in the spotlight', *The Edge Malaysia*. Available at: https://theedgemalaysia.com/node/820636 (Accessed: 23 November 2026).
 
 ---
 

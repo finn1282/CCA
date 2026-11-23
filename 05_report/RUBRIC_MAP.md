@@ -9,11 +9,11 @@
 | | Cognitive capability per problem | 4 | 1.3, Table 2 | Specific capability per problem; why it beats the conventional method; stated limits (screening, not diagnosis) |
 | 2 (15 %) | Application: name, core functions, target users | 2 | 2.1 | Five functions traced to P1–P3 / O1–O4; users with interfaces |
 | | Underlying technologies justified | 3 | 2.2, Figure 1 | Adapted layered architecture; each technology justified by capability |
-| | Compare ≥3 platforms; recommend one linked to Part 1 | 5 | 2.3, Table 3 | Four platforms; seven weighted capability criteria with both sensitivity rows; AWS leads on breadth (89 vs 85) and is named strong runner-up; Azure recommended on three evidenced case constraints (SAP estates, weeks offline, audit-ready explanations), each tied to P1–P3 |
-| | Integration with existing IT + phased plan | 3 | 2.4, Table 4 | SAP (IOI and SD Guthrie evidence), mill grading, MSPO reporting, Power BI and Teams (M365), LoRaWAN/edge; PDPA residency split (Malaysia West vs Southeast Asia); short/medium/long plan with KPIs (PDF Fig. 6) |
-| | Integration & implementation risks + mitigations | 2 | 2.5, Table 5 | Six risks across technical/operational/vendor & cost, ranked L×I, concrete mitigations and owners |
+| | Compare ≥3 platforms; recommend one linked to Part 1 | 5 | 2.3, Tables 3–4 | Four platforms; seven weighted capability criteria with both sensitivity rows; AWS leads on breadth (89 vs 85) and is named strong runner-up; two-stage method: Azure meets all three case-critical requirements in Table 4 (SAP estates, long outages on remote blocks, audit-ready counterfactuals) where AWS is partial, each tied to P1–P3 |
+| | Integration with existing IT + phased plan | 3 | 2.4, Table 5 | SAP (IOI and SD Guthrie evidence), mill grading, MSPO reporting, Power BI and Teams (M365), LoRaWAN/edge; PDPA residency split (Malaysia West vs Southeast Asia); short/medium/long plan with KPIs (PDF Fig. 6) |
+| | Integration & implementation risks + mitigations | 2 | 2.5, Table 6 | Six risks across technical/operational/vendor & cost, ranked L×I, concrete mitigations and owners |
 | 3 (5 %) | Novelty vs off-the-shelf | 3 | 3.1 | Explain-to-audit ledger, counterfactuals, multiscale cascade, decision-level allocation, planned cross-country validation |
 | | Future extension | 2 | 3.2 | Tied to the roadmap phases; pooled override data as a sector benchmark (new knowledge); FELDA smallholders; EUDR commodities (rubber, cocoa) |
-| General | Harvard in-text citations in every section; ≥10 sources | — | All; References | Every section cites; 32 references |
+| General | Harvard in-text citations in every section; ≥10 sources | — | All; References | Every section cites; 34 references |
 | | Progress report with each member's contribution | — | Appendix A | Timeline and contribution tables (placeholders) |
 | | Cover page with names and IDs | — | (stakeholder adds) | D40: cover page added at formatting stage |

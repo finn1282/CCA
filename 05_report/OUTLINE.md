@@ -3,6 +3,7 @@
 ## Changelog (D37)
 | Ver | Date | What changed | Trigger |
 |---|---|---|---|
+| v5 | 2026-11-24 | Audit 2 fixes N-01…N-11: IOI connectivity restored (IOI2026); constraint 2 renamed 'Long outages on remote blocks'; 2.3 recast as a two-stage method (Table 3 breadth, new Table 4 case-critical pass/partial; roadmap and risk tables renumbered 5 and 6); residency marked indicative with the Retail Prices API retitled; DPS dropped (certificate-based client registration); ledger overview cited (AZ-ACL); exec summary at 149 words; 34 references | REPORT_AUDIT_2 |
 | v4 | 2026-11-24 | Audit 1 fixes C-01…C-23 (except C-05, which is for the stakeholder); 2.3 shows the rescored matrix (AWS 89 / Azure 85 / Google 67 / IBM 49) and recommends Azure on case fit (SAP estates, weeks offline, audit-ready explanations); residency split corrected; MSPO Parts 3-2 / 4-1; references 33; body limit excludes references and appendix | REPORT_AUDIT_1, research file 10, D49, D50, D51 |
 | v3 | 2026-11-23 | Stakeholder changes applied: validation is a planned step (no prototype results); risk 1 is now cold start / data gap; roadmap wording changed; references raised to 26 (+KWANG2025, IOI2026, NST-FELDA2019, STAR-LAB2026, GCP-REGIONS, GEE-S2 — the last two evidence Google's residency and geospatial scores in 2.3; EDGE-RUBBER2026 and AZ-ACL-RES left out to stay at 26); FELDA 112,635 families; no cover page or TOC; rubric map moved to RUBRIC_MAP.md | D40 (outline v2 approved with changes) |
 | v2 | 2026-11-23 | 2.4 and 2.5 rebuilt from Software design docs 01–05 (integration table, Fig. 6 roadmap with KPIs, nine risks condensed to six); only the M1 metrics remain pending | 03_software docs 01–05 pushed and Lead-checked |
@@ -148,7 +149,7 @@ Source: `04_cloud_design.md` §4, §7. The nine risks there, scored likelihood �
 
 ---
 
-## Tables and figures (6)
+## Tables and figures (7: Tables 1–6 + Figure 1; v5 adds Table 4, the Stage 2 requirements)
 Table 1 prioritisation · Table 2 conventional vs cognitive · Figure 1 architecture · Table 3 platform matrix · Table 4 roadmap · Table 5 risk register.
 
 ## Core reference list (33)

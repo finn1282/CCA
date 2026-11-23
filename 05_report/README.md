@@ -1,6 +1,8 @@
 # 05_report — README
 
-## Status (24 Nov 2026, revision 1 after compliance audit 1)
+## Status (24 Nov 2026, revision 2 after compliance audit 2: N-01…N-11 applied; body prose 3,715 + tables 767 ≈ 4,480 words, ≈4,560 with Figure 1; 34 references; 6 tables + 1 figure plus Table 4)
+
+### Previous status (revision 1)
 REPORT.md has been revised against REPORT_AUDIT_1 (C-01…C-23), research file 10, D49, D50 and D51. OUTLINE.md is at v4.
 
 | Section | Prose words | Table words |
@@ -33,7 +35,7 @@ Assignment PDF; `00_lead/` SPEC, DECISIONS D1–D40, PROJECT_PLAN, `briefs/repor
 | `RUBRIC_MAP.md` | Sub-task → section cross-reference (internal, moved out of the report per D40) |
 | `PLAN.md` | Original plan and proposals REP-P1–P3 (P1 and P2 accepted in D34) |
 
-## Core reference list (32). Reuse only these
+## Core reference list (34). Reuse only these
 The assembler mapping is fixed. In-text form → key:
 - Abdul Hadi et al. (2026) → MPOB-TT698
 - Ahmad et al. (2020) → AHMAD2020
@@ -60,8 +62,10 @@ The assembler mapping is fixed. In-text form → key:
 - Microsoft (2025) → AZ-RAI
 - Microsoft (2026a) → AZ-PRICES-API
 - Microsoft (2026b) → AZ-IOTOPS
-- Microsoft (n.d.a) → AZ-SAP
-- Microsoft (n.d.b) → AZ-ACL-RES
+- Microsoft (n.d.a) → AZ-ACL
+- Microsoft (n.d.b) → AZ-SAP
+- Microsoft (n.d.c) → AZ-ACL-RES
+- IOI Corporation Berhad (2026) → IOI2026
 - New Straits Times (2019) → NST-FELDA2019
 - Ramendran (2026) → STAR-LAB2026
 - The Edge Malaysia (2025) → EDGE-SDG2025
