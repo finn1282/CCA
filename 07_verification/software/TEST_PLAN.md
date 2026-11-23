@@ -1,112 +1,107 @@
 # SW Verification: Test Plan
 
-> Owner: SW Verification & Testing. Scope: the `03_software` backend, rule engine, evidence chain, dashboard, datasets, models and cloud guides. It also covers the device side of the HW↔SW contract (`02_hardware/firmware/*.ino`).
-> Contract under test: **`00_lead/INTERFACES.md` v0.2.2** (v0.2.1 plus `age_s`/`captured_at`, replay-first and `/latest` ignoring buffered rows, D33).
-> Rolling passes (D10): Pass 1 = M1 backend smoke test, Pass 2 = M2 model trained, Pass 3 = M3 design docs, Pass 4 = M4 run guides.
+> Owner: SW Verification & Testing. Scope: the `03_software` backend, rule engine, evidence chain, dashboard, datasets, models, docs and run guides. It also covers the device side of the HW↔SW contract (`02_hardware/firmware/*.ino`).
+> Contract under test: **`00_lead/INTERFACES.md` v0.2.6**. That is v0.2.2 `age_s`/`captured_at`, plus v0.2.3 ts validation, idempotent seq, NO DATA and 1-dp rounding, plus the v0.2.4 seq-reuse rule, plus v0.2.6 `/latest` = most recently captured non-buffered row.
+> Rolling passes (D10): Pass 1 = M1 backend; **Pass 2 = M2–M4** (model, design docs, run guides).
 > Status values: **pass**, **fail**, **blocked** and **pass (obs)**. "pass (obs)" means the contract is met but something is worth noting.
-> Evidence: `tests/pass1_results.md` is the full per-check output of `tests/contract_test.py`. Defect IDs (S-xx) are listed in `PASS_1_REPORT.md`.
+> Evidence:
+> - `tests/pass2_results.md`: per-check output of `tests/contract_test.py`
+> - `tests/pass2_eval_m1.md`: output of `tests/eval_m1.py`
+> - `tests/pass1_results.md`: the earlier Pass 1 run
+>
+> Defect IDs (S-xx) are listed in `PASS_1_REPORT.md` (S-01…15, all closed) and `PASS_2_REPORT.md` (S-16…25).
 
-Last run: **Pass 1, 23 Nov 2026**, software `b3cb4fe`, firmware `54eea6c`, repo HEAD `4163a6d`, port 8833.
+Last run: **Pass 2, 23 Nov 2026**, repo HEAD `345ec07` (software `1ad0560`), existing `03_software/.venv` (D43/D44), port 8833.
 
-## A. Owner's own suite (re-run in a fresh venv)
+## A. Owner's own suite
 
 | ID | Area | Test | Method | Expected | Status | Evidence |
 |---|---|---|---|---|---|---|
-| OWN-01 | Backend | `pytest` suite | Fresh venv (Python 3.14) in scratch, `SAWIT_RUNTIME_DIR` set to scratch, `python -m pytest -q -p no:cacheprovider` from `03_software/src` | All pass | pass | 22 passed, 1 deprecation warning (starlette/httpx) |
-| OWN-02 | Backend | `smoke_test.sh` end to end | `PY=<venv> PORT=8833 ./smoke_test.sh` | "SMOKE TEST PASSED" and every step plausible | pass (obs) | Output matches `src/tests/smoke_output.txt`. The script has no assertions and prints PASSED unconditionally (S-09) |
+| OWN-01 | Backend | `pytest` | `03_software/.venv`, `SAWIT_RUNTIME_DIR` in scratch, `-p no:cacheprovider` | All pass | pass | 33 passed |
+| OWN-02 | Backend | `smoke_test.sh` (asserted, `tests/smoke_e2e.py`) | `PY=../.venv/bin/python PORT=8833` | "SMOKE TEST PASSED (all assertions)" | pass | S-09 closed |
 
 ## B. Backend and contract (black-box HTTP, `tests/contract_test.py`)
 
 | ID | Area | Test | Method | Expected | Status | Evidence |
 |---|---|---|---|---|---|---|
-| BE-01…03 | Health/meta | `/health`, and that `/meta` thresholds and action set match §4 | GET | 200; 30/80, 4.0/4.2/6.5, margin 0.30; 7 actions | pass | results BE-* |
-| AU-01…05 | Auth | No headers, no key, wrong key, unknown device, body/header device mismatch | POST `/readings` | 401, 401, 401, 401, 400 | pass | AU-* |
-| AU-06 | Auth | Camera key used on `/readings` | POST as cam-01 | No rule in the contract | pass (obs) | Keys are not scoped per endpoint |
-| VA-01…08, 10…13 | Validation | Out-of-range or typed-wrong fields, missing `device_id`, malformed JSON, `age_s` −1, edge-valid 0/100/14, minimal body | POST | 422 for invalid; 200 for edge-valid; minimal body treated as all-null | pass | VA-* |
-| VA-09 | Validation | Non-ISO `ts` | POST `ts:"not-a-timestamp"` | 422 | **fail** | Accepted. Becomes `captured_at` and sorts as the newest chart point (S-03) |
-| TH-01…10 | §4 edges | Moisture 29.9/30/80/80.1; pH 3.99/4.0/4.19/4.2/6.5/6.51 | POST | irrigate/ok/ok/drain; lime/watch/watch/ok/ok/watch(PH_HIGH); rule_id and LED per §4 | pass | TH-* |
-| TH-11 | §4 note | pH 5.6 | POST | ok plus the "above typical band, not harmful" note | pass | TH-11 |
-| TH-12 | TDS | TDS rules before calibration | POST | Skipped, with a note | pass | TH-12 |
-| TH-13…17 | TDS edges | Baseline 600 ±30 %: 419/420/780/781; baseline 1000 ±10 %: 899/900/1101 | POST | fertilise / ok / ok / skip_fertiliser, `simulated` true only on TDS findings | pass | TH-13…17 |
-| PR-01…08 | Priority | Multi-finding readings | POST | irrigate/drain > lime > fertilise/skip > watch > ok; `action == actions[0]`; counterfactual present | pass | PR-* |
-| PR-02 | Simulated flag | irrigate together with a TDS finding | POST | `simulated` true (conservative) | pass (obs) | PR-02 |
-| NU-01…05 | Nulls | pH null, all null, moisture null + pH low, two nulls, null temp/RH/rssi | POST and evidence GET | Stored as null, no fabricated value; `OK (partial)` / `NO DATA` (amber); other rules still fire | pass | NU-*. NU-04: line 2 names only the first missing sensor |
-| EC-01…02 | EC | `ec_us_cm` null → derived as TDS/0.5 and flagged; when supplied → kept | POST + evidence | 1240 with `ec_derived=true`; 900 with false | pass | EC-* |
-| OL-01…08 | OLED/LED | Every `/readings` reply in the run (≈150, including extreme values) | Aggregate | 2 strings of 1–16 chars; LED ∈ {green, amber, red} and matches the §4 row; vocabulary only from §4; all §2 fields present; line 1 has no `_` | pass | OL-*. OL-07: line 2 is hard-truncated at 16 chars for extreme TDS |
-| RP-01…09 | Replay/seq | Buffered replay accepted and flagged; `/latest` keeps the highest-seq non-buffered row (D-04 retest); chart ordered by `captured_at`; `age_s` → `captured_at = received − age_s`; `ts` wins over `age_s` | POST + GET | As in v0.2.2 §2 | pass | RP-* |
-| RP-05 | Idempotency | Same `seq` posted twice | POST ×2 | No rule in the contract | pass (obs) | 2 evidence records (S-06) |
-| CA-01…16 | Calibration | GET before set; POST validation (0, −5, margin 0/1, empty); use_latest (409 with no reading, picks last TDS); device GET (own / other / wrong key); dashboard GET; evidence logged; firmware parser caches the values or clears on null | GET/POST | v0.2.1 body `{tds_baseline_ppm, tds_margin, updated_at}` | pass | CA-*. CA-14: the baseline cannot be cleared to null through the API |
-| CM-01…07 | Commands | Empty poll → `{cmd:none}`; queue → capture consumed once; unknown command 422; wrong device 403; no key 401 | GET/POST | As §3 | pass | CM-*. CM-04: repeated clicks queue repeated captures (S-07) |
-| EV-01…11 | Evidence | Chain intact; prev_hash links; record content (input/output/calibration/mspo/rules_version); 404; approve/override reviews; retraining flag; audit pack VERIFIED with fertiliser rows `Simulated=yes`; coverage | GET/POST | Explain-to-audit (D18/D28) | pass, except EV-07 | EV-* |
-| EV-07 | Evidence | Override to a non-vocabulary action | POST review `override_action:"banana"` | 422 | **fail** | Accepted and logged (S-04) |
-| EV-12…15 | Tamper | Edit one record → verify fails at it, audit pack says BROKEN; restore → OK; delete a middle record → fails | Direct SQLite edit on the throw-away DB | Detected | pass | EV-12…15 |
-| EV-16 | Tamper | Truncating the tail, or recomputing the whole chain | Analysis | Not detectable without an external head anchor | pass (obs) | Demo limitation; the report target is Confidential Ledger (S-10) |
-| AD-01…06, 08, 09, 11…13 | Cloud mode | `SAWIT_DEVICE_KEYS` overrides demo keys; admin token protects calibration/commands/review writes; `?token=` accepted; `SAWIT_MODE=cloud` with no keys/token fails closed (D-12 retest) | Separate server instances | 401/403 as configured | pass | AD-* |
-| AD-07 | Cloud mode | Dashboard calibration panel GET when a token is set | GET without device headers or token (the way `app.js` sends it) | 200 | **fail** | 403, so the panel is blank in cloud mode (S-01) |
-| AD-10 | Cloud mode | Read endpoints with a token set | GET `/latest`, `/evidence/export` | No rule in the contract | pass (obs) | Unauthenticated (S-08) |
-| RI-01…04 | Ripeness | No auth 401, empty 400, >5 MB 413, model absent 503 with a clear message | POST raw JPEG | As stated | pass | RI-* |
-| RI-05…09 | Ripeness/model | Response fields, heatmap PNG, non-image 400, cam parser, CPU latency < 2 s | POST | §3 response | **blocked** | M1 not exported yet (503) |
+| BE-01…03 | Health/meta | `/health`, plus `/meta` thresholds and actions equal §4 | GET | 200; 30/80, 4.0/4.2/6.5, 0.30; 7 actions | pass | BE-* |
+| AU-01…05 | Auth | No headers, no key, wrong key, unknown device, body/header mismatch | POST | 401×4, 400 | pass | AU-* |
+| AU-06 | Auth | Camera key used on `/readings` | POST | No rule in the contract | pass (obs) | Keys not scoped per endpoint |
+| VA-01…08, 10…13 | Validation | Out-of-range or typed-wrong fields, missing id, malformed JSON, `age_s` −1, edge-valid values, minimal body | POST | 422 / 200 | pass | VA-* |
+| VA-09 | Validation | `ts` garbage / naive / >24 h future / `+08:00` | POST | Garbage → null (`captured_at = received_at`); `+08:00` → normalised `Z` (v0.2.3) | pass | S-03 closed |
+| TH-01…17 | §4 edges | Moisture 29.9/30/80/80.1; pH 3.99/4.0/4.19/4.2/5.6/6.5/6.51; TDS 600±30 % (419/420/780/781), 1000±10 %; TDS before calibration | POST | Strict `<`/`>` edges, rule_id, LED, `simulated` only on TDS | pass | TH-* |
+| PR-01…08 | Priority | Multi-finding readings | POST | irrigate/drain > lime > fertilise/skip > watch > ok; counterfactual | pass (PR-02 obs) | PR-* |
+| NU-01…05, EC-01…03 | Nulls / EC | Nulls stored as null; `OK (partial)` / `NO DATA` amber; EC derived and labelled from `ec_derived` | POST + evidence | As §2 | pass (NU-04 obs) | S-13 EC label closed |
+| OL-01…08 | OLED/LED | Every reply (~400) | Aggregate | 2 × ≤16 chars, LED matches §4, line 1 without `_` | pass | OL-* |
+| RP-01…04, 06…09 | Replay/time | Buffered flag + `ts` kept; `/latest` = most recently captured non-buffered row, including after a seq reset (D-04/D-16); chart ordered by `captured_at`; `age_s` arithmetic | POST + GET | v0.2.6 §2 | pass | RP-* |
+| RP-05, RP-10, RP-11 | Idempotency | Identical re-POST; same seq with new values; same seq with a different air temp | POST | Original reply + `duplicate`, no new evidence; new values stored; (obs) only 4 soil fields compared | pass (RP-11 obs) | S-06 closed |
+| CA-01…16 | Calibration | GET/POST validation, use_latest, device/other/wrong key, dashboard GET, evidence logged, firmware parse | GET/POST | v0.2.1 body | pass (CA-14 obs) | CA-* |
+| CM-01…08 | Commands | Poll none / capture once; coalescing of repeated clicks; 60 s expiry; 422/403/401 | GET/POST + DB-aged row | As §3, S-07 | pass | S-07 closed |
+| EV-01…17 | Evidence | Chain links, content, 404, reviews (approve/override, vocabulary 422), audit pack VERIFIED + Simulated=yes + **head hash**, coverage, tamper edit/delete detected | GET/POST + SQLite edit | D18/D28 | pass (EV-16 obs) | S-04, S-10 closed |
+| AD-01…14 | Cloud mode | Key override; writes need the token; **reads need the token** (10 endpoints 403 without, 200 with `?token=`); shell and `/health` public; dashboard `get()` sends the token; `SAWIT_MODE=cloud` without secrets fails closed | 3 server instances | 401/403/200 as stated | pass | S-01, S-08, D-12 closed |
+| RI-01…03 | Ripeness | No auth 401, empty 400, >5 MB 413 | POST | As stated | pass | RI-* |
+| RI-04…11 | Ripeness + model | SVGA JPEG from D2 test → 200; 8 §3 fields and types; probs sum to 1; label = argmax; heat-map PNG 448×224 at `/static/heatmaps/<ev>.png`; image served; non-image 400; cam parser; p95 < 2 s; override vocabulary for ripeness; `/health` model_version | POST/GET | §3 | pass | Cold 0.22 s; warm **p50 0.082 s / p95 0.083 s** |
+| RI-12…14 | Ripeness | Underripe column; soil POST during inference; full-size D2 original | — | — | pass (obs) | p(underripe) 0.002 (untrained); soil waits about 0.17 s; 8.6 MB → 413 (S-23) |
 
-## C. Firmware ↔ backend (exact device payloads, firmware `54eea6c`)
+## C. Firmware ↔ backend (exact device payloads, firmware v0.2.3+)
 
 | ID | Area | Test | Method | Expected | Status | Evidence |
 |---|---|---|---|---|---|---|
-| FW-01…06 | Soil node | `toJson()` shapes: no NTP (`ts:null`, `cal_id:"uncalibrated"`), NTP, DS18B20/DHT failed, all probes failed, buffered + `age_s` 95 + rssi null, 3 findings | POST the byte-exact JSON with the firmware headers; parse with a Python port of `applyCloudResponse()` (ArduinoJson `|` defaults) | 200; parser accepts the reply; lines 1 and 2 are not truncated by `substring(0,16)`; LED valid; `ev_` id | pass | FW-01…06 |
-| FW-07 | Fallback | LOCAL `localDecision()` vs CLOUD on 75 boundary combinations (moisture × pH × TDS) | Python port | Same action and LED | pass | FW-07 |
-| FW-08 | Fallback | Raw float (LOCAL) vs rounded payload (CLOUD) at edges | Python port | — | pass (obs) | e.g. raw 29.96 %: LOCAL irrigate, CLOUD ok (S-12, Hardware) |
-| FW-09, FW-12 | Fallback | LOCAL OLED wording | Python port | — | pass (obs) | `pH 4.0<4.0` at raw 3.96; all probes failed shows green OK on LOCAL vs amber NO DATA on CLOUD (S-12) |
-| CA-09, CA-16 | Soil node | `fetchCalibration()` parse of GET calibration (number / null) | Python port | Caches the number; null clears the baseline (v0.2.2 firmware) | pass | CA-09/16 |
-| FW-10 | Camera | `pollCommands()` on `{cmd:none}` / `{cmd:capture}` | GET with cam headers | Only `capture` triggers | pass | FW-10, CM-03 |
-| FW-11 | Camera | `captureAndUpload()` reply parse | POST JPEG with `Content-Type: image/jpeg` | `label`, `confidence`, `harvest_advice`, `evidence_id` | **blocked** | 503 until M1 exists. A static read of `main.py` shows the fields are present |
-| FW-13 | Integration | One device key for both `API_BASE` and `API_BASE_LOCAL` | Config review | The laptop fallback accepts the cloud key | **fail** | The laptop in local mode only knows the demo keys unless `SAWIT_DEVICE_KEYS` is exported (S-02) |
-| FW-14 | Integration | Cloud and LAN are two separate databases | Design review | The dashboard and devices use the same backend | pass (obs) | A capture queued on cloud never reaches a camera on LAN. Rehearsal item R-07 (S-05) |
+| FW-01…06 | Soil node | `toJson()` shapes (1-dp `r1()` rounding, `age_s`, null for NAN): no NTP, NTP, temp/RH failed, all probes failed, buffered, 3 findings | POST byte-shaped JSON; Python port of `applyCloudResponse()` | 200; parser accepts; no truncation | pass | FW-01…06 |
+| FW-07 | Fallback | LOCAL `localDecision()` vs CLOUD on **315 raw boundary combinations** | Python port | Same action, LED and OLED line 1 | pass | S-12 closed |
+| FW-08 | Fallback | 1-dp pH rounding at edges | Python port | — | pass (obs) | Raw 3.95 → watch (0.05 pH shift, both sides) |
+| FW-12 | Fallback | All probes failed | Python port | NO DATA/amber in LOCAL and CLOUD | pass | v0.2.3 |
+| FW-10, FW-11 | Camera | `pollCommands()`; `captureAndUpload()` with SVGA JPEG | GET/POST | Only `capture` triggers; reply has label/confidence/harvest_advice/evidence_id | pass | — |
+| FW-13 | Integration | One key for cloud and LAN | Doc review | Laptop exports the same `SAWIT_DEVICE_KEYS` | pass | S-02 closed (D39, DEPLOY §7, 06 §4.3) |
+| FW-14 | Integration | Separate cloud/LAN databases | Doc review | One backend at a time | pass | S-05 closed (D39) |
 
 ## D. Dashboard
 
 | ID | Area | Test | Method | Expected | Status | Evidence |
 |---|---|---|---|---|---|---|
-| DB-01…03 | Offline-safe | No CDN, fonts or external URL in `index.html`, `app.js`, `style.css`, `harvester.html`; all assets served locally (Chart.js 4.4.1 vendored) | Regex over served files plus GET | None external; all 200 | pass | DB-01…03 |
-| DB-04 | Panels | Readings, recommendation + reasoning/counterfactual/ML check, camera + heatmap, calibration, satellite→drone→ground cascade, harvest, evidence, MSPO | HTML ids plus an `app.js` read | Present | pass | DB-04 |
-| DB-05, DB-08 | Labelling | CC BY 4.0 credits (Kamal D1, Rosbi D2, Mimboro D4, Descals), the Copernicus notice, SIMULATED badges and SIMULATED feed sources | Text check | Present | pass | DB-05/08 |
-| DB-06 | Labelling | Copernicus notice wording | Read | "Contains modified Copernicus Sentinel data [year]"; source matches the build (Earth Engine, D16) | pass (obs) | Year missing; says Planetary Computer (S-11) |
-| DB-07 | Feeds | Every polled feed returns 200 | GET | 200 | pass | DB-07 |
-| DB-09 | Backend down | `tick()` catch sets the pill to "offline" and keeps the last values; other renders use `.catch` | Static read of `app.js:196-220` | Graceful | pass (static) | Cascade is fetched only on the first tick, so it stays empty if the backend was down then; `harvester.html` has no error handling (S-13). A live check is in rehearsal R-10 |
-| DB-10 | Licence | Third-party JS licence notice | Read vendor file | MIT notice kept | pass (obs) | Chart.js banner stripped from the minified file (S-14) |
+| DB-01…03 | Offline-safe | No external URL in HTML/JS/CSS/harvester; all assets local | Regex + GET | None; 200 | pass | — |
+| DB-04, DB-05, DB-07, DB-08 | Panels/labels/feeds | 8 panels; CC BY 4.0 credits; SIMULATED badges; feeds 200 | Text + GET | Present | pass | — |
+| DB-06 | Labelling | Copernicus notice | Regex | Year + Earth Engine | pass | S-11 closed |
+| DB-09 | Backend down | `tick()` → "offline" pill; cascade retried until loaded; harvester try/catch + offline text | Static read | Graceful | pass (static) | Live check in R-10 |
+| DB-10 | Licence | Chart.js MIT notice | GET `vendor/LICENSE-chartjs.txt` | 200 | pass | S-14 closed |
 
-## E. Datasets (D16), as documented so far
+## E. Datasets (D16)
 
 | ID | Area | Test | Method | Expected | Status | Evidence |
 |---|---|---|---|---|---|---|
-| DS-01 | Sources | D1 Mendeley doi:10.17632/424y96m6sw.1, D2 Zenodo 11114885 / GitHub mirror, D4 Mendeley v2 doi:10.17632/s23jvbpnr3.2, D9 GEE | `03_datasets.md`, `train_m1.py`, `scripts/fetch_d2_github.py` | Documented, with licence | pass | D2 is fetched from the GitHub mirror of the same CC BY 4.0 record |
-| DS-02 | Licence | CC BY 4.0 attribution in the dashboard and the model meta (`data` field) | Read | Present | pass | DB-05; `train_m1.py:300` |
-| DS-03 | Harmonisation | `map_class()` regex order: damaged/empty excluded; overripe/decay; partial → underripe; immature before mature | Code review plus D2 folder names | 4 classes, no mis-mapping | pass (static) | D2 Test{Unripe,Ripe,Overripe} map correctly. D1 folder names to be confirmed once extracted |
-| DS-04 | Split | D1 train/val/test (provided split) → D2 Malaysian test; head fine-tune uses D2 train only, evaluated on D2 test | Code review `train_m1.py:204-290` | No D2-test image in training | pass (static) | Re-check on real counts in Pass 2 |
-| DS-05 | Leakage | Near-duplicate images across train/test (same bunch photographed twice) | Perceptual hash across splits | 0 cross-split duplicates | **blocked** | D1 zip incomplete (19 MB of 272 MB); D2 FFBtrain not downloaded |
-| DS-06 | Class balance | Per-class counts per split | `train_counts` in `m1_metrics.json` | Documented; class weights used | **blocked** | Waiting for the M1 run. D2 local test copy has 23/41/14 unripe/ripe/overripe (no underripe in D2) |
-| DS-07 | D4 split | Geographic split preserved (no reshuffle) | Code review | Provided split | **blocked** | M3 not built yet (stretch, SW-P6) |
-| DS-08 | Simulated | M6 data labelled SIMULATED (`m6_tree.json` meta, dashboard, audit pack) | Read + EV-10 | Labelled | pass | `metrics_m6.json` "SIMULATED … n=20000, seed=42" |
-| DS-09 | Provisional | A provisional (D2-only) M1 must be labelled as such and not reported as D1→D2 | Code review | `-provisional` suffix, `provisional: true` | pass (static) | `train_m1.py:270,297`. It has no underripe training data (Pass 2 check) |
+| DS-01 | Sources | D1 Mendeley, D2 Zenodo URLs used by the notebook resolve | HEAD request only (no download, D43) | 200, sizes as documented | pass | D1 272,151,984 B zip; D2 1,159,745,282 B, CC BY 4.0 |
+| DS-02 | Licence | CC BY 4.0 credits (dashboard, model meta, Copernicus year) | Read | Present | pass | — |
+| DS-03 | Harmonisation | My folder→class mapping vs `train_m1.map_class` / `split_of` on all 312 local D2 files; D1 names | `eval_m1.py` | 0 mismatches | pass | Immature→unripe, Partially Ripe→underripe, Fully Ripe/Mature→ripe, Overripe/Decayed→overripe |
+| DS-04 | Split | Provisional: D2-train 85/15 → D2-test; final: D1 split → D2 test; head fine-tune on D2-train | Code review | No test file in training | pass (static) | — |
+| DS-05 | Leakage | Cross-split exact (MD5) and near (dHash ≤ 6) duplicates, D2 train × test, plus visual confirmation | `eval_m1.py` | 0 | **fail** | 6/89 test images duplicate train (S-17) |
+| DS-06 | Class balance | Counts per split | `eval_m1.py` | Documented | pass (obs) | Local D2 test 34/41/14, train 40/123/60 (partial copy); provisional train 34/105/51 |
+| DS-07 | D4 split | Geographic split preserved | — | — | blocked | M3 not built (stretch, D42) |
+| DS-08, DS-09 | Labelling | M6 SIMULATED; provisional M1 labelled `-provisional` everywhere (`/health`, meta, README, 03 §9) | Read + RI-11 | Labelled | pass | — |
 
-## F. Models (Pass 2, triggered by M2)
+## F. Models
 
 | ID | Area | Test | Method | Expected | Status | Evidence |
 |---|---|---|---|---|---|---|
-| MD-01 | M1 | Re-run evaluation on D1 test and D2 test with the exported ONNX; compare with `m1_metrics.json` | Own script with onnxruntime | Within ±0.5 pp | blocked | Training in progress |
-| MD-02 | M1 | Confusion matrix sane (ordinal errors mostly adjacent) | From MD-01 | Off-diagonal mass mostly ±1 class | blocked | — |
-| MD-03 | M1 | ONNX loads in the endpoint; `/health` reports `model_version` | Restart the server with the model | 200 at ripeness | blocked | — |
-| MD-04 | M1 | Grad-CAM/CAM heatmap PNG produced and focused on the bunch | RI-06 plus a visual check | Overlay saved and served | blocked | — |
-| MD-05 | M1 | CPU latency (laptop) p95 | 20 requests | < 2 s | blocked | — |
-| MD-06 | M6 | Tree accuracy reproducible (`train_m6.py` seed 42) | Re-run | 0.884 | blocked → Pass 2 | Needs sklearn in the scratch venv |
+| MD-01a | M1 | Reproduce the reported D2-test metric with the training pipeline | Own torchvision path + ONNX | = 0.9326 | pass | Identical CM |
+| MD-01b | M1 | Same metric on the **serving** path (`inference._preprocess`) | `eval_m1.py` | Within ±0.5 pp of reported | **fail** | 0.8989 (−3.4 pp) (S-16) |
+| MD-01c | M1 | Deduplicated D2 test (S-17 removed) | `eval_m1.py` | Report it | pass (obs) | 0.8916, n = 83 |
+| MD-02 | M1 | Confusion matrix sane | `eval_m1.py` | Errors adjacent | pass (obs) | All errors unripe→ripe (adjacent in D2's 3 classes; costly direction) |
+| MD-03 | M1 | ONNX loads in the endpoint; `/health` model_version | RI-04/RI-11 | Loaded | pass | — |
+| MD-04 | M1 | CAM heat-map focused on the bunch | RI-06 + visual check + CAM centre mass | On the fruit | pass | Centre mass 0.82 |
+| MD-05 | M1 | CPU latency p95 | RI-09 | < 2 s | pass | 0.083 s |
+| MD-06 | M6 | `train_m6.py` reproducible (run from a scratch copy, nothing written to `03_software`) | Re-run, seed 42 | 0.88375, identical tree | pass | Accuracy and tree structure identical |
+| MD-07 | M1 final | D1→D2 Kaggle model: repeat MD-01b/c on D2 test; check the D1-test numbers in the owner's log | After the stakeholder run | — | blocked | Stakeholder step (D31) |
 
-## G. Cloud trainability and docs (Passes 3–4)
+## G. Run guides and docs (desk-check only, D31)
 
-| ID | Area | Test | Method | Expected | Status |
-|---|---|---|---|---|---|
-| CL-01 | Kaggle | Notebook/guide: dataset attach paths, GPU flag, `KAGGLE_API_TOKEN` usage, output download, `--d1/--d2` paths | Review only (D31) | Runs as written | blocked (M4) |
-| CL-02 | Azure | Deploy guide: resources, region (D29), app settings `SAWIT_MODE=cloud`, `SAWIT_DEVICE_KEYS`, `SAWIT_ADMIN_TOKEN`, startup command, `/api/v1/health` check, persistent DB path | Review only (D31) | Complete for a beginner | blocked (M4) |
-| CL-03 | GEE | Satellite export guide → `precomputed/` | Review only | Runs as written | blocked (M4) |
-| DOC-01 | D20/D23/D32 | Docs 01–05: no Kaggle/student/price reasons; residency split; RAI scoping (tabular only, Grad-CAM for images) | Read | Compliant | blocked (M3; drafts `01_solution_overview.md`, `02_architecture.md`, `03_ai_models.md` seen, not yet reviewed) |
-| DOC-02 | Internal | README/implementation guide documents the actual build honestly | Read | Accurate | pass (obs): README accurate for M1; the local-run section needs the S-02 note |
+| ID | Area | Test | Method | Expected | Status | Evidence |
+|---|---|---|---|---|---|---|
+| CL-01 | Kaggle | Notebook equals `train_m1.py`; URLs; GPU/internet/private metadata; `KAGGLE_API_TOKEN` env/file outside the repo; output `-p models`; post-run health | Review + HEAD | Runs as written | pass (obs) | `/kaggle/tmp` vs documented `/kaggle/temp`; step 4 may hit 413 (S-23) |
+| CL-02 | Azure | Resources, region fallback, app settings, startup, health version 0.2.6, token URL, clean-up | Review | Complete for a beginner | **fail** | SAS 60 d vs 7 d limit (S-18); SQLite WAL on `/home` (S-19); bare `startup.sh` (S-20) |
+| CL-03 | Earth Engine | `EE_PROJECT` env, auth token outside the repo, outputs committed, attribution | Review | Runs as written | pass (obs) | Block-ID mismatch with estate (S-24); no Windows path note (S-25) |
+| CL-04 | Alternatives | Fallback ladder, keys, one backend | Review | Consistent with D39 | pass | — |
+| DOC-01 | D20/D23/D32 | Docs 01–05: residency split, RAI tabular-only / Grad-CAM for images, no student/price reasons | Grep + read | Compliant | **fail** (minor) | D32 ✔ throughout; build/demo/cost wording in 02/03 (S-22); 05 stale (S-21) |
+| DOC-02 | Internal | 06 beginner guide, 07 build-vs-target, README | Read | Accurate | pass (obs) | S-23 |
 
 ## H. Presentation-day end-to-end rehearsal checklist
 
@@ -114,17 +109,18 @@ Run this in full at least once before the day, on the presentation laptop and ho
 
 | # | Step | Pass criterion |
 |---|---|---|
-| R-01 | `git pull`; fresh venv; `pytest -q`; `PORT=<free> ./smoke_test.sh` | All pass |
-| R-02 | Run `contract_test.py` on the presentation laptop | 0 FAIL (open defects fixed) |
-| R-03 | Cloud: App Service settings `SAWIT_MODE=cloud`, `SAWIT_DEVICE_KEYS`, `SAWIT_ADMIN_TOKEN` set; `GET /api/v1/health` returns `mode:"cloud"` | 200 |
-| R-04 | Laptop fallback started with **the same** `SAWIT_DEVICE_KEYS` as the cloud (S-02); `--host 0.0.0.0`; firewall open; `API_BASE_LOCAL` IP matches the hotspot IP | The soil node's POST to the LAN base returns 200 |
-| R-05 | Open the dashboard as `https://<app>/?token=<admin>` (and `http://<laptop>:<port>/` for fallback). Check the calibration panel shows the baseline (S-01) | Panel populated |
-| R-06 | Soil node boot: OLED shows CLOUD, a reading arrives within 10 s, and the dashboard tiles update | ≤ 10 s |
-| R-07 | Single-backend rule: dashboard, soil node and camera all on the same base (CLOUD **or** LAN), because the databases are separate (S-05) | OLED tag matches the dashboard pill |
-| R-08 | Demo beats: dry soil → IRRIGATE/red; lime cup → LIME/red; set the TDS baseline from the REFERENCE cup ("Use current reading"); PLAIN → FERTILISE (SIMULATED badge); NUTRIENT → SKIP FERTILISER | Each within one interval, with matching OLED/LED/dashboard |
-| R-09 | Camera: dashboard **Capture** once (not repeatedly, S-07) → result, heatmap and harvest advice show in ≤ 10 s; the evidence row appears | ≤ 10 s |
-| R-10 | Kill the backend: dashboard pill shows "offline", the node falls back (LAN, then LOCAL), and readings are buffered. Restart the backend → replay; the "live" panel shows the fresh seq, not a replay | As stated |
-| R-11 | Evidence: "Verify chain" ✔; open the MSPO audit pack; approve one record, override one | VERIFIED; review rows present |
-| R-12 | Wi-Fi off on the laptop and reload the dashboard (local fallback) → no missing assets or fonts | Renders fully |
-| R-13 | Before presenting: reset the demo DB (new `SAWIT_RUNTIME_DIR`) so the evidence list starts clean, and seed 3 warm-up readings | Clean log |
-| R-14 | After presenting: stop all servers; never commit `secrets.h`, `.env` or DB files | `git status` clean of secrets |
+| R-01 | `git pull`; `pytest -q`; `PORT=<free> ./smoke_test.sh` | 33 passed; SMOKE TEST PASSED |
+| R-02 | `contract_test.py` and `eval_m1.py` on the presentation laptop | 0 FAIL; serving-path accuracy recorded |
+| R-03 | Cloud: `SAWIT_MODE=cloud`, `SAWIT_DEVICE_KEYS`, `SAWIT_ADMIN_TOKEN`; `/api/v1/health` gives `mode:"cloud"`, version 0.2.6, the model version | 200 |
+| R-03b | Cloud DB on `/home/data` (S-19): 50 simulator readings, **Verify chain**, `az webapp restart`, Verify chain again | No "database is locked"; chain VERIFIED and history kept |
+| R-04 | Laptop fallback started with the **same** `SAWIT_DEVICE_KEYS` (D39); `--host 0.0.0.0`; firewall open; `API_BASE_LOCAL` = hotspot IP | Node POST to LAN → 200 |
+| R-05 | Dashboard opened as `https://<app>/?token=<admin>`; calibration panel shows the baseline; evidence link and audit pack open in a new tab | Panels populated |
+| R-06 | Soil node boot: OLED shows CLOUD (or LAN), a reading arrives within 10 s, tiles update | ≤ 10 s |
+| R-07 | **One backend at a time (D39):** devices and dashboard on the same base; OLED tag = dashboard pill | Match |
+| R-08 | Demo beats: dry → IRRIGATE/red; lime cup → LIME/red; baseline from the **REFERENCE** cup; PLAIN → FERTILISE (SIMULATED); NUTRIENT → SKIP FERTILISER | Within one interval, OLED/LED/dashboard agree |
+| R-09 | Camera: one **Capture** click → result, heat-map and advice in ≤ 10 s. Use printed **D2 FFBtest** photos not on the S-17 list | ≤ 10 s |
+| R-10 | Kill the backend: pill "offline", node → LAN/LOCAL, buffering. Restart → replay; "live" panel shows the fresh reading | As stated |
+| R-11 | Verify chain ✔; audit pack shows the head hash; approve one record, override one | VERIFIED |
+| R-12 | Wi-Fi off and reload the local dashboard | All assets render |
+| R-13 | Reset the demo DB and seed 3 warm-up readings | Clean log |
+| R-14 | After the show: stop servers, rotate keys, `az group delete` if done; no secrets in git | Clean |
