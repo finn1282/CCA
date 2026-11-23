@@ -97,7 +97,7 @@ The first deploy installs the requirements on the server, which takes 3–6 minu
 URL=https://$APP.azurewebsites.net
 curl -s $URL/api/v1/health
 ```
-Expect `{"status":"ok","version":"0.2.3","mode":"cloud","ripeness_model":"m1-effb0-0.1",...}`. The first call can take about 20 s while the model downloads from Blob.
+Expect `{"status":"ok","version":"0.2.5","mode":"cloud","ripeness_model":"m1-effb0-0.1",...}`. The first call can take about 20 s while the model downloads from Blob.
 
 Then send one simulated reading with the **real** key:
 ```bash

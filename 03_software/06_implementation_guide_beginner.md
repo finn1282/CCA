@@ -93,9 +93,9 @@ Hardware assembly and flashing are in `02_hardware/` (assembly guide + firmware)
 
 ## 5. Calibrate on the day (5 minutes)
 1. **pH:** two-point calibration with the 4.01 and 6.86 buffers, following `02_hardware/` (firmware calibration mode).
-2. **TDS baseline:** put the probe in the "normal" soil-water slurry, wait for 2–3 readings, then click **TDS calibration → Use current reading** for `soilnode-01`. Keep the margin at 0.30.
-3. The node fetches its baseline at boot and hourly (`GET /devices/{id}/calibration`) for LOCAL mode. To pass it on immediately, press the node's reset button.
-4. Demo beats: slurry with extra NPK → **SKIP FERTILISER**; plain water → **FERTILISE**; dry soil → **IRRIGATE**.
+2. **TDS baseline (three-cup demo, D33):** put the probe in the **REFERENCE cup**, wait for 2–3 readings, then click **TDS calibration → Use current reading** for `soilnode-01`. Keep the margin at 0.30. Always set the baseline from the reference cup, never from the plain or the nutrient cup.
+3. The node fetches its baseline at boot and every 5 minutes (`GET /devices/{id}/calibration`, INTERFACES v0.2.5) for LOCAL mode. To pass it on immediately, press the node's reset button.
+4. Demo beats: nutrient cup (extra NPK) → **SKIP FERTILISER**; plain-water cup → **FERTILISE**; dry soil → **IRRIGATE**.
 
 ## 6. Train the ripeness model
 - **Main path (stakeholder, Kaggle GPU):** follow `training/RUN_ON_KAGGLE.md`. The result is `models/m1_ripeness.onnx` + `.json`.

@@ -1,6 +1,6 @@
-# 05 — SawitSense API Specification (v0.2.2)
+# 05 — SawitSense API Specification (v0.2.5)
 
-> Implements `00_lead/INTERFACES.md` v0.2.2 (D25, D30, D33). Base path `/api/v1`. All bodies are JSON (UTF-8), except the camera upload, which is raw `image/jpeg`. Interactive OpenAPI docs are served at `/docs`.
+> Implements `00_lead/INTERFACES.md` v0.2.5 (D25, D30, D33, D39, D45). Base path `/api/v1`. All bodies are JSON (UTF-8), except the camera upload, which is raw `image/jpeg`. Interactive OpenAPI docs are served at `/docs`.
 > - In the target design this API runs on Azure Container Apps behind API Management, and device traffic arrives through IoT Hub (`04_cloud_design.md`).
 > - In the build, devices call it directly over HTTPS (INTERFACES §1).
 
@@ -83,7 +83,7 @@
 **`/latest` semantics (D-04).** The dashboard shows the **non-buffered** reading with the highest `seq` per device. A buffered replay never replaces a fresh reading. A device that has sent only buffered rows shows its newest row.
 
 ### 2.2 `GET /api/v1/devices/{device_id}/calibration` (v0.2.1, D30)
-Callable by the device itself (device headers), or by the dashboard (admin token, or open in local mode). Called by the soil node at boot and hourly to cache the baseline for LOCAL mode.
+Callable by the device itself (device headers), or by the dashboard (admin token, or open in local mode). Called by the soil node at boot and **every 5 minutes** (v0.2.5) to cache the baseline for LOCAL mode.
 ```json
 {"tds_baseline_ppm": 592.0, "tds_margin": 0.30, "updated_at": "2026-12-10T08:40:00Z", "cal_id": "2026-12-10"}
 ```
@@ -141,7 +141,7 @@ Body: raw JPEG (≤ 5 MB) with device headers. The block comes from the device m
 | `GET /screening?z=-1.5&p=0.3` | Satellite → drone → ground cascade | `stage1_satellite.flagged[]`, `stage2_drone`, `stage3_ground.ranked[]` (`priority, dist_to_confirmed_m`) |
 | `GET /satellite` | Pre-computed M5 NDVI panel | `blocks[]`, `months[]`, `estate_ndvi[]`, `image`, `source` |
 | `GET /meta` | Thresholds, action list, model info | — |
-| `GET /health` | Liveness | `{"status":"ok","version":"0.2.2","mode":"local","ripeness_model":…,"fertiliser_model":true}` |
+| `GET /health` | Liveness | `{"status":"ok","version":"0.2.5","mode":"local","ripeness_model":…,"fertiliser_model":true}` |
 | `GET /`, `GET /harvester` | Dashboard, mobile harvester view | HTML |
 
 ## 4. Evidence record (stored, hashed)
@@ -153,7 +153,7 @@ Body: raw JPEG (≤ 5 MB) with device headers. The block comes from the device m
   "record": {"input": {...payload, "captured_at": "...", "ec_derived": true}, "received_at": "...",
              "calibration": {"device_cal_id": "2026-12-09", "tds_baseline_ppm": 592, "tds_margin": 0.3},
              "output": {...recommendation, "ml": {"model_version": "m6-tree-0.1", "probs": {...}, "attributions": [...]}},
-             "rules_version": "INTERFACES-v0.2.2"},
+             "rules_version": "INTERFACES-v0.2.5"},
   "mspo": ["TRACEABILITY", "SOIL_FERTILITY", "FERTILISER_RECORDS"],
   "prev_hash": "…", "hash": "sha256(prev_hash + canonical JSON of the fields above)"
 }

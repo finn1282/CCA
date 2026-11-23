@@ -1,7 +1,7 @@
 """SawitSense backend (FastAPI) — actual build of the ingestion, cognitive and application layers.
 
 Run locally:  uvicorn app.main:app --host 0.0.0.0 --port 8000   (from 03_software/src)
-Contract:     00_lead/INTERFACES.md v0.2.3, full spec in 03_software/05_api_spec.md
+Contract:     00_lead/INTERFACES.md v0.2.5, full spec in 03_software/05_api_spec.md
 """
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from . import analytics, config as C, db, evidence, inference, recommender
 
-APP_VERSION = "0.2.3"
+APP_VERSION = "0.2.5"
 log = logging.getLogger("sawitsense")
 app = FastAPI(title="SawitSense API", version=APP_VERSION,
               description="Smart palm oil plantation decision support — explain-to-audit build")
@@ -157,7 +157,7 @@ def _ingest(r: SoilReading, device: str) -> dict:
         "input": payload, "received_at": received, "captured_at": captured,
         "calibration": {"device_cal_id": r.cal_id, "tds_baseline_ppm": dev.get("tds_baseline"),
                         "tds_margin": dev.get("tds_margin"), "tds_cal_id": dev.get("cal_id")},
-        "output": rec, "rules_version": "INTERFACES-v0.2.3",
+        "output": rec, "rules_version": "INTERFACES-v0.2.5",
     }
     ev = evidence.append("soil_recommendation", record, device, r.block_id)
     out = {k: rec[k] for k in ("action", "reason", "confidence", "actions", "counterfactual", "simulated")}
