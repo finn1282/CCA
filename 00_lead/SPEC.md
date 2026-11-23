@@ -31,6 +31,7 @@
 - **Two layers of truth (D20):** the *report/presentation* describe a professional, fully Azure-native deployment (Azure ML training/MLOps, IoT Hub, etc.). The *actual build* trains on Kaggle (Colab backup), deploys API/dashboard/ingestion on Azure for Students, pre-computes NDVI in Earth Engine. Internal docs record the actual build; report-facing docs don't foreground the workaround.
 - Prefer real, downloadable, properly licensed datasets. If a dataset doesn't exist for an outcome, say so and use a documented proxy or simulated data, clearly labelled.
 - **Report content rules (D23):** no hardware/demo details unless a rubric item needs them; no price/credit/availability-based justifications — justify by capabilities and fit to the case. Enterprise cost only as a Part 2 risk.
+- **No large downloads here (D43):** verify by review/static checks/light tests; heavy steps happen in the stakeholder's build.
 - **Stakeholder runs account-bound steps (D31):** deliver code + numbered steps; never handle secrets.
 - Conserve tokens/credits: Markdown outputs, concise but complete; Mermaid for diagrams (renders on GitHub).
 

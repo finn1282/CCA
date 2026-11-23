@@ -36,9 +36,9 @@ If using Claude Code: start a session in this repo and say *"You are the project
 | Member | Status | Next action on resume |
 |---|---|---|
 | Research | Waves 1–3 done (101 sources). Idle | Only on new `01_research/REQUESTS.md` rows |
-| Hardware | Docs 01–06 + firmware v0.2.2 pushed; finishing HW-verif pass-1 fixes (D-01 3-cup TDS demo, D-02 pH constants, D-03 DigiCert G2) + v0.2.3 (NO DATA, rounding, shared keys) + arduino-cli compile | Resume `briefs/hardware.md`: confirm fixes + compile pushed, write final Step 2 README |
+| Hardware | Docs 01–06 + firmware pushed; stopped (D43) before compile. Pass-1 fixes + v0.2.3/v0.2.4 changes: check `git log -- 02_hardware` and README for which landed | Resume `briefs/hardware.md`: confirm D-01/D-02/D-03 + v0.2.3 (NO DATA, rounding, shared keys) are in the code/docs; **no compile here** — compile happens on stakeholder's machine (assembly guide step 1) |
 | Software | ✅ Step 2 complete (D42): docs 01–05, 32/32 tests, provisional M1 (not reportable), run guides `training/RUN_ON_KAGGLE.md`, `deploy/DEPLOY_AZURE.md`, `deploy/ALTERNATIVES.md`, `gee/RUN_EARTH_ENGINE.md`, `06_implementation_guide_beginner.md`, `07_actual_build_vs_target.md` | Only if stretch drone YOLO wanted, or fixes from SW verif pass 2 |
-| HW Verification | Pass 1 ✅ (2 major/10 minor → fixed by owners in progress) | Pass 2: compile both sketches, re-check fixes, cert test vs Azure URL |
+| HW Verification | Pass 1 ✅ (2 major/10 minor) | Pass 2 (deferred): static re-check of fixes vs v0.2.4; compile is a stakeholder build step (D43) |
 | SW Verification | Pass 1 ✅ (132/154; 2 major/13 minor — all fixed by SW in 9bd2e04) | **Pass 2 (deferred):** re-test fixes, provisional M1 endpoint + heatmap, docs 01–05 vs D20/D23/D32, run guides for beginner correctness |
 | Report | ✅ Full draft v1 done & Lead-gated (D41): `05_report/REPORT.md`, ~4,270 words, 26 refs | Stakeholder review; fill placeholders; optional ledger citation; then compliance audit |
 | Technical summary (04_technical), Presentation (06_presentation, storyboard approval first per D36), Compliance audit | **Not started** — Lead writes briefs | — |
