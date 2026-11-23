@@ -18,6 +18,8 @@ subagents belong to the session that started them and cannot be resumed from ano
 | `verification_hardware.md` | HW Verification (rolling passes) | Each Hardware milestone |
 | `verification_software.md` | SW Verification (rolling passes) | Each Software milestone (M1 smoke, M2 model, M3 docs, M4 run guides) |
 | `report.md` | Report | Part 1 from research gate; Parts 2–3 when Software docs land |
-| _compliance, presentation, technical summary_ | written by the Lead when those stages start | — |
+| `technical_summary.md` | Technical summary author | After HW + SW Step 2 |
+| `presentation.md` | Presentation (storyboard → approval → build) | After report draft |
+| `compliance.md` | Compliance & rubric audit | After report draft; again after presentation |
 
 Shared rules for every member live in `00_lead/PROJECT_PLAN.md` (working rules, citations, git, PLAN.md/proposals).

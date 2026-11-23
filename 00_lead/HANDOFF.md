@@ -32,7 +32,7 @@ Deliverables: Markdown report (Parts 1–3 + progress report), interactive prese
 
 If using Claude Code: start a session in this repo and say *"You are the project lead. Read 00_lead/HANDOFF.md and continue from the current phase."*
 
-## 4. Current state (2026-11-23, wrapping up — stakeholder low on usage; no new tasks)
+## 4. Current state (2026-11-23, resumed: SW verif pass 2, HW verif pass 2, Technical summary, Presentation storyboard, Compliance report audit running in parallel)
 | Member | Status | Next action on resume |
 |---|---|---|
 | Research | Waves 1–3 done (101 sources). Idle | Only on new `01_research/REQUESTS.md` rows |
