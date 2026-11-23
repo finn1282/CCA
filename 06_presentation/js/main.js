@@ -113,7 +113,7 @@
       el._t = setTimeout(() => {
         const t0 = performance.now(), D = 1300;
         const tick = (t) => {
-          const p = Math.min(1, (t - t0) / D), e = 1 - Math.pow(1 - p, 3);
+          const p = Math.max(0, Math.min(1, (t - t0) / D)), e = 1 - Math.pow(1 - p, 3);
           el.textContent = fmt(to * e);
           if (p < 1) el._r = requestAnimationFrame(tick);
         };
