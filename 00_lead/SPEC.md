@@ -29,6 +29,7 @@
 - The system design (cloud AI, data, models, platform evaluation, integration) is the **main deliverable**. The hardware is a **small live demo** representing the IoT soil-sensor layer only — it must never dominate the report or presentation.
 - **Two layers of truth (D20):** the *report/presentation* describe a professional, fully Azure-native deployment (Azure ML training/MLOps, IoT Hub, etc.). The *actual build* trains on Kaggle (Colab backup), deploys API/dashboard/ingestion on Azure for Students, pre-computes NDVI in Earth Engine. Internal docs record the actual build; report-facing docs don't foreground the workaround.
 - Prefer real, downloadable, properly licensed datasets. If a dataset doesn't exist for an outcome, say so and use a documented proxy or simulated data, clearly labelled.
+- **Report content rules (D23):** no hardware/demo details unless a rubric item needs them; no price/credit/availability-based justifications — justify by capabilities and fit to the case. Enterprise cost only as a Part 2 risk.
 - Conserve tokens/credits: Markdown outputs, concise but complete; Mermaid for diagrams (renders on GitHub).
 
 ## 5. Demo (draft — Hardware/Software finalise)

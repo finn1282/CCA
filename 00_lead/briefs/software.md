@@ -18,6 +18,9 @@ Use the dataset(s) and platforms confirmed in SPEC §8/DECISIONS (D16, D20). **D
 8. `06_implementation_guide_beginner.md` — install, run backend + simulator + dashboard, connect hardware, train, deploy to cloud.
 9. `README.md` — Status, inputs, outputs, interface changes requested, assumptions, Open issues for Lead, Research requests, new sources used.
 
+## Report-facing justification rule (D23)
+In docs 01–05, justify every technology/platform choice by capability and fit (Malaysian region/PDPA residency, first-party IoT + edge, geospatial, MLOps, ERP integration, explainability) — never by price, free credits or availability. Cost appears only as an enterprise-scale vendor & cost risk with mitigation. Keep hardware mentions generic ("IoT soil-sensor nodes").
+
 ## Rules
 Write only inside 03_software/ (plus appending to 01_research/REQUESTS.md). Cite in-text (Author, Year) with keys from sources.md. No personal info in web queries. Never commit secrets, venvs, datasets or weights over a few MB. Git after each file/milestone: `git add 03_software && git commit -m "03_software: <what>" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git push` (no routine pull; retry on index.lock; on rejection `git pull --rebase --autostash` then push).
 
