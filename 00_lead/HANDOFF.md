@@ -33,15 +33,16 @@ Deliverables: Markdown report (Parts 1–3 + progress report), interactive prese
 If using Claude Code: start a session in this repo and say *"You are the project lead. Read 00_lead/HANDOFF.md and continue from the current phase."*
 
 ## 4. Current state
-- Research wave 1 done and gated (D14–D18); stakeholder rulings D19–D22.
-- Running: Hardware ∥ Software, PLAN.md step (briefs in `00_lead/briefs/`). They pause after PLAN.md for Lead rulings, then build.
-- Next: rule on HW/SW proposals → build → rolling verification passes (briefs to be written to `00_lead/briefs/`).
-- Research requests from any team go in `01_research/REQUESTS.md`; Lead dispatches waves.
-- Next: stakeholder check-in on datasets, training platform, extra parts → Software adopts them → rolling verification passes.
+- Research wave 1 gated (D14–D18); stakeholder rulings D19–D23; HW/SW plans ruled (D24–D29); **INTERFACES v0.2 agreed**.
+- Running in parallel: **Hardware Step 2** (design docs + firmware), **Software Step 2** (backend/simulator/dashboard → M1 training → design docs), **Research wave 2** (REQUESTS R1, R-HW1, name check, capability-only platform matrix, deeper capabilities).
+- Next: Verification passes start when HW firmware is pushed and SW smoke test passes / M1 trained (briefs to be added to `00_lead/briefs/`). Then Technical summary → Report ∥ Presentation → Compliance audit.
+- Waiting on stakeholder: Kaggle account, Azure for Students subscription + deploy access, Earth Engine project (D29). Software uses CPU/local/Copernicus fallbacks meanwhile.
+- Relaunch note: if this session ended, relaunch HW/SW/Research from `00_lead/briefs/` with the "resume" preamble; tell them Step 1 (PLAN) is done and ruled.
 
 ## 5. Phase log
 | Date | Event |
 |---|---|
+| 2026-11-23 | HW/SW plans ruled, INTERFACES v0.2, Step 2 + research wave 2 started |
 | 2026-11-23 | Research gate passed; D14–D22; Hardware + Software launched (PLAN step) |
 | 2026-11-23 | Member briefs saved to `00_lead/briefs/` for cross-session relaunch |
 | 2026-11-23 | Team PLAN.md + proposal/ruling process added (D13) |
