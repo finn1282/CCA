@@ -19,10 +19,10 @@ Out of scope: on-device ML inference, drone/satellite hardware, real fertiliser 
 | FR1 | Soil node reads moisture, pH, TDS, soil/solution temp, air temp/RH every 10 s (configurable `SEND_INTERVAL_MS`) | Serial log, dashboard |
 | FR2 | pH read with TDS module powered **off** (GPIO25 low), TDS read with it on; DS18B20 temperature used for TDS compensation | Serial log shows order; `04_calibration.md` |
 | FR3 | POST `application/json` to `{API_BASE}/api/v1/readings` with `X-Device-Id` + `X-Device-Key`, payload fields exactly as INTERFACES §2; failed sensor → `null` | Backend log / Verification |
-| FR4 | Parse 200 response: show `oled[0..1]` and `led` tagged **CLOUD** | Demo |
+| FR4 | Parse 200 response: show `oled[0..1]` and `led` tagged **CLOUD** (answered by `API_BASE`) or **LAN** (answered by `API_BASE_LOCAL`) | Demo |
 | FR5 | On failure: compute local result from INTERFACES §4 thresholds and priority, show tagged **LOCAL**; TDS rules only if a baseline was received earlier | Unplug WiFi test |
-| FR6 | Ring buffer of the last 30 unsent readings, replayed oldest-first with `buffered:true` when the link returns | Offline test |
-| FR7 | Cloud URL tried first, `API_BASE_LOCAL` (laptop) second | Fallback drill |
+| FR6 | Ring buffer of the last 30 unsent readings, replayed oldest-first with `buffered:true` and `age_s` **before** the fresh reading when the link returns; a 4xx-rejected reading is dropped and logged (never blocks the queue, never buffered) | Offline test |
+| FR7 | Cloud URL tried first, `API_BASE_LOCAL` (laptop) second; while on LAN, retry the cloud every 5 min and switch back on success | Fallback drill |
 | FR8 | Button short press = send now; long press (≥1.5 s) = next OLED page; very long press (≥5 s) on the calibration page = capture moisture dry/wet raw value to NVS | Demo, calibration |
 | FR9 | OLED pages: (1) decision + reason, (2) all readings, (3) network/seq/cal_id | Demo |
 | FR10 | Camera captures JPEG on (a) dashboard command poll `GET /api/v1/devices/cam-01/commands` every 2.5 s, (b) local `/capture` page, (c) once on boot; POSTs raw `image/jpeg` to `/api/v1/infer/ripeness` | Demo |

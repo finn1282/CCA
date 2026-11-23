@@ -7,7 +7,7 @@
 ## 0. Before you start
 - Do the pH divider check **first** (§2.1), before the pH board's PO wire touches the ESP32.
 - Room temperature, DS18B20 connected (it gives the buffer/solution temperature).
-- Cups: `BUFFER 6.86`, `BUFFER 4.01`, `RINSE` (distilled water), `NUTRIENT`, `PLAIN`.
+- Cups: `BUFFER 6.86`, `BUFFER 4.01`, `RINSE` (distilled water), and the three TDS demo cups `REFERENCE`, `PLAIN`, `NUTRIENT` (§3).
 - Buffer sachets: dissolve each in the stated volume (usually 250 mL) of distilled water; label with today's date. Use them the same day.
 
 ## 1. Capacitive moisture (two-point: dry / wet) [DFR-SEN0193]
@@ -16,7 +16,8 @@ The output is inverse: dry = high mV. The firmware maps linearly: `pct = (dry �
 2. **Dry point:** probe clean and dry, held in air. Hold the button **5 s** → OLED shows `dry=XXXX` (or type `cal dry`).
 3. **Wet point:** put the probe in a cup of water up to the marked line (never wet the electronics). Hold 5 s → `wet=XXXX` (or `cal wet`).
 4. Check: typical clones give dry ≈ 2.6–3.0 V, wet ≈ 1.2–1.6 V (unverified, per unit). Spread < 800 mV → probe faulty or powered from the wrong rail.
-5. Insert into the pot soil at the same depth every time; dry pot soil should read < 30 % (IRRIGATE), freshly watered > 50 %.
+5. **ADC range note (Verification D-07):** at 11/12 dB attenuation the ESP32 ADC is accurate only over ≈150–2450 mV [ESP32-DS]; a dry point above 2.45 V is read compressed/non-linear, so resolution near "dry" (0–15 %) is coarse. This is acceptable because the value is relative and the demo threshold (30 %) lies in the linear part. If the bench dry reading exceeds 2.45 V *and* the dry end matters, add a 10 kΩ (top) / 33 kΩ (bottom) divider on AO (×0.77) and recalibrate both points — no firmware change needed.
+6. Insert into the pot soil at the same depth every time; dry pot soil should read < 30 % (IRRIGATE), freshly watered > 50 %.
 The result is **relative moisture of the calibrated span, not volumetric water content** — say so if asked.
 
 ## 2. pH — two-point with 6.86 and 4.01 buffers (D21) [RAW-PH]
@@ -56,9 +57,15 @@ TDS    = (133.42·V_comp³ − 255.86·V_comp² + 857.39·V_comp) × 0.5 × K
 - T comes from the DS18B20 **in the same cup** (move the probe there for TDS/pH steps). If DS18B20 fails, 25 °C is used and `soil_temp_c` is sent as `null`.
 - **K (cell constant)**: if you have a known solution or a reference TDS pen, read it and set `cal tdsk <K>` with K = reference ÷ displayed (default 1.0). Otherwise leave 1.0 — the demo rules are **relative to a baseline**, so absolute accuracy is not needed.
 - **Baseline for the fertilise rules (INTERFACES §4):** owned by the backend. On the day:
-  1. Probe in `PLAIN` (tap/distilled water or plain-soil leachate) → note the dashboard TDS.
-  2. In the dashboard calibration panel, set this as the device baseline (default margin 30 %).
-  3. `NUTRIENT` cup (≈ ½ teaspoon water-soluble NPK in 250 mL) must read clearly above baseline × 1.3 → `skip_fertiliser`; plain distilled water below baseline × 0.7 → `fertilise`.
+  Three cups (Verification D-01 — a cup used to *set* the baseline can never trigger a rule against it):
+  | Cup | Contents | Role | Must read |
+  |---|---|---|---|
+  | `REFERENCE` | Pot leachate (or tap water) + a **small pinch** of NPK in 250 mL | Sets the baseline ("adequately fertilised block") | = baseline |
+  | `PLAIN` | Distilled water | "Nutrient-depleted block" → `fertilise` | **< 0.7 × baseline** |
+  | `NUTRIENT` | ≈ ½ teaspoon NPK in 250 mL | "Just fertilised block" → `skip_fertiliser` | **> 1.3 × baseline** |
+  1. Probes + DS18B20 in `REFERENCE`, wait 30 s → note the dashboard TDS; set it as the device baseline in the dashboard calibration panel (default margin 30 %).
+  2. Move to `PLAIN` → must show FERTILISE; move to `NUTRIENT` → must show SKIP FERTILISER. If either is inside ±30 %, adjust the pinch in `REFERENCE` (more NPK if PLAIN is not low enough; less if NUTRIENT is not high enough) and re-set the baseline.
+  3. Rinse probes in `RINSE` between cups; return them to `REFERENCE` (the demo start state).
   4. The node fetches the baseline (boot + every 5 min) for LOCAL mode; without it, LOCAL mode skips TDS rules.
 - pH and TDS are read **sequentially**: the firmware powers the TDS module (GPIO25) only during its own reading, so both probes may sit in one cup.
 - Fertiliser decisions are **simulated agronomy** (no published slurry-EC target for oil palm) — the dashboard labels them.

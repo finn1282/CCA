@@ -1,6 +1,6 @@
 /*
   SawitSense camera node — AI-Thinker ESP32-CAM (OV2640) on ESP32-CAM-MB USB base
-  Firmware 0.2.0 — conforms to 00_lead/INTERFACES.md v0.2 §3
+  Firmware 0.2.0 — conforms to 00_lead/INTERFACES.md v0.2.2 §3
 
   Capture & upload only (no on-device inference). Triggers:
     (a) primary: polls GET {base}/api/v1/devices/{DEVICE_ID}/commands every 2.5 s, captures on {"cmd":"capture"}
@@ -18,7 +18,7 @@
 #include "esp_camera.h"
 #include "secrets.h"   // copy secrets.h.example -> secrets.h
 
-#define FW_VERSION "0.2.0"
+#define FW_VERSION "0.2.2"
 
 // ---- AI-Thinker pin map (fixed by the board) ----
 #define PWDN_GPIO_NUM 32
@@ -48,7 +48,9 @@ const uint32_t HTTP_TIMEOUT_MS = 8000; // inference may take a few seconds
 
 WiFiMulti wifiMulti;
 WebServer server(80);
-bool preferLocal = false;
+bool onLan = false;
+uint32_t tLastCloudTry = 0;
+const uint32_t CLOUD_RETRY_MS = 300000;
 String lastResult = "no capture yet";
 uint32_t tLastPoll = 0, captures = 0;
 
@@ -109,15 +111,20 @@ int httpRequest(const String& base, const String& path, const uint8_t* body, siz
   http.end();
   return code;
 }
-int requestAny(const String& path, const uint8_t* body, size_t len, String& resp) {
-  String bases[2] = { preferLocal ? API_BASE_LOCAL : API_BASE, preferLocal ? API_BASE : API_BASE_LOCAL };
+// Cloud first; while the laptop (LAN) answers, retry API_BASE every CLOUD_RETRY_MS (INTERFACES v0.2.2 §2).
+int requestAny(const String& path, const uint8_t* body, size_t len, String& resp, String& via) {
+  bool cloudFirst = !onLan || (millis() - tLastCloudTry >= CLOUD_RETRY_MS);
+  const char* bases[2] = { cloudFirst ? API_BASE : API_BASE_LOCAL, cloudFirst ? API_BASE_LOCAL : API_BASE };
   int code = -1;
   for (int i = 0; i < 2; i++) {
-    if (bases[i].length() == 0) continue;
-    code = httpRequest(bases[i], path, body, len, resp);
-    if (code >= 200 && code < 300) { preferLocal = (bases[i] == String(API_BASE_LOCAL)); return code; }
-    if (body) Serial.printf("[http] %s%s -> %d\n", bases[i].c_str(), path.c_str(), code);
+    if (strlen(bases[i]) == 0) continue;
+    bool isCloud = (strcmp(bases[i], API_BASE) == 0);
+    if (isCloud) tLastCloudTry = millis();
+    code = httpRequest(String(bases[i]), path, body, len, resp);
+    if (code >= 200 && code < 300) { onLan = !isCloud; via = isCloud ? "CLOUD" : "LAN"; return code; }
+    if (body) Serial.printf("[http] %s%s -> %d\n", bases[i], path.c_str(), code);
   }
+  via = "none";
   return code;
 }
 
@@ -128,8 +135,8 @@ String captureAndUpload(const char* trigger) {
   camera_fb_t* fb = grab();
   if (!fb) { digitalWrite(PIN_STATUS, HIGH); return lastResult = "capture failed"; }
   Serial.printf("[cap] trigger=%s %u bytes\n", trigger, fb->len);
-  String resp;
-  int code = (WiFi.status() == WL_CONNECTED) ? requestAny("/api/v1/infer/ripeness", fb->buf, fb->len, resp) : -1;
+  String resp, via;
+  int code = (WiFi.status() == WL_CONNECTED) ? requestAny("/api/v1/infer/ripeness", fb->buf, fb->len, resp, via) : -1;
   esp_camera_fb_return(fb);
   digitalWrite(PIN_STATUS, HIGH);
   captures++;
@@ -140,14 +147,14 @@ String captureAndUpload(const char* trigger) {
   float conf = d["confidence"] | 0.0f;
   String advice = d["harvest_advice"] | "";
   String ev = d["evidence_id"] | "";
-  lastResult = label + " (" + String(conf, 2) + ") " + advice + " " + ev;
+  lastResult = label + " (" + String(conf, 2) + ") " + advice + " " + ev + " [" + via + "]";
   Serial.printf("[infer] %s\n", lastResult.c_str());
   return lastResult;
 }
 void pollCommands() {
   if (WiFi.status() != WL_CONNECTED) return;
-  String resp;
-  int code = requestAny(String("/api/v1/devices/") + DEVICE_ID + "/commands", nullptr, 0, resp);
+  String resp, via;
+  int code = requestAny(String("/api/v1/devices/") + DEVICE_ID + "/commands", nullptr, 0, resp, via);
   if (code != 200 || resp.length() == 0) return;      // 204 / empty = no command
   JsonDocument d;
   if (deserializeJson(d, resp)) return;

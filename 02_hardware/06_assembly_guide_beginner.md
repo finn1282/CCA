@@ -40,11 +40,11 @@ Open *Tools → Serial Monitor* at **115200** baud. For each step, flash `firmwa
 |---|---|---|---|
 | 1 LEDs + button | GPIO18/19/23 → 220 Ω → LED long leg; short leg → GND. Button: GPIO27 ↔ GND | At boot G, A, R flash once; short press triggers an extra `[read]` line | LED reversed → flip it |
 | 2 OLED | VCC→3V3, GND, SDA→21, SCL→22 | No `[oled] not found`; screen shows "SawitSense" | Swap SDA/SCL; some boards are 0x3D |
-| 3 Moisture | VCC→**3V3**, GND, AOUT→GPIO34 | `moist=..% (2800mV)` in air, ~1300 mV in water | 0 mV → AOUT wire; 3300 mV → powered from 5 V or wrong pin |
+| 3 Moisture | VCC→**3V3**, GND, AOUT→GPIO34 | `moist=..% (2800mV)` in air, ~1300 mV in water (above ~2450 mV the ADC is less accurate — see `04_calibration.md` §1 step 5) | 0 mV → AOUT wire; 3300 mV → powered from 5 V or wrong pin |
 | 4 DS18B20 | Red→3V3, black→GND, yellow→GPIO4, **4.7 kΩ between yellow and 3V3** | `T=24.5` (room) | `nan` → pull-up missing; 85.0 → power glitch |
 | 5 DHT22 | + →3V3, − →GND, out→GPIO16 (bare sensor: add 10 kΩ out→3V3) | `air=27.3C/65%` | `nan` → wrong pin order, wait 2 s after boot |
-| 6 TDS | + → **GPIO25** (not 3V3), − →GND, A→GPIO32; probe in a cup of tap water | `tds=150ppm (0.3V)` tap water, higher in NUTRIENT | 0 ppm always → probe not in water / + wire on 3V3 |
-| 7 pH (careful) | First do `04_calibration.md` §2.1 with a multimeter. Board V+ → **5V rail (VIN)**, G → GND, PO → 10 kΩ → GPIO35, and GPIO35 → 20 kΩ (two 10 kΩ in series) → GND | `pH=6.9 (PO 2.48V)` in 6.86 buffer before calibration (rough) | `nan` → board unpowered / PO > 4.9 V; never connect PO directly to GPIO35 |
+| 6 TDS | + → **GPIO25** (not 3V3), − →GND, A→GPIO32; probe in a cup of tap water | `tds=150ppm (0.3V)` tap water, higher in NUTRIENT | 0 ppm always → probe not in water / + wire not on GPIO25 or loose / A wire not on GPIO32 |
+| 7 pH (careful) | First do `04_calibration.md` §2.1 with a multimeter. Board V+ → **5V rail (VIN)**, G → GND, PO → 10 kΩ → GPIO35, and GPIO35 → 20 kΩ (two 10 kΩ in series) → GND | `pH≈7.0 (PO 2.50V)` in 6.86 buffer before calibration (rough; defaults assume 2.50 V @ pH 7) | `nan` → board unpowered / PO > 4.9 V; never connect PO directly to GPIO35 |
 
 Type `raw` in the Serial Monitor to print raw millivolts any time.
 
@@ -76,6 +76,6 @@ arduino-cli upload  -p /dev/ttyUSB0 --fqbn esp32:esp32:esp32 02_hardware/firmwar
 | pH drifts | Probe not settled / TDS interference | Wait 30–60 s; firmware already turns TDS off for pH |
 | HTTP −1 on cloud, local works | TLS root CA wrong/rotated | Re-export root CA; emergency `ALLOW_INSECURE_TLS 1` (log it) |
 | HTTP 401/403 | Wrong `DEVICE_KEY` / `DEVICE_ID` | Ask Software for the key |
-| OLED stays on LOCAL | Backend unreachable | Check laptop IP matches `API_BASE_LOCAL`, firewall allows port 8000 |
+| OLED stays on LOCAL (or LAN when the cloud should work) | Backend unreachable (LAN: cloud down/TLS; node retries cloud every 5 min) | Check laptop IP matches `API_BASE_LOCAL`, firewall allows port 8000 |
 | CAM poll never captures | Dashboard command not issued / wrong device id | Check `cam-01`; use local `/capture` page |
 | Power bank switches off | Load too low for auto-off detection | Use the 2-port bank or keep laptop/USB meter in line |

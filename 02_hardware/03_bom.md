@@ -37,4 +37,4 @@
 **Approved total ≈ RM44–84** (including D21 buffers). Divider and pull-up resistors come from the owned kit.
 
 ## 3. Household items for the demo (no purchase expected)
-Tray or plate under the pot, paper towels, a spoon for slurry, marker for cup labels ("BUFFER 4.01", "BUFFER 6.86", "RINSE", "LEACHATE", "NUTRIENT"), tape, a small stand/box to hold the ESP32-CAM ~25–30 cm above the print, USB meter (optional).
+Tray or plate under the pot, paper towels, a spoon for slurry, marker for cup labels ("BUFFER 4.01", "BUFFER 6.86", "RINSE", "REFERENCE", "PLAIN", "NUTRIENT"), tape, a small stand/box to hold the ESP32-CAM ~25–30 cm above the print, USB meter (optional).

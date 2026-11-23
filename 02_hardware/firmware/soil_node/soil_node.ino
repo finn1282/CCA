@@ -1,6 +1,6 @@
 /*
   SawitSense soil node — NodeMCU ESP32 (ESP32-WROOM-32)
-  Firmware 0.2.0 — conforms to 00_lead/INTERFACES.md v0.2.1
+  Firmware 0.2.0 — conforms to 00_lead/INTERFACES.md v0.2.2
 
   Sensors: capacitive moisture (GPIO34), pH PO via 10k/20k divider (GPIO35), TDS (GPIO32, powered from GPIO25),
            DS18B20 (GPIO4), DHT22 (GPIO16). OLED SSD1306 I2C (21/22). LEDs G/A/R (18/19/23), status LED (2).
@@ -29,7 +29,7 @@
 #include <math.h>
 #include "secrets.h"   // copy secrets.h.example -> secrets.h
 
-#define FW_VERSION "0.2.0"
+#define FW_VERSION "0.2.2"
 
 // ---------------- Pins ----------------
 const int PIN_MOIST   = 34;  // ADC1_CH6
@@ -52,12 +52,13 @@ const uint32_t LONG_PRESS_MS      = 1500;
 const uint32_t VERY_LONG_PRESS_MS = 5000;
 const uint32_t TDS_WARMUP_MS      = 800;
 const uint8_t  MAX_REPLAY_PER_CYCLE = 5;
+const uint32_t CLOUD_RETRY_MS     = 300000;  // v0.2.2: while on LAN, retry API_BASE every 5 min
 
 // ---------------- Default calibration (overridden by NVS; see 04_calibration.md) ----------------
 const float DEF_MOIST_DRY_MV = 2800.0;  // probe in air
 const float DEF_MOIST_WET_MV = 1300.0;  // probe in water to the line
-const float DEF_PH_V686      = 2.320;   // PO volts (after divider correction) in pH 6.86 buffer
-const float DEF_PH_V401      = 2.830;   // PO volts in pH 4.01 buffer  (=> ~0.179 V/pH)
+const float DEF_PH_V686      = 2.525;   // PO volts (after divider correction) in pH 6.86 buffer (2.50 V @ pH 7 offset)
+const float DEF_PH_V401      = 3.035;   // PO volts in pH 4.01 buffer  (=> 0.179 V/pH) [RAW-PH]
 const float DEF_PH_CAL_T     = 25.0;    // buffer temperature during pH calibration
 const float DEF_TDS_K        = 1.0;     // TDS cell constant correction
 const char* DEF_CAL_ID       = "uncalibrated";
@@ -87,6 +88,7 @@ struct Reading {
   time_t ts;          // 0 = unknown
   float moist, ph, tds, soilT, airT, airRh;
   int8_t rssi;
+  uint32_t capMs;     // millis() at capture -> age_s
 };
 const int BUF_N = 30;   // offline ring buffer
 Reading ring[BUF_N];
@@ -104,7 +106,8 @@ String lastBaseUsed = "-";
 int lastHttpCode = 0;
 int calibStep = 0;  // 0 = next capture is DRY, 1 = next is WET
 String calibMsg = "";
-bool preferLocal = false;
+bool onLan = false;             // true while the laptop (API_BASE_LOCAL) is the answering base
+uint32_t tLastCloudTry = 0;
 
 uint32_t tLastSend = 0, tLastCal = 0, tBtnDown = 0;
 bool btnWasDown = false, forceSend = false;
@@ -195,6 +198,7 @@ Reading takeReading() {
   Reading r;
   r.seq = ++seqNo; saveSeqIfNeeded();
   r.ts = nowOrZero();
+  r.capMs = millis();
   r.moist = readMoisturePct();
   r.soilT = readSolutionTemp();
   r.ph = readPh(r.soilT);
@@ -274,30 +278,40 @@ int httpRequest(const String& base, const String& path, const char* method, cons
   http.end();
   return code;
 }
-// Try preferred base first, then the other. Returns code; sets usedBase.
+// Base selection (INTERFACES v0.2.2 §2): cloud first; once the laptop (LAN) answered, stay on LAN and
+// retry API_BASE every CLOUD_RETRY_MS, switching back on success.
+// Returns the best HTTP code (2xx wins, else 4xx, else last error); sets usedBase to "CLOUD" or "LAN".
 int requestAny(const String& path, const char* method, const String& body, String& resp, String& usedBase) {
-  String bases[2] = { preferLocal ? API_BASE_LOCAL : API_BASE, preferLocal ? API_BASE : API_BASE_LOCAL };
-  int code = -1;
+  bool cloudFirst = !onLan || (millis() - tLastCloudTry >= CLOUD_RETRY_MS);
+  const char* bases[2] = { cloudFirst ? API_BASE : API_BASE_LOCAL, cloudFirst ? API_BASE_LOCAL : API_BASE };
+  int best = -1;
   for (int i = 0; i < 2; i++) {
-    if (bases[i].length() == 0) continue;
+    if (strlen(bases[i]) == 0) continue;
+    bool isCloud = (strcmp(bases[i], API_BASE) == 0);
+    if (isCloud) tLastCloudTry = millis();
     digitalWrite(PIN_LED_NET, LOW);
-    code = httpRequest(bases[i], path, method, body, resp);
+    int code = httpRequest(String(bases[i]), path, method, body, resp);
     digitalWrite(PIN_LED_NET, WiFi.status() == WL_CONNECTED);
     if (code >= 200 && code < 300) {
-      usedBase = bases[i];
-      preferLocal = (bases[i] == String(API_BASE_LOCAL));
+      usedBase = isCloud ? "CLOUD" : "LAN";
+      if (onLan == isCloud) Serial.printf("[net] now using %s\n", usedBase.c_str());
+      onLan = !isCloud;
       return code;
     }
-    Serial.printf("[http] %s %s%s -> %d\n", method, bases[i].c_str(), path.c_str(), code);
+    Serial.printf("[http] %s %s%s -> %d\n", method, bases[i], path.c_str(), code);
+    if (code >= 400 && code < 500) best = code; else if (best < 400) best = code;
   }
-  return code;
+  usedBase = "LOCAL";
+  return best;
 }
+bool isRejected(int code) { return code >= 400 && code < 500; }   // permanent: do not buffer / drop from queue
 String toJson(const Reading& r, bool buffered) {
   JsonDocument d;
   d["device_id"] = DEVICE_ID;
   d["seq"] = r.seq;
   if (r.ts) d["ts"] = isoTime(r.ts); else d["ts"] = nullptr;
   d["buffered"] = buffered;
+  d["age_s"] = (uint32_t)((millis() - r.capMs) / 1000);   // v0.2.2: 0 for fresh readings
   d["block_id"] = BLOCK_ID;
   jsonNum(d, "soil_moisture_pct", r.moist, 1);
   jsonNum(d, "soil_ph", r.ph, 2);
@@ -316,7 +330,8 @@ void bufferPush(const Reading& r) {
   ring[(ringHead + ringCount) % BUF_N] = r;
   if (ringCount < BUF_N) ringCount++; else ringHead = (ringHead + 1) % BUF_N;  // drop oldest
 }
-bool applyCloudResponse(const String& resp) {
+void bufferPop() { ringHead = (ringHead + 1) % BUF_N; ringCount--; }
+bool applyCloudResponse(const String& resp, const String& tag) {
   JsonDocument d;
   if (deserializeJson(d, resp)) return false;
   String a = d["action"] | "";
@@ -324,10 +339,10 @@ bool applyCloudResponse(const String& resp) {
   String l1 = d["oled"][0] | "", l2 = d["oled"][1] | "";
   if (l1.length() == 0) { l1 = a; l1.toUpperCase(); }
   if (l2.length() == 0) l2 = String((const char*)(d["reason"] | ""));
-  decSource = "CLOUD"; decLine1 = l1.substring(0, 16); decLine2 = l2.substring(0, 16);
+  decSource = tag; decLine1 = l1.substring(0, 16); decLine2 = l2.substring(0, 16);
   decLed = d["led"] | "amber"; decEvidence = d["evidence_id"] | "";
   setLed(decLed);
-  Serial.printf("[cloud] action=%s led=%s ev=%s reason=%s\n", a.c_str(), decLed.c_str(),
+  Serial.printf("[%s] action=%s led=%s ev=%s reason=%s\n", tag.c_str(), a.c_str(), decLed.c_str(),
                 decEvidence.c_str(), (const char*)(d["reason"] | ""));
   return true;
 }
@@ -339,38 +354,40 @@ void fetchCalibration() {
   if (code < 200 || code >= 300) return;
   JsonDocument d;
   if (deserializeJson(d, resp)) return;
-  float b = d["tds_baseline_ppm"] | NAN;
+  float b = d["tds_baseline_ppm"] | NAN;            // null or missing => baseline cleared on the server
   float m = d["tds_margin"] | NAN;
   if (!isnan(b) && b > 0) { tdsBaseline = b; prefs.putFloat("tdsb", b); }
+  else { tdsBaseline = NAN; prefs.remove("tdsb"); }  // LOCAL mode then skips TDS rules
   if (!isnan(m) && m > 0 && m < 1) { tdsMargin = m; prefs.putFloat("tdsm", m); }
-  Serial.printf("[cal] backend TDS baseline=%.0f margin=%.2f\n", tdsBaseline, tdsMargin);
+  Serial.printf("[cal] backend TDS baseline=%.0f margin=%.2f (via %s)\n", tdsBaseline, tdsMargin, used.c_str());
 }
 void cycle() {
   wifiEnsure();
   last = takeReading();
-  String resp, used;
-  bool sent = false;
-  if (WiFi.status() == WL_CONNECTED) {
-    lastHttpCode = requestAny("/api/v1/readings", "POST", toJson(last, false), resp, used);
-    if (lastHttpCode >= 200 && lastHttpCode < 300) {
-      sent = true; lastBaseUsed = (used == String(API_BASE)) ? "cloud" : "local";
-      if (!applyCloudResponse(resp)) localDecision(last);
-    }
-  } else lastHttpCode = -1;
-  if (!sent) {
-    bufferPush(last);
-    localDecision(last);
-    lastBaseUsed = "offline";
-    Serial.printf("[buf] stored seq=%u (%d buffered)\n", last.seq, ringCount);
-    return;
-  }
-  // link is up: replay oldest buffered readings
-  for (uint8_t i = 0; i < MAX_REPLAY_PER_CYCLE && ringCount > 0; i++) {
+  bool linkOk = WiFi.status() == WL_CONNECTED;
+  // 1) replay oldest buffered readings FIRST (INTERFACES v0.2.2), so the fresh reading is the newest row
+  for (uint8_t i = 0; linkOk && i < MAX_REPLAY_PER_CYCLE && ringCount > 0; i++) {
     String r2, u2;
     int c = requestAny("/api/v1/readings", "POST", toJson(ring[ringHead], true), r2, u2);
-    if (c < 200 || c >= 300) break;
-    Serial.printf("[buf] replayed seq=%u\n", ring[ringHead].seq);
-    ringHead = (ringHead + 1) % BUF_N; ringCount--;
+    if (c >= 200 && c < 300) { Serial.printf("[buf] replayed seq=%u via %s\n", ring[ringHead].seq, u2.c_str()); bufferPop(); }
+    else if (isRejected(c))  { Serial.printf("[buf] DROPPED seq=%u (HTTP %d rejected)\n", ring[ringHead].seq, c); bufferPop(); }
+    else { linkOk = false; break; }                  // transport error / 5xx: try again next cycle
+  }
+  // 2) fresh reading
+  String resp, used = "LOCAL";
+  lastHttpCode = linkOk ? requestAny("/api/v1/readings", "POST", toJson(last, false), resp, used) : -1;
+  if (lastHttpCode >= 200 && lastHttpCode < 300) {
+    lastBaseUsed = used;
+    if (!applyCloudResponse(resp, used)) localDecision(last);
+    return;
+  }
+  localDecision(last);
+  lastBaseUsed = "offline";
+  if (isRejected(lastHttpCode)) {
+    Serial.printf("[http] seq=%u rejected (HTTP %d) - not buffered\n", last.seq, lastHttpCode);
+  } else {
+    bufferPush(last);
+    Serial.printf("[buf] stored seq=%u (%d buffered)\n", last.seq, ringCount);
   }
 }
 

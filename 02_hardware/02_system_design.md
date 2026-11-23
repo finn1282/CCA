@@ -38,11 +38,14 @@ sequenceDiagram
   participant C as ESP32-CAM
   loop every 10 s or button
     N->>N: read moisture, pH (TDS off), TDS (TDS on), temps, RH
-    N->>A: POST /readings (JSON, X-Device-Id/Key)
+    opt buffer not empty (v0.2.2)
+      N->>A: replay up to 5 buffered readings first (buffered:true, age_s); 4xx = drop
+    end
+    N->>A: POST /readings (JSON, X-Device-Id/Key), cloud first, laptop second
     alt 200 OK
       A-->>N: {action, oled[], led, evidence_id...}
-      N->>N: show CLOUD result
-    else fail (cloud then local base)
+      N->>N: show CLOUD / LAN result
+    else both bases fail (transport / 5xx)
       N->>N: local rules (INTERFACES §4) → show LOCAL, buffer reading
     end
   end
@@ -78,7 +81,7 @@ Note: `GET /api/v1/devices/{id}/calibration` returns `{tds_baseline_ppm, tds_mar
 | 6–11 | — | **unused** | SPI flash |
 | ADC2 (0, 2, 4, 12–15, 25–27) | — | **no analog** | ADC2 blocked by WiFi [ESPFAQ] |
 
-LED colour follows the `led` field from the API in CLOUD mode, and INTERFACES §4 table in LOCAL mode.
+LED colour follows the `led` field from the API in CLOUD/LAN mode, and the INTERFACES §4 table in LOCAL mode.
 
 ### pH level shifting
 `PO ─ 10 kΩ ─┬─ GPIO35` and `┴─ 20 kΩ (2 × 10 kΩ in series) ─ GND`. V_pin = V_PO × 20/30 = 0.667 × V_PO. PO at pH 0 ≈ 3.76 V → 2.51 V at the pin; worst case PO = 5 V → 3.33 V (rail limit, still not over 3.3 V by more than the clamp margin). Firmware divides by `PH_DIVIDER = 0.6667` before applying the pH formula [RAW-PH]. **Measure PO with a multimeter before connecting.**
@@ -146,7 +149,7 @@ flowchart LR
   subgraph TABLE[Presentation table, left → right]
     PB[Power bank] --- BB[Breadboard node<br/>OLED facing audience]
     BB --- POT[Potted plant<br/>moisture probe + DS18B20 in soil]
-    POT --- CUP[Cups: leachate / buffer / rinse<br/>pH + TDS probes]
+    POT --- CUP[Cups: REFERENCE / PLAIN / NUTRIENT / rinse<br/>pH + TDS probes]
     CUP --- CAM[ESP32-CAM on stand<br/>25-30 cm above A5 FFB print]
     CAM --- LAP[Laptop: dashboard on projector]
   end
