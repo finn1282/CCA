@@ -32,17 +32,23 @@ Deliverables: Markdown report (Parts 1–3 + progress report), interactive prese
 
 If using Claude Code: start a session in this repo and say *"You are the project lead. Read 00_lead/HANDOFF.md and continue from the current phase."*
 
-## 4. Current state
-- Research wave 1 gated (D14–D18); stakeholder rulings D19–D23; HW/SW plans ruled (D24–D29); **INTERFACES v0.2 agreed**.
-- Running in parallel: **Hardware Step 2** (design docs + firmware), **Software Step 2** (backend/simulator/dashboard → M1 training → design docs), **Research wave 2** (REQUESTS R1, R-HW1, name check, capability-only platform matrix, deeper capabilities).
-- Also running: HW verification pass 1, SW verification pass 1, Report (Part 1 + skeleton). Research wave 2 done (D32).
-- Next: SW M1 model → SW verification pass 2; HW/SW docs → Technical summary → Report Parts 2–3 ∥ Presentation → Compliance audit.
-- Waiting on stakeholder: Kaggle account, Azure for Students subscription + deploy access, Earth Engine project (D29). Software uses CPU/local/Copernicus fallbacks meanwhile.
-- Relaunch note: if this session ended, relaunch HW/SW/Research from `00_lead/briefs/` with the "resume" preamble; tell them Step 1 (PLAN) is done and ruled.
+## 4. Current state (paused 2026-11-23 — usage limit)
+All members were **stopped mid-task** to pause cleanly. Each pushes per file, so resume from its folder README/PLAN + `git log -- <folder>`. Uncommitted leftovers (if any) are listed by `git status`; review before committing.
+| Member | Where it stopped | Resume with |
+|---|---|---|
+| Hardware (Step 2) | Firmware + docs 01–04 pushed; was writing `06_assembly_guide_beginner.md` (05_demo_plan status: check folder); compile with arduino-cli in progress | `briefs/hardware.md` + resume preamble; Step 1 done & ruled |
+| Software (Step 2) | Backend + simulator + 17/17 tests pushed (305bb47); was writing the dashboard polish / M1 CPU training next; then docs 01–05 (apply D32), run guides per D31, `07_actual_build_vs_target.md` | `briefs/software.md` + resume preamble; Step 1 done & ruled; follow D30–D32 |
+| HW Verification pass 1 | Interrupted — check `07_verification/hardware/` | `briefs/verification_hardware.md`, Pass 1 |
+| SW Verification pass 1 | Interrupted — check `07_verification/software/` | `briefs/verification_software.md`, Pass 1 (M1 milestone) |
+| Report | Interrupted — scope: PLAN, README, REPORT.md skeleton + cover + Intro + full Part 1 + Appendix B | `briefs/report.md` |
+| Research | Waves 1–2 complete (D14, D32); idle until new REQUESTS rows | `briefs/research.md` |
+Not yet started: Technical summary (04_technical), Presentation (06_presentation), Compliance audit — briefs to be written by the Lead.
+Stakeholder pending: regenerate Kaggle token (was pasted in chat), Earth Engine project ID → `EE_PROJECT` env var, Azure for Students sign-up issue (fallback = laptop local; report unaffected).
 
 ## 5. Phase log
 | Date | Event |
 |---|---|
+| 2026-11-23 | Research wave 2 (D32), SW smoke test, verification + report started; all paused at usage limit |
 | 2026-11-23 | HW/SW plans ruled, INTERFACES v0.2, Step 2 + research wave 2 started |
 | 2026-11-23 | Research gate passed; D14–D22; Hardware + Software launched (PLAN step) |
 | 2026-11-23 | Member briefs saved to `00_lead/briefs/` for cross-session relaunch |
