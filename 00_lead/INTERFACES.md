@@ -1,4 +1,4 @@
-# Interface Contract (HW ↔ SW) — v0.2.4 (agreed)
+# Interface Contract (HW ↔ SW) — v0.2.5 (agreed)
 
 > Owner: Lead. v0.2 reconciles HW-P1–P5/P7 and SW-P2/P3 (D25). Hardware and Software MUST both conform.
 > Change requests → your PLAN.md Proposals table; the Lead bumps the version here.
@@ -101,4 +101,4 @@ Actions: `ok | irrigate | drain | lime | fertilise | skip_fertiliser | watch`
 - pH and TDS probes read a soil-water slurry; firmware powers TDS off (GPIO25) while reading pH.
 
 ## 5. Other endpoints (Software publishes full spec in `03_software/05_api_spec.md`)
-`GET /api/v1/latest`, `GET /api/v1/evidence/{id}`, `POST` **and `GET`** `/api/v1/devices/{id}/calibration` (v0.2.1: body/response `{"tds_baseline_ppm": number|null, "tds_margin": 0.30, "updated_at": "..."}`; GET used by the soil node at boot and hourly to cache the baseline for LOCAL mode), `POST /api/v1/devices/{id}/commands`, `GET /api/v1/health`.
+`GET /api/v1/latest`, `GET /api/v1/evidence/{id}`, `POST` **and `GET`** `/api/v1/devices/{id}/calibration` (v0.2.1: body/response `{"tds_baseline_ppm": number|null, "tds_margin": 0.30, "updated_at": "..."}`; GET used by the soil node at boot and **every 5 minutes** (v0.2.5, matches firmware `CAL_FETCH_MS`) to cache the baseline for LOCAL mode), `POST /api/v1/devices/{id}/commands`, `GET /api/v1/health`.
