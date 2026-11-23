@@ -1,7 +1,7 @@
 # 01_research — README
 
 ## Status
-**Wave 1 complete; wave 2 complete (23 Nov 2026)** — R1, R-HW1, R2 answered. Further research on demand via `REQUESTS.md`.
+**Waves 1–3 complete (23 Nov 2026)** — R1, R-HW1, R2, R-REP1, R3 answered; no open requests. Further research on demand via `REQUESTS.md`.
 
 ## Inputs used
 `00_lead/SPEC.md`, `PROJECT_PLAN.md`, `DECISIONS.md`, `INTERFACES.md`, `components.md`, `CCA Group Assignment.pdf` (rubric p.9); web research (official/vendor pages, journals, MPOB/MSPO documents, dataset repository APIs) — all opened 23 Nov 2026.
@@ -18,7 +18,8 @@
 | `06_azure_services_and_compliance.md` | R1(a–c): verified Azure service capabilities/caveats, MS 2530:2022 clause numbers, PDPA s129 (2024 amendment) |
 | `07_field_evidence_and_naming.md` | R1(d–e) Ganoderma spread & harvest productivity; R-HW1 LoRaWAN/NB-IoT field nodes; SawitSense name check |
 | `08_platform_comparison_capability.md` | Capability-only platform matrix for the report (D23) + sensitivity checks + caveats |
-| `sources.md` | 95 Harvard entries with stable keys, grouped by type |
+| `09_report_requests.md` | R-REP1: FELDA scale & FGV relationship, EUDR commodity scope, Malaysian rubber traceability (MSNR) |
+| `sources.md` | 101 Harvard entries with stable keys, grouped by type |
 | `REQUESTS.md` | Request log for on-demand research waves |
 | `PLAN.md` | Approach, ideas, conflicts, proposals (R-P1…R-P8) for Lead ruling |
 

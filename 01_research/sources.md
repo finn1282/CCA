@@ -14,6 +14,7 @@
 | [MPOCC-P21] | Malaysian Palm Oil Certification Council (MPOCC) (2023) *Guidance document for MS2530-2-1:2022 General principles for independent smallholders*, Version 1.0, May. Available at: https://mspo.org.my/wp-content/uploads/2025/08/Guidance-document-for-MSPO-Part-2-1.pdf (Accessed: 23 November 2026). |
 | [MPOCC-P31] | Malaysian Palm Oil Certification Council (MPOCC) (2023) *Guidance document for MS2530-3-1:2022 General principles for oil palm plantations (40.46 hectares to 500 hectares)*, Version 1.0, May. Available at: https://mspo.org.my/wp-content/uploads/2025/08/Guidance-document-for-MSPO-Part-3-1.pdf (Accessed: 23 November 2026). |
 | [MAYER-PDPA2025] | Mayer Brown (2025) *From legislative reform to practical guidance: key amendments to Malaysia's PDPA and the launch of cross-border transfer guidelines*, 25 July. Available at: https://www.mayerbrown.com/en/insights/publications/2025/07/from-legislative-reform-to-practical-guidance-key-amendments-to-malaysias-pdpa-and-the-launch-of-cross-border-transfer-guidelines (Accessed: 23 November 2026). |
+| [EC-EUDR] | European Commission (2026) *Regulation on deforestation-free products* (Regulation (EU) 2023/1115). Available at: https://environment.ec.europa.eu/topics/forests/deforestation/regulation-deforestation-free-products_en (Accessed: 23 November 2026). |
 | [AAR-SOIL] | Applied Agricultural Resources Sdn Bhd (AAR) (n.d.) *Soil management: soil requirements of plantation tree crops*. Available at: https://aarsb.com.my/soil-management-soil-requirements-of-plantation-tree-crops (Accessed: 23 November 2026). |
 
 ## News / trade press
@@ -29,6 +30,9 @@
 | [STAR-EUDR2025] | The Star (2025) 'EU: All countries subject to deforestation risk ratings', *The Star*, 26 May. Available at: https://www.thestar.com.my/news/nation/2025/05/26/eu-all-countries-subject-to-deforestation-risk-ratings (Accessed: 23 November 2026). |
 | [MPOB-NEWS2020] | The Malaysian Reserve (2020) 'Labour shortage heightens losses in palm oil yield', 14 September; republished by MPOB Palm News. Available at: https://prestasisawit.mpob.gov.my/en/palmnews/news/30341 (Accessed: 23 November 2026). |
 | [MPOB-APPS2025] | Business Today (2025) 'MPOB introduces AI-powered apps for palm oil smallholders', 12 March; republished by MPOB Palm News. Available at: https://prestasisawit.mpob.gov.my/ms/palmnews/news/37718 (Accessed: 23 November 2026). |
+| [EDGE-FELDA] | The Edge Malaysia (n.d.) 'Felda's road ahead in the spotlight', *The Edge Malaysia*, 6 October (year not stated in text; displayed 2026). Available at: https://theedgemalaysia.com/node/820636 (Accessed: 23 November 2026). |
+| [NST-FELDA2019] | New Straits Times (2019) 'Felda seeking investors for hitech agriculture and cash cropping', 25 February; republished by MPOB Palm News. Available at: https://prestasisawit.mpob.gov.my/en/palmnews/news/27078 (Accessed: 23 November 2026). |
+| [EDGE-RUBBER2026] | The Edge Malaysia (2026) 'Cover Story: Rubber industry sees sustainability and traceability as competitive edge', *The Edge Malaysia Weekly*, 17–23 August. Available at: https://theedgemalaysia.com/node/814575 (Accessed: 23 November 2026). |
 | [HL-EUDR2026] | Ritz, C., Gräler, S., Werner, F. and Deutschmann, M. (2026) *EU Deforestation Regulation: Commission publishes simplification package ahead of December 2026*. Hogan Lovells, 15 May. Available at: https://www.hlc.com/en/publications/eu-deforestation-regulation-commission-publishes-simplification-package-ahead-of-december-2026 (Accessed: 23 November 2026). |
 
 ## Academic papers
