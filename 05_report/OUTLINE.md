@@ -3,15 +3,16 @@
 ## Changelog (D37)
 | Ver | Date | What changed | Trigger |
 |---|---|---|---|
+| v3 | 2026-11-23 | Stakeholder changes applied: validation is a planned step (no prototype results); risk 1 is now cold start / data gap; roadmap wording changed; references raised to 26 (+KWANG2025, IOI2026, NST-FELDA2019, STAR-LAB2026, EDGE-RUBBER2026, AZ-ACL-RES); FELDA 112,635 families; no cover page or TOC; rubric map moved to RUBRIC_MAP.md | D40 (outline v2 approved with changes) |
 | v2 | 2026-11-23 | 2.4 and 2.5 rebuilt from Software design docs 01–05 (integration table, Fig. 6 roadmap with KPIs, nine risks condensed to six); only the M1 metrics remain pending | 03_software docs 01–05 pushed and Lead-checked |
 | v1 | 2026-11-23 | First full outline within the D35 budget (≈4,300 body words, 6 tables/figures, 20 references) | D35, D36, D37 |
 
-Keys refer to `01_research/sources.md`. "(pending: …)" marks points that may change when that team's output arrives. Rules applied throughout: D20 (Azure-native target design only), D23 (capability-only justification; cost only as a risk), D32 (residency split, explainability scope, Ganoderma = screening).
+Keys refer to `01_research/sources.md`. "(pending: …)" would mark points awaiting another team; none remain in v3. Rules applied throughout: D20 (Azure-native target design only), D23 (capability-only justification; cost only as a risk), D32 (residency split, explainability scope, Ganoderma = screening).
 
 ---
 
 ## Front matter (outside the word budget)
-- **Cover page:** title, module, ITS69404+[GroupNo], [Member 1 – Leader]…[Member 5] with [ID], lecturer, submission date. **TOC.**
+- No cover page, TOC or formatting in REPORT.md (D40): the stakeholder adds them.
 - **Executive summary (150 words):** three ranked problems → SawitSense → Azure (88/100) → three-phase roadmap → explain-to-audit novelty.
 
 ## 1 Introduction (150)
@@ -22,8 +23,8 @@ Keys refer to `01_research/sources.md`. "(pending: …)" marks points that may c
 ## Part 1 — Case Analysis & Problem Identification (~1,400)
 
 ### 1.1 Case, organisations, stakeholders, situation (300) — *sub-task 1a [2]*
-- **FELDA:** ≈870,000 ha; ≈490,000 ha worked by more than 100,000 settler families; ≈330,000 ha of estates run by FGV, which FELDA has now taken private [EDGE-FELDA].
-- **SD Guthrie:** raised land per worker from 10.7 ha to 13–13.5 ha (target 15 ha by 2028); says harvesting "still lacks mechanisation" [EDGE-SDG2025]. **IOI:** estate-wide 4G (no core reference; see open question 1).
+- **FELDA:** ≈870,000 ha; ≈490,000 ha of settler land, ≈330,000 ha of estates run by FGV, which FELDA has now taken private [EDGE-FELDA]; 112,635 settler families [NST-FELDA2019].
+- **SD Guthrie:** raised land per worker from 10.7 ha to 13–13.5 ha (target 15 ha by 2028); says harvesting "still lacks mechanisation" [EDGE-SDG2025]. **IOI:** more than 100 4G/LTE sites across more than 100 estates for IoT [IOI2026].
 - **Stakeholders** (a single prose sentence, no table): estate managers, harvest supervisors, agronomists, MSPO officers, mill graders, smallholders, MPOB/MSPO regulators, EU buyers.
 - **Current situation:** ripeness judged by eye on fixed rounds; Ganoderma found by visual census; blanket fertiliser schedules; MSPO records kept as separate paperwork. MSPO data lack EUDR polygon geolocation and plot-level traceability [MA-POEB] [KHOO2023] [MSPO-EFI2025].
 - *Outstanding:* we contrast the three operating models (settler scheme, multinational, digitising estate) to show that one solution must serve all three.
@@ -31,12 +32,14 @@ Keys refer to `01_research/sources.md`. "(pending: …)" marks points that may c
 ### 1.2 Prioritised problems with evidence (550) — *sub-task 1b [4]*
 - **Ranking criteria (REP-P1, D34):** scale of loss · urgency · labour dependence of today's fix · cognitive addressability.
 - **P1 Labour and harvest losses (rank 1):**
+  - About 80 % of workers are foreign, and losses are put at RM7.5–20 bn a year (an employer estimate) [STAR-LAB2026].
   - 30,000 workers short (Oct 2026); target of 10 % foreign workers by 2030; RM1 bn of ripe FFB left unharvested in 2021 [EDGE-LAB2026].
   - The shortage drives under-ripe harvesting and so OER loss [MA-POEB].
   - Each 0.5 pt of OER ≈ RM2.2 bn (our calculation, working shown) [MPOB2025]. Nuance: the shortage is cyclical, so the case is about structural resilience.
 - **P2 Ganoderma BSR (primary) + ageing (rank 2):**
   - BSR can cause a 43 % loss within 6 months and could reach 860,610 ha by 2040.
   - It is asymptomatic until 60–70 % infected, and lab tests are too slow to apply to every palm [KHOO2023].
+  - Published early-detection accuracy is only 64–84 % [KWANG2025] (in 1.3).
   - Ageing is capital-bound; missed replanting locks blocks out of mechanisation [EDGE-SDG2025].
 - **P3 MSPO compliance and fertiliser (rank 3):**
   - MSPO is mandatory (87 % of area certified), and the MS 2530:2022 cut-off is 31 Dec 2019 [MSPO-EFI2025].
@@ -111,7 +114,7 @@ Source: `03_software/04_cloud_design.md` §3, §5, §6.
   - s129 safeguards apply: a Transfer Impact Assessment and transfer records [MAYER-PDPA2025].
 - **Roadmap (PDF Fig. 6 structure):**
   - **Short term (0–6 months), pilot.** One estate, 2–3 blocks including one with a BSR history. Models M1, M5, M6, M7, with M3 as a screening trial. ERP read-only. Human approval of every action. Baseline KPIs first.
-  - **Medium term (6–18 months), scale and integrate.** One region of estates, with LoRaWAN plus edge processing on each estate. Models retrained on estate data, which replaces the simulated M6 labels. M2 learns time-to-ripe from logged grades. SAP work-order write-back, drift monitoring and ledger anchoring go live.
+  - **Medium term (6–18 months), scale and integrate.** One region of estates, with LoRaWAN plus edge processing on each estate. The rule-based baseline is replaced by estate-trained models. M2 learns time-to-ripe from logged grades. SAP work-order write-back, drift monitoring and ledger anchoring go live.
   - **Long term (18–36 months), optimise and extend.** Group-wide rollout plus smallholder co-operatives. Yield forecasting from logged history. Multispectral BSR detection. EUDR geolocation package.
 - **Table 4: Phased roadmap.** Columns: Phase · Scope · Models / functions · Integration · Success measure. Three rows, with KPIs per phase:
   - short term: agronomist agreement ≥80 %, and the audit pack accepted by an internal auditor;
@@ -120,7 +123,7 @@ Source: `03_software/04_cloud_design.md` §3, §5, §6.
 
 ### 2.5 Risks and mitigations, prioritised (350) — *2e [2]*
 Source: `04_cloud_design.md` §4, §7. The nine risks there, scored likelihood × impact on 1–3 scales, are condensed to six rows in Fig. 6 categories, highest first:
-1. **Technical: model accuracy and data gaps (3×3).** Early BSR detection is only moderate; there is no public soil or harvest-timing data; and the Indonesia → Malaysia domain shift affects M1 [KHOO2023]. *Mitigation:* screening, not diagnosis, with ground confirmation of every positive; report cross-country accuracy (pending: 03_software M1); drift-triggered retraining.
+1. **Technical: cold start and data gaps (3×3).** No labelled estate data exists at launch: no public soil-sensor, harvest-timing or multispectral BSR data, and early-BSR accuracy in the literature is only 64–84 % [KWANG2025]. *Mitigation:* launch on a rule-based agronomic baseline with human review of every action; frame Ganoderma as screening, not diagnosis, with ground confirmation; collect labelled pilot data; validate across countries before go-live; retrain on pilot data, triggered by drift.
 2. **Operational: adoption and trust (3×2).** The field workforce is largely foreign, with mixed literacy [EDGE-LAB2026]. *Mitigation:* multilingual counterfactual explanations, one-tap approve or override, mandore champions, and a paper fallback during the pilot.
 3. **Technical: legacy ERP and connectivity (2×3).** Customised SAP ECC with inconsistent block codes, and blocks with poor coverage. *Mitigation:* the SAP connector with read-only first and write-back later, a block-master clean-up [AZ-SAP], and edge buffering with local rules [AZ-IOTOPS].
 4. **Vendor & cost: lock-in (2×2).** *Mitigation:* open formats (ONNX, STAC, Kafka protocol, MLflow), a containerised API, and AWS as a documented fallback because it also has a Malaysian region [AWS-MYREGION].
@@ -134,7 +137,7 @@ Source: `04_cloud_design.md` §4, §7. The nine risks there, scored likelihood �
 - **Explain-to-audit evidence log (anchor, D18/D28).** Each decision is stored with its inputs, model version, explanation, counterfactual, human approval or override, geolocation and MSPO clause. Records are hash-chained into Azure Confidential Ledger, and a one-click audit pack is produced [MPOCC-P31] [MSPO-EFI2025]. Compliance becomes a by-product of operations.
 - **Counterfactual explanations** a supervisor can read, e.g. "if pH ≥ 4.2 → fertilise" [AZ-RAI].
 - The **satellite → drone → ground cascade** with neighbour-risk reasoning [KHOO2023], and **crew allocation** that turns ripeness grades into decisions [HASSAN2026].
-- **Cross-country validation:** trained on Indonesian data, tested on Malaysian data, and the drop is reported honestly (pending: 03_software M1). The human-review queue feeds retraining.
+- **Cross-country validation (planned):** train on another country's public data and test on Malaysian data before go-live, then report any drop. The human-review queue feeds retraining.
 - No table; a contrast sentence against single-function tools.
 
 ### 3.2 Future extension (200) — *3b [2]*
@@ -149,39 +152,19 @@ Source: `04_cloud_design.md` §4, §7. The nine risks there, scored likelihood �
 ## Tables and figures (6)
 Table 1 prioritisation · Table 2 conventional vs cognitive · Figure 1 architecture · Table 3 platform matrix · Table 4 roadmap · Table 5 risk register.
 
-## Core reference list (20)
-In-text form is given first, then the full Harvard entry.
+## Core reference list (26)
+The 20 entries of v2 plus six added under D40. Full entries are in the REPORT.md reference list. Letters changed with the additions: The Edge Malaysia (2026a) = [EDGE-LAB2026], (2026b) = [EDGE-RUBBER2026]; Microsoft (n.d.a) = [AZ-SAP], (n.d.b) = [AZ-ACL-RES].
 
-1. **(Amazon, 2024)** Amazon (2024) *AWS launches infrastructure region in Malaysia* [Press release], 21 August. Available at: https://press.aboutamazon.com/2024/8/aws-launches-infrastructure-region-in-malaysia (Accessed: 23 November 2026).
-2. **(Chong, 2026)** Chong, R. (2026) 'Lower palm oil yields loom as Sabah growers cut fertiliser', *The Star*, 20 August. Available at: https://www.thestar.com.my/news/nation/2026/08/20/lower-palm-oil-yields-loom-as-sabah-growers-cut-fertiliser (Accessed: 23 November 2026).
-3. **(Che Hassan et al., 2026)** Che Hassan, C.A.Z., Muhammad Razif, M.R., Mohd, M.N., Abd Halim, A., Mohd Mustapha, N.H. and Azman, M.N. (2026) 'Real-time oil palm fresh fruit bunch drone image classification using YOLO11 architecture', *Journal of Oil Palm Research* (in press). doi:10.21894/jopr.2026.0033 (Accessed: 23 November 2026).
-4. **(Clark, 2022)** Clark, L. (2022) 'IBM to fire Watson IoT Platform from its cloud', *The Register*, 15 November. Available at: https://www.theregister.com/2022/11/15/ibm_set_to_retire_watson/ (Accessed: 23 November 2026).
-5. **(European Commission, 2026)** European Commission (2026) *Regulation on deforestation-free products* (Regulation (EU) 2023/1115). [URL as in sources.md] (Accessed: 23 November 2026).
-6. **(Google Cloud, n.d.)** Google Cloud (n.d.) *Google.Cloud.Iot.V1 .NET client library reference* (deprecation notice). Available at: https://docs.cloud.google.com/dotnet/docs/reference/Google.Cloud.Iot.V1/latest (Accessed: 23 November 2026).
-7. **(Khoo and Chong, 2023)** Khoo, Y.W. and Chong, K.P. (2023) '*Ganoderma boninense*: general characteristics of pathogenicity and methods of control', *Frontiers in Plant Science*, 14, 1156869. doi:10.3389/fpls.2023.1156869 (Accessed: 23 November 2026).
-8. **(Ma, n.d.)** Ma, A.N. (n.d.) 'Challenges facing the palm oil industry', *Palm Oil Engineering Bulletin*, No. 94, pp. 19–22. Bangi: MPOB. Available at: https://palmoilis.mpob.gov.my/publications/POEB/poeb94-ma2.pdf (Accessed: 23 November 2026).
-9. **(MPOB, 2026)** Malaysian Palm Oil Board (MPOB) (2026) *Overview of the Malaysian Oil Palm Industry in 2025*. Bangi: MPOB. Available at: https://bepi.mpob.gov.my/images/overview/Overview2025.pdf (Accessed: 23 November 2026).
-10. **(MPOCC, 2023)** Malaysian Palm Oil Certification Council (MPOCC) (2023) *Guidance document for MS2530-3-1:2022 General principles for oil palm plantations (40.46 hectares to 500 hectares)*, Version 1.0. Available at: https://mspo.org.my/wp-content/uploads/2025/08/Guidance-document-for-MSPO-Part-3-1.pdf (Accessed: 23 November 2026).
-11. **(MSPO and EFI, 2025)** Malaysian Sustainable Palm Oil (MSPO) and European Forest Institute (EFI) (2025) *Joint gap assessment of the EUDR information needs and information availability from the MSPO certification*. Available at: https://www.forest-trends.org/wp-content/uploads/2022/01/2025-MSPO_EUDR-Joint_Gap_Assessment.pdf (Accessed: 23 November 2026).
-12. **(Mayer Brown, 2025)** Mayer Brown (2025) *From legislative reform to practical guidance: key amendments to Malaysia's PDPA and the launch of cross-border transfer guidelines*, 25 July. Available at: https://www.mayerbrown.com/en/insights/publications/2025/07/from-legislative-reform-to-practical-guidance-key-amendments-to-malaysias-pdpa-and-the-launch-of-cross-border-transfer-guidelines (Accessed: 23 November 2026).
-13. **(Microsoft, 2025)** Microsoft (2025) *Assess AI systems and make data-driven decisions with Azure Machine Learning Responsible AI dashboard*. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/machine-learning/concept-responsible-ai-dashboard (Accessed: 23 November 2026).
-14. **(Microsoft, 2026a)** Microsoft (2026a) *Azure OpenAI models and region availability*. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/ai-foundry/openai/concepts/models (Accessed: 23 November 2026).
-15. **(Microsoft, 2026b)** Microsoft (2026b) *List of Azure regions*. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/reliability/regions-list (Accessed: 23 November 2026).
-16. **(Microsoft, 2026c)** Microsoft (2026c) *What is Azure IoT Operations?* Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/iot-operations/overview-iot-operations (Accessed: 23 November 2026).
-17. **(Microsoft, n.d.)** Microsoft (n.d.) *Access SAP from workflows* (Azure Logic Apps SAP connector). Microsoft Learn. Available at: https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-using-sap-connector (Accessed: 23 November 2026).
-18. **(The Edge Malaysia, 2025)** The Edge Malaysia (2025) 'Cover Story: Positioning SD Guthrie for next stage of growth', *The Edge Malaysia Weekly*, 15–21 December. Available at: https://theedgemalaysia.com/node/786139 (Accessed: 23 November 2026).
-19. **(The Edge Malaysia, 2026)** The Edge Malaysia (2026) 'Cover Story 1: Can Malaysian planters avert another migrant worker crunch?', *The Edge Malaysia Weekly*, 9–15 November. Available at: https://theedgemalaysia.com/node/825330 (Accessed: 23 November 2026).
-20. **(The Edge Malaysia, n.d.)** The Edge Malaysia (n.d.) 'Felda's road ahead in the spotlight', *The Edge Malaysia*, 6 October. [URL as in sources.md] (Accessed: 23 November 2026).
-
-**Left out to stay at 20 (each a one-for-one swap):** [IOI2026] (IOI connectivity) · [AZ-ACL-RES] (ledger replication) · [STAR-LAB2026] (~80 % foreign workforce) · [EDGE-RUBBER2026] (rubber traceability) · [KWANG2025] (Ganoderma detection accuracy of 64–84 %).
+- **Industry and government:** MPOB (2026) · MPOCC (2023) · MSPO and EFI (2025) · Ma (n.d.) · IOI Corporation Berhad (2026) · European Commission (2026) · Mayer Brown (2025)
+- **News and trade press:** Chong (2026) · Ramendran (2026) · The Edge Malaysia (2025; 2026a; 2026b; n.d.) · New Straits Times (2019) · Clark (2022)
+- **Academic:** Khoo and Chong (2023) · Che Hassan et al. (2026) · Kwang et al. (2025)
+- **Vendor:** Amazon (2024) · Google Cloud (n.d.) · Microsoft (2025; 2026a; 2026b; 2026c; n.d.a; n.d.b)
 
 ## Appendix A — Progress report (≤1 page)
 - **Table A1: Timeline.** Columns: Date · Milestone · Owner (6–8 rows, 23 Nov – 14 Dec; from git history and PROJECT_PLAN phases).
 - **Table A2: Contribution.** Columns: Member · Role · Sections / artefacts · Contribution %. Names are placeholders ([Member 1 – Leader]…[Member 5]).
-- The rubric cross-reference has moved to `05_report/RUBRIC_MAP.md` (D35) and is not part of the report.
+- The rubric cross-reference is in `05_report/RUBRIC_MAP.md` (D35, D40) and is not part of the report.
+- Placeholders: [Member 1 – Leader]…[Member 5], [ID], [GroupNo], [Lecturer name].
 
 ## Open questions for the stakeholder
-1. **References are capped at 20.** Should any of the five left-out sources replace one in the core list? I recommend swapping in IOI2026 for 1.1, as IOI is one of the three named organisations.
-2. **Section owners:** which members owned which sections, for Table A2 and the presentation split?
-3. **Lecturer name** and **group number** for the cover page.
-4. **FELDA settlers:** the core source gives ">100,000 settlers" [EDGE-FELDA]. The exact count of 112,635 families (2019) would need [NST-FELDA2019] as a 21st reference. Is "more than 100,000" enough?
+- Resolved in D40. Still open: section owners for Table A2, lecturer name and group number (placeholders in Appendix A).
