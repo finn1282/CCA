@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SawitSense Presentation</title>
-<link rel="stylesheet" href="css/style.css?v=6">
-<script src="config.js?v=6"></script>
+<link rel="stylesheet" href="css/style.css?v=8">
+<script src="config.js?v=8"></script>
 <script src="config.local.js" onerror="void 0"></script>
-<script src="js/data.js?v=6"></script>
+<script src="js/data.js?v=8"></script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -35,7 +35,7 @@
     <div class="kicker">Malaysia · oil palm · 2025</div>
     <div class="counters">
       <div class="counter"><div class="num" data-count="20.28" data-dec="2" data-suffix=" Mt">0</div><div class="lbl">crude palm oil: a record year</div></div>
-      <div class="counter"><div class="num" data-count="80" data-prefix="~" data-suffix=" %" data-delay="1400">0</div><div class="lbl">of plantation workers are foreign</div></div>
+      <div class="counter"><div class="num" data-count="80" data-prefix="~" data-suffix=" %" data-delay="1400">0</div><div class="lbl">foreign plantation workforce</div></div>
       <div class="counter"><div class="num" data-count="30000" data-sep="1" data-delay="2800">0</div><div class="lbl">workers short again (Oct 2026)</div></div>
     </div>
     <div class="title-card" data-b="1">
@@ -54,9 +54,9 @@
       <div class="card org"><div class="model">Settler scheme</div><h3>FELDA</h3>
         <ul><li>≈870,000 ha</li><li><span class="hl">112,635</span> settler families</li></ul></div>
       <div class="card org"><div class="model">Multinational estate group</div><h3>SD Guthrie</h3>
-        <ul><li>10.7 → 13–13.5 ha per worker, target 15</li><li>"No mechanised solution for harvesting"</li></ul></div>
+        <ul><li>10.7 → 13–13.5 ha per worker, target 15</li><li>"No mechanised solution for harvesting"</li><li>Estate master data in SAP</li></ul></div>
       <div class="card org"><div class="model">Digitising estate group</div><h3>IOI</h3>
-        <ul><li>100+ 4G/LTE sites</li><li>across 100+ estates, for IoT</li></ul></div>
+        <ul><li>SAP S/4HANA across estates and mills</li><li>Built 100+ private 4G/LTE sites: connectivity must be engineered</li></ul></div>
     </div>
     <div class="row" style="margin-top:30px; align-items:flex-start">
       <div class="grow" data-b="1">
@@ -73,7 +73,7 @@
         <div class="sticker" style="left:58%; top:70%">MSPO records on paper</div>
       </div>
     </div>
-    <div class="src">The Edge Malaysia (n.d.; 2025); New Straits Times (2019); IOI Corporation Berhad (2026); MSPO and EFI (2025)</div>
+    <div class="src">The Edge Malaysia (n.d.; 2025); New Straits Times (2019); BSI Services Malaysia (2023); IOI Corporation Berhad (2020; 2026); Abdul Hadi et al. (2026); Chong (2026); MSPO and EFI (2025)</div>
   </section>
 
   <!-- ============ 3 PROBLEMS ============ -->
@@ -88,20 +88,20 @@
           <div class="big hl">RM2.2 bn</div>
           <div>per 0.5-point oil extraction rate lost <span class="badge calc">authors' calculation</span></div>
           <ul><li>Short of harvesters, ripe bunches go <span class="hl-red">over-ripe</span> or are cut under-ripe</li>
-              <li>RM7.5–20 bn/yr: employer estimate</li><li>30,000 workers short; ~6 months to replace one</li></ul>
+              <li>Rounds stretch from 7–13 to 20–25 days</li><li>30,000 workers short; RM7.5–20 bn/yr (employer estimate)</li></ul>
         </div>
         <div class="prob" data-only="1">
           <h3><span class="rank">2</span><i>Ganoderma</i> basal stem rot</h3>
           <div class="big hl-red">Invisible</div>
           <div>until the palm is <b>60–70 %</b> infected</div>
-          <ul><li>−43 % plantation return within 6 months</li><li>Spreads by root contact, ~4 rows</li><li>Ageing stands too, but that constraint is replanting capital</li></ul>
+          <ul><li>−43 % economic return within 6 months (Olaniyi and Szulczyk, 2020, cited in Khoo and Chong, 2023)</li><li>Spreads by root contact, ~4 rows</li><li>Ageing stands too, but that constraint is replanting capital</li></ul>
         </div>
         <div class="prob" data-only="2">
           <h3><span class="rank">3</span>MSPO compliance &amp; fertiliser</h3>
           <div class="small muted">EUDR applies from 30 Dec 2026, in</div>
           <div class="clock" id="eudr-clock">-- days</div>
           <ul><li>Fertiliser ≈ <b>30 %</b> of production cost</li><li>MSPO mandatory, 87 % of planted area certified</li></ul>
-          <div class="stamps"><span class="stamp">4.1.3 fertilising records</span><span class="stamp">4.2.2 traceability</span><span class="stamp">4.5.4 N₂O</span></div>
+          <div class="stamps"><span class="stamp">4.1.3 SOP records (e.g. fertilising)</span><span class="stamp">4.2.2 traceability</span><span class="stamp">4.5.4 N₂O</span></div>
         </div>
       </div>
     </div>
@@ -114,7 +114,7 @@
       </table>
       <p style="margin-top:34px">Census and compliance paperwork draw on the <span class="hl">same scarce field labour</span> as harvesting, so P1 is the root and <b>one integrated system</b> beats three separate tools.</p>
     </div>
-    <div class="src">MPOB (2026); Ramendran (2026); The Edge Malaysia (2026); Khoo and Chong (2023); Chong (2026); MSPO and EFI (2025); MPOCC (2023); European Commission (2026)</div>
+    <div class="src">MPOB (2026); Ramendran (2026); The Edge Malaysia (2026); Ahmad et al. (2020); Khoo and Chong (2023); Chong (2026); MSPO and EFI (2025); MPOCC (2023a; 2023b); European Commission (2026)</div>
   </section>
 
   <!-- ============ 4 COGNITIVE ============ -->
@@ -131,13 +131,13 @@
         <div class="face back"><h4>P2 · cognitive</h4><h3>Multisource anomaly detection + spatial reasoning</h3><p>Satellite → drone → ground cascade</p><p>Ranks palms for lab confirmation: <b>screening, not diagnosis</b></p><p class="small muted">Early-BSR accuracy in research: 64–84 % (Kwang et al., 2025)</p></div>
       </div></div>
       <div class="flip" data-b="3"><div class="inner">
-        <div class="face front"><h4>P3 · today</h4><h3>Blanket schedules + paper records</h3><p>A dashboard can show "pH 3.8"</p><p>It cannot say what to do, or record why</p></div>
+        <div class="face front"><h4>P3 · today</h4><h3>Blanket schedules + paper records</h3><p>A dashboard can show an acidic reading</p><p>It cannot say what to do, or record why</p></div>
         <div class="face back"><h4>P3 · cognitive</h4><h3>Knowledge-based reasoning + explainable ML + NLP</h3>
-          <div class="cf"><span class="bad">pH 3.8</span><br><b>Lime now:</b> pH 3.8 is below 4.0. At pH 4.2 or above the advice would be to fertilise.</div>
+          <div class="cf"><span class="bad">pH: acidic</span><br><b>Lime first:</b> soil is more acidic than the knowledge base allows; inside the optimal band the advice would be to fertilise.</div>
           <p class="small">Every recommendation stored with the MSPO clause it supports</p></div>
       </div></div>
     </div>
-    <div class="src">Report Table 2; Che Hassan et al. (2026); Khoo and Chong (2023); Kwang et al. (2025); MPOCC (2023)</div>
+    <div class="src">Report Table 2; Che Hassan et al. (2026); Khoo and Chong (2023); Kwang et al. (2025); MPOCC (2023a); Microsoft (2025)</div>
   </section>
 
   <!-- ============ 5 SAWITSENSE ============ -->
@@ -157,7 +157,7 @@
       <span class="chip">Agronomists: review queue</span><span class="chip">Plant health: ranked check-lists</span>
       <span class="chip">MSPO officers: audit packs</span><span class="chip">IT: model registry + ERP</span><span class="chip aff">Later: smallholder co-operatives</span>
     </div>
-    <div class="src">Report section 2.1; Ramendran (2026); New Straits Times (2019)</div>
+    <div class="src">Report section 2.1; MPOCC (2023a); Ramendran (2026); New Straits Times (2019)</div>
   </section>
 
   <!-- ============ 6 ARCHITECTURE ============ -->
@@ -167,10 +167,10 @@
     <div class="arch">
       <div class="layers" id="layers">
         <div class="layer l1" data-b="1"><span class="n">1</span><span class="lt">Data sources</span><div><div class="items">Sentinel-2 imagery · drone RGB/multispectral · IoT soil sensors (LoRaWAN) · bunch photos · SAP ERP · MSPO standard</div><div class="why">Multiscale evidence: satellite covers every block, drones resolve crowns, sensors read continuously.</div></div></div>
-        <div class="layer l2" data-b="2"><span class="n">2</span><span class="lt">Ingestion &amp; big data</span><div><div class="items">IoT Hub + Device Provisioning · Event Grid (MQTT) · Event Hubs · Data Lake Storage Gen2 · Planetary Computer (STAC)</div><div class="why">Device identity and two-way messaging; streaming telemetry; one lake for imagery and readings.</div></div></div>
+        <div class="layer l2" data-b="2"><span class="n">2</span><span class="lt">Ingestion &amp; big data</span><div><div class="items">Event Grid MQTT broker (certificate-based registration) · Event Hubs · Data Lake Storage · STAC imagery catalogue</div><div class="why">The MQTT broker handles device telemetry and commands, with devices registered by certificate; Event Hubs streams events; one lake for imagery and readings.</div></div></div>
         <div class="layer l3" data-b="3"><span class="n">3</span><span class="lt">Cognitive services</span><div><div class="items">Vision models (ripeness, crown detection) · NDVI anomaly detection · fertiliser recommender · MSPO knowledge base &amp; reasoning · NLP explanations (Azure OpenAI)</div><div class="why">CNNs read images; anomaly detection catches a disease that is invisible early; rules + knowledge base suit a regulated decision. The language model only rewrites explanations; it never decides.</div></div></div>
-        <div class="layer l4" data-b="4"><span class="n">4</span><span class="lt">Cloud &amp; deployment</span><div><div class="items">Azure Machine Learning: training, registry, managed endpoints, monitoring · Azure IoT Operations at the estate edge</div><div class="why">Versioned, monitored models; the edge keeps working offline (validated after up to 45 days).</div></div></div>
-        <div class="layer l5" data-b="5"><span class="n">5</span><span class="lt">Application</span><div><div class="items">Manager dashboard · <i>mandore</i> mobile app · agronomist review queue · MSPO audit pack · ERP work orders</div><div class="why">Each user gets the decision they own, with its reason.</div></div></div>
+        <div class="layer l4" data-b="4"><span class="n">4</span><span class="lt">Cloud &amp; deployment</span><div><div class="items">Azure ML training, registry, endpoints, monitoring · Functions/App Service API · IoT Operations at the estate edge</div><div class="why">Versioned, monitored models; the edge keeps working offline (validated after up to 45 days).</div></div></div>
+        <div class="layer l5" data-b="5"><span class="n">5</span><span class="lt">Application</span><div><div class="items">Manager dashboard &amp; Power BI · <i>mandore</i> mobile app · agronomist review queue · MSPO audit pack · SAP work orders</div><div class="why">Each user gets the decision they own, with its reason.</div></div></div>
         <div class="particle" style="animation-delay:0s"></div><div class="particle" style="left:700px; animation-delay:1.1s"></div><div class="particle" style="left:1000px; animation-delay:2.2s"></div>
       </div>
       <div class="xcut" data-b="6"><h4>Cross-cutting</h4><ul>
@@ -178,10 +178,10 @@
     </div>
     <div class="platform-line" data-b="7">
       <span>Built on <b class="hl">Microsoft Azure</b>, our chosen platform</span>
-      <span class="region"><span class="pin"></span><span><b>Malaysia West</b>: personal data (Event Grid MQTT, Event Hubs, Storage, App Service)</span></span>
-      <span class="region"><span class="pin sea"></span><span><b>Southeast Asia</b>: Azure ML, IoT Hub/DPS, Ledger, OpenAI; non-personal or hashed data only</span></span>
+      <span class="region"><span class="pin"></span><span><b>Malaysia West</b>: everything touching personal data (Event Grid MQTT broker, Event Hubs, Functions, App Service, Storage)</span></span>
+      <span class="region"><span class="pin sea"></span><span><b>Southeast Asia</b>: Azure ML, confidential ledger, Azure OpenAI; non-personal or hashed data only</span></span>
     </div>
-    <div class="src">Report Figure 1; Microsoft (2025; 2026a; 2026b; 2026c); Mayer Brown (2025): PDPA s129 transfer safeguards</div>
+    <div class="src">Report Figure 1; Google Earth Engine (n.d.); Che Hassan et al. (2026); Microsoft (2025; 2026a, indicative availability; 2026b; n.d.c); Mayer Brown (2025): PDPA s129 safeguards</div>
   </section>
 
   <!-- ============ 7 ROADMAP ============ -->
@@ -189,20 +189,21 @@
     <div class="kicker">Part 2 · Integration, phased plan, risks</div>
     <h2 style="margin-bottom:20px">Fits the estate's IT, step by step</h2>
     <div data-only="0" class="hub">
-      <div class="node"><b>SAP ERP</b>block master in · approved actions → work orders · harvest tickets back <span class="arrow">⇄</span><br><span class="small muted">via Logic Apps SAP connector</span></div>
+      <div class="node"><b>SAP ERP</b>block master in · approved actions → work orders · harvest tickets back <span class="arrow">⇄</span><br><span class="small muted">via the Logic Apps SAP connector</span></div>
       <div class="core">Sawit<br>Sense</div>
       <div class="node"><b>Mill grading</b>ripeness feedback · OER KPIs <span class="arrow">→</span></div>
-      <div class="node"><b>Field data</b>soil sensors → LoRaWAN → IoT Hub · edge cluster for offline blocks · 4G where available <span class="arrow">→</span></div>
-      <div class="node"><b>MSPO reporting</b>evidence packs · fertiliser N for GHG criterion <span class="arrow">←</span></div>
+      <div class="node"><b>Field data</b>soil sensors → LoRaWAN → Event Grid MQTT · IoT Operations edge cluster for offline blocks <span class="arrow">→</span></div>
+      <div class="node"><b>Microsoft 365</b>Power BI dashboards · Teams alerts <span class="arrow">→</span></div>
+      <div class="node"><b>MSPO reporting</b>evidence packs · fertiliser quantities for traceability (4.2.2) and GHG (4.5.4) <span class="arrow">→</span></div>
     </div>
     <div data-only="1" class="timeline">
       <div class="phase"><div class="dot"></div><div class="when">Short · 0–6 months</div><h3>Pilot</h3><ul>
-        <li>1 estate, 2–3 blocks incl. one with BSR history</li><li>F1, F4, F5 on a rule-based baseline; F3 trial</li><li>Human approves every action; ERP read-only</li><li><b>Success:</b> agronomist agreement ≥80 %; audit pack accepted</li></ul></div>
+        <li>1 estate, 2–3 blocks incl. one with BSR history</li><li>F1, F4, F5 on a rule-based baseline; F3 trial</li><li>Human approves every action; ERP read-only</li><li><b>Success:</b> baseline recorded (round length vs 7–13-day norm); agronomist agreement ≥80 %; audit pack accepted</li></ul></div>
       <div class="phase"><div class="dot"></div><div class="when">Medium · 6–18 months</div><h3>Scale &amp; integrate</h3><ul>
-        <li>All estates in one region</li><li>Baseline replaced by estate-trained models; F2 live; drift monitoring</li><li>SAP write-back; ledger anchoring</li><li><b>Success:</b> shorter rounds, fewer over-ripe bunches</li></ul></div>
+        <li>All estates in one region</li><li>Baseline replaced by estate-trained models; F2 live; drift monitoring</li><li>SAP write-back; Power BI and Teams; ledger anchoring</li><li><b>Success:</b> rounds back within 7–13 days; fewer over-ripe bunches; fertiliser skipped where not needed</li></ul></div>
       <div class="phase"><div class="dot"></div><div class="when">Long · 18–36 months</div><h3>Optimise &amp; extend</h3><ul>
-        <li>Group-wide + smallholder co-operatives</li><li>Yield forecasting; multispectral BSR; multilingual audit narrative</li><li>MSPO GHG export; EUDR geolocation package</li><li><b>Success:</b> measurable OER gain; zero record findings</li></ul></div>
-      <p class="small muted" style="grid-column:1/-1; margin-top:24px">Every phase starts by measuring a baseline (round length, under-ripe share at the mill, fertiliser kg/ha), so gains are shown, not assumed.</p>
+        <li>Group-wide + smallholder co-operatives</li><li>Yield forecasting; multispectral BSR; continuous learning from overrides; quarterly model-governance review</li><li>MSPO GHG export; EUDR geolocation package; co-operative APIs</li><li><b>Success:</b> measurable OER gain; zero record findings</li></ul></div>
+      <p class="small muted" style="grid-column:1/-1; margin-top:24px">Success measures reuse the Part 1 harvest-round evidence (7–13-day norm, Ahmad et al., 2020): gains are measured against a stated baseline, not assumed.</p>
     </div>
     <div data-only="2,3" class="riskwrap" id="riskwrap">
       <div>
@@ -211,7 +212,7 @@
       </div>
       <div class="riskinfo card" id="riskinfo"></div>
     </div>
-    <div class="src">Report Tables 4 and 5; Microsoft (n.d.; 2026c); IOI Corporation Berhad (2026); Kwang et al. (2025); Mayer Brown (2025)</div>
+    <div class="src">Report Tables 5 and 6; Microsoft (n.d.b; 2026a; 2026b); MPOCC (2023a; 2023b); Ahmad et al. (2020); Kwang et al. (2025); Ramendran (2026); Amazon Web Services (2025); Mayer Brown (2025)</div>
   </section>
 
   <!-- ============ 8 DEMO ============ -->
@@ -235,6 +236,8 @@
       <p class="small">Run in a terminal at the repo root. Soil readings appear on the same dashboard; the frame shows a "Simulated device feed" badge. Press <kbd>S</kbd> again to close (badge stays on; <kbd>Shift</kbd>+<kbd>S</kbd> clears it).</p>
       <code id="simcmd"></code>
       <button class="btn" id="simcopy">Copy command</button> <span class="small muted" id="simmsg"></span>
+      <p class="small" style="margin:18px 0 0">Camera offline (post the prepared FFB photo):</p><code id="camcmd" style="font-size:22px"></code>
+      <p class="small" style="margin:0">Laptop backend crashed (laptop is primary): restart, then press <kbd>U</kbd>:</p><code id="restartcmd" style="font-size:22px"></code>
     </div></div>
   </section>
 
@@ -242,21 +245,22 @@
   <section class="scene" id="s-novelty" data-steps="3">
     <div class="kicker">Part 3 · Novelty</div>
     <h2 style="margin-bottom:22px">Explain-to-audit: every decision becomes evidence</h2>
+    <div class="small muted" style="margin:-12px 0 16px">Off-the-shelf tools stop at the prediction; even MPOB's SawitSCAN addresses grading alone.</div>
     <div class="chain" id="chain"></div>
     <div class="row" style="margin-top:26px; align-items:center" data-b="1">
       <button class="btn" id="tamper">Tamper with record 3</button>
       <button class="btn alt" id="undo">Undo</button>
       <span class="verdict ok" id="verdict">VERIFIED</span>
-      <span class="small muted grow">Hashes computed live in this browser (SHA-256, each record chained to the previous one). In production the chain head is anchored in Azure confidential ledger.</span>
+      <span class="small muted grow">Hashes computed live in this browser (SHA-256, each record chained to the previous one). In production record digests are anchored in Azure confidential ledger (Microsoft, n.d.a).</span>
     </div>
     <div class="novel" style="margin-top:26px" data-b="2">
       <div class="card"><b>Evidence log</b>data, model, explanation, approval, block, MSPO clause in one tamper-evident record</div>
       <div class="card"><b>Counterfactuals</b>plain language a supervisor can challenge</div>
       <div class="card"><b>Screening cascade</b>satellite → drone → ground directs scarce experts</div>
       <div class="card"><b>Decisions, not detections</b>grades become crew allocations</div>
-      <div class="card"><b>New knowledge</b>agree/override rate measures oversight and model quality</div>
+      <div class="card"><b>Validation + learning loop</b>cross-country test before go-live; every override becomes a training label</div>
     </div>
-    <div class="src">Report section 3.1; MPOCC (2023); MSPO and EFI (2025); Microsoft (2025)</div>
+    <div class="src">Report section 3.1; MPOCC (2023a); Microsoft (n.d.a; 2025); MSPO and EFI (2025); Abdul Hadi et al. (2026); Che Hassan et al. (2026); Khoo and Chong (2023); Kwang et al. (2025)</div>
   </section>
 
   <!-- ============ 10 EXTENSION ============ -->
@@ -265,25 +269,25 @@
     <h2>Beyond one estate</h2>
     <div class="row">
       <div class="card grow"><b class="hl-leaf" style="font-size:36px">Inside the organisation</b>
-        <p>FELDA's <span class="hl">112,635</span> settler families through a simplified co-operative app, supporting group MSPO certification</p>
-        <p>Logged harvests and fertiliser → yield forecasting and automatic N₂O accounting</p></div>
+        <p><b>Medium term:</b> logged harvests and fertiliser → yield forecasting and GHG inputs (4.5.4); <b>mills</b> join through MS 2530-4-1 traceability</p>
+        <p><b>Long term:</b> FELDA's <span class="hl">112,635</span> settler families via a co-operative app; pooled overrides → the first <b>sector-wide benchmark</b> of AI-assisted agronomy</p></div>
       <div class="card grow" data-b="1"><b class="hl-leaf" style="font-size:36px">Other sectors: EUDR's seven commodities</b>
         <div class="ring"><span class="chip self">oil palm</span><span class="chip hot">rubber</span><span class="chip">cocoa</span><span class="chip">wood</span><span class="chip">coffee</span><span class="chip">soya</span><span class="chip">cattle</span></div>
-        <p>Rubber has the same smallholder geolocation and traceability problem: the natural second sector</p></div>
+        <p>Malaysian rubber and cocoa share the smallholder geolocation and traceability problem: plot verification and the evidence log transfer directly</p></div>
     </div>
     <div class="arc" style="margin-top:34px" data-b="2">
       <div class="card"><b>1 · Estate decision support</b>today's design</div><div class="to">→</div>
       <div class="card"><b>2 · Shared traceability layer</b>buyers verify ledger digests instead of re-auditing</div><div class="to">→</div>
       <div class="card"><b>3 · Reusable pattern</b>"explained, auditable decision" for any regulated agri supply chain</div>
     </div>
-    <div class="src">Report section 3.2; New Straits Times (2019); MPOCC (2023); European Commission (2026)</div>
+    <div class="src">Report section 3.2; MPOCC (2023a; 2023b); New Straits Times (2019); European Commission (2026)</div>
   </section>
 
   <!-- ============ 11 CLOSE ============ -->
   <section class="scene" id="s-close" data-steps="2">
     <div class="kicker">Conclusion</div>
     <div class="answers">
-      <div class="card"><div class="small muted">Record output, but ~80 % foreign harvesters</div><b>→ ripeness grades become a harvest plan</b></div>
+      <div class="card"><div class="small muted">Record output, ~80 % foreign plantation workforce</div><b>→ ripeness grades become a harvest plan</b></div>
       <div class="card"><div class="small muted">A disease invisible until 60–70 %</div><b>→ satellite-drone-ground screening</b></div>
       <div class="card"><div class="small muted">MSPO &amp; EUDR records</div><b>→ explained advice, logged as evidence</b></div>
     </div>
@@ -297,7 +301,7 @@
   <div id="black"></div>
 </div></div>
 
-<script src="js/sha256.js?v=6"></script>
-<script src="js/main.js?v=6"></script>
+<script src="js/sha256.js?v=8"></script>
+<script src="js/main.js?v=8"></script>
 </body>
 </html>

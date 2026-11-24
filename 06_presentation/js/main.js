@@ -242,6 +242,9 @@
   function toggleSim(clear) {
     if (clear) { fbox.classList.remove("sim-on"); $("#simmodal").classList.remove("show"); return; }
     $("#simcmd").textContent = simCmd(); $("#simmsg").textContent = "";
+    const b = demo.base.replace(/\/+$/, "");
+    $("#camcmd").textContent = (CFG.CAMERA_CMD || "").replace("{BASE}", b);
+    $("#restartcmd").textContent = CFG.RESTART_CMD || "";
     $("#simmodal").classList.toggle("show");
     fbox.classList.add("sim-on");
   }
