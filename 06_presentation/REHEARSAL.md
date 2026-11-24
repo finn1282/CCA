@@ -12,13 +12,13 @@
 | 4:05 | 5 SawitSense | [Member 3] | — |
 | 4:45 | 6 Architecture | [Member 3] | — |
 | 6:00 | 7 Integration, roadmap, risks | [Member 4] | Click risk chips if asked |
-| 7:30 | 8 **Live demo** | [Member 5] + [Member 3] | Advance beats, Capture, crew 30→20, Verify chain, audit pack; call fallbacks |
+| 7:30 | 8 **Live demo** | [Member 5] + [Member 3]; [Member 4] at the cups | Advance beats, Capture, crew 30→20, Verify chain, audit pack; call fallbacks. M4 rinses probes and holds the next cup |
 | 10:15 | 9 Novelty (tamper) | [Member 5] | Click Tamper, then Undo |
 | 11:20 | 10 Extension | [Member 4] | — |
 | 12:05 | 11 Close | [Member 1] | — |
 | 12:30 | Q&A | all | Leave "Questions?" on screen; B blacks out |
 | 15:00 | End | | Stop servers (R-14) |
-**Checkpoints:** start of demo ≤ 7:45, end of demo ≤ 10:30, "Questions?" ≤ 12:45. If you're late at the demo, use the skip rule in SCRIPT.md (scene 8).
+**Checkpoints:** start of demo ≤ 7:45, end of demo ≤ 10:30, "Questions?" ≤ 12:45. If you're late at the demo, use the X-08 rules in SCRIPT.md (scene 8): parallel probe swaps, merge beats, skip the harvester beat at 9:40.
 
 ## 2. One backend at a time (D39)
 - At the rehearsal, **pick the primary**: the cloud if it is deployed and stable on the presentation hotspot, otherwise the laptop.
@@ -32,6 +32,7 @@
 |---|---|---|
 | Day before | Full rehearsal on the same hotspot, power and projector. Run TEST_PLAN §H R-01…R-13 and this file's §4 drill. Time the whole talk with the presenter window | ☐ |
 | Day before | Chrome: zoom 100 %, notifications off, bookmarks bar hidden; laptop sleep/power saving off | ☐ |
+| Day before | Take a phone photo of the A5 FFB print and save it on the laptop as the prepared image for `CAMERA_CMD`; fill the real paths in `config.js` (`RESTART_CMD`, `CAMERA_CMD`) | ☐ |
 | 30 min | Start the standby laptop backend: `cd 03_software/src && ../.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000` with the same `SAWIT_DEVICE_KEYS` as the cloud; check `GET /api/v1/health` on the primary | ☐ |
 | 30 min | Fresh demo DB (R-13: new `SAWIT_RUNTIME_DIR`) so the evidence log starts clean; 3 warm-up readings | ☐ |
 | 20 min | Start the presentation server: `cd 06_presentation && python -m http.server 8080`; open `http://localhost:8080/` in Chrome | ☐ |
@@ -52,7 +53,10 @@
 | Devices fail, backend up | No new readings after pressing the button | Press **S**, copy the command, run it in a terminal at the repo root (cloud mode: add `--device` and `--key` from `SAWIT_DEVICE_KEYS`). The badge "Simulated device feed" shows on the frame. `Shift+S` clears it | "We'll drive the same block from a simulated node", then narrate the same beats as readings cycle |
 | Camera Capture does nothing | No result after 5 s | Open `http://<cam-ip>/capture` (demo plan §5), else skip the beat | "At harvest time the same platform grades bunches…" |
 | Sensor reads `--` | NO DATA (amber) | Reseat the wire | "Failed sensors are sent as null, never faked." |
-| Running long | Presenter clock amber/red | At 9:40, jump to the Capture beat (click it in the rail) | — |
+| Laptop is primary and its backend crashed | Health light red; F does nothing (it points at the same laptop) | Press **S**, copy the **restart** command (same `SAWIT_RUNTIME_DIR`, same `SAWIT_DEVICE_KEYS`), run it, wait ~5 s, press **U** | "The node keeps deciding locally on the OLED while the server restarts." |
+| Hotspot lost | Nodes show LOCAL / NO NET; cloud health red | Press **F** (laptop dashboard on localhost still works with no network), then **S** and run the simulator against localhost to continue the beats | "No signal under the canopy is normal: the edge keeps working and buffers." |
+| Camera offline | Capture gives nothing; CAM unreachable | Press **S**, run the **camera** command (posts the prepared FFB photo once as cam-01), then show the camera panel | "Here is the same grade from the estate's camera feed." |
+| Running long | Presenter clock amber/red | Merge PLAIN + NUTRIENT into one line. At **9:40**, skip the **harvester** beat (never the camera): click "Screening cascade" in the rail | — |
 There is **no video fallback** (D48). If everything fails, finish the beats verbally on the OLED/LEDs (LOCAL mode) and move to scene 9 at 10:15.
 
 ## 5. Visual check by stakeholder (first time you open it)
@@ -66,11 +70,18 @@ Open `http://localhost:8080/` and step through with →. Check:
    - Ranking: the table covers the map completely.
 4. **Why cognitive:** each press flips one card from brown (today) to green (cognitive); the P3 counterfactual text is readable.
 5. **SawitSense:** five coloured tiles in one row; the user chips on the second press.
-6. **Architecture:** layers stack from the bottom (1 at the bottom, 5 on top); clicking a layer shows a "why" line; orange particles rise after the cross-cutting box appears; the final line says Azure with Malaysia West / Southeast Asia pins. Check that the wording matches D50.
+6. **Architecture:** layers stack from the bottom (1 at the bottom, 5 on top); clicking a layer shows a "why" line; orange particles rise after the cross-cutting box appears; the final line says Azure with Malaysia West / Southeast Asia pins. Check the wording matches D57: no IoT Hub; only Azure ML, ledger and OpenAI in Southeast Asia.
 7. **Roadmap:** hub diagram, then a three-phase timeline, then the risk grid. Risk 1 sits top-right (L3×I3), risk 2 in L3×I2, risk 3 in L2×I3, and risks 4–6 in L2×I2. Clicking a chip shows its mitigation.
-8. **Demo:** with the backend running, the dashboard appears in the frame and each → scrolls it to the right panel; the health light is green. Stop the backend: within 5 s the "not reachable" card appears. Try F, O and S.
+8. **Demo:** with the backend running, the dashboard appears in the frame and each → scrolls it to the right panel; the health light is green. Stop the backend: within 5 s the "not reachable" card appears. Try F, O and S (the S panel also shows the camera and restart commands).
 9. **Novelty:** five records with hashes; "Tamper" types 5.0, record 3 and later turn red and the verdict says "TAMPERED at record 3"; "Undo" returns to VERIFIED.
 10. **Extension and close:** rubber highlighted in orange; the arc of three cards; "Questions?" in large orange type.
 11. **Presenter window (`P`):** the current cue is highlighted, the clocks run, and its Next/Back buttons move the slides.
 12. **Daylight theme (`T`):** everything is still readable on cream.
 Tell [Member 3] or the Presentation member about anything that looks off (colours, sizes, wording).
+
+## 6. Q&A cross-training drill (X-07; assignment p.2: anyone may be asked about any part)
+Run this twice before the day, about 10 minutes each time.
+1. Each member answers **two questions from another member's area**, picked at random from the SCRIPT.md Q&A bank: M1 takes M4's, M2 takes M5's, M3 takes M2's, M4 takes M3's, M5 takes M1/M2's. Rotate the pairing in the second run.
+2. Keep each answer to 20 s. The owner of that area corrects it in one sentence.
+3. Each member then gives a **15 s contribution statement** ("I worked on …, mainly …, and I can answer on …"), matching Appendix A2 of the report.
+4. Must-know for everyone: the 89 vs 85 Azure answer, the residency split (no IoT Hub; only Azure ML, ledger and OpenAI in Southeast Asia), "screening, not diagnosis", and the ripeness-accuracy answer (validation plan; no figure).

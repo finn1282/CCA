@@ -3,7 +3,7 @@
 ## Status (24 Nov 2026)
 | Step | State |
 |---|---|
-| Step 1: storyboard | Approved with changes (D48); `STORYBOARD.md` v2 records the changes (D48, D50, D51) |
+| Step 1: storyboard | Approved with changes (D48); `STORYBOARD.md` v3 records the changes (D48, D51, D57, Audit 1) |
 | Step 2: build | **Done**: interactive presentation, `SCRIPT.md`, `REHEARSAL.md` |
 
 ## What this is
@@ -35,8 +35,8 @@ cd 06_presentation && python -m http.server 8080      # open http://localhost:80
 No third-party libraries, no CDN, no web fonts. The only network calls go to the configured dashboard (iframe + `/api/v1/health`). The folder is well under 1 MB.
 
 ## Rules followed
-D19 problem order · Azure as the chosen platform with no comparison (D48) · D50 residency wording · no ripeness-model accuracy figure (D51) · no Kaggle/student/price talk (D20/D23) · hardware only in the demo · Harvard in-text citations on every scene (D11) · no large downloads (D43) · browser checks limited to our own localhost pages (D52/D53).
+D19 problem order · Azure as the chosen platform with no comparison (D48) · D57 residency wording (Event Grid MQTT, no IoT Hub) · no ripeness-model accuracy figure (D51) · no Kaggle/student/price talk (D20/D23) · hardware only in the demo · Harvard in-text citations on every scene (D11) · no large downloads (D43) · browser checks limited to our own localhost pages (D52/D53).
 
 ## Open issues for Lead
 - If the platform decision or the report's figures change, update `js/data.js` (cues, risks) and scene 6 in `index.html`. Service names live only in scene 6, its cues, and `SCRIPT.md`.
-- The demo cascade panel shows placeholder satellite data and "Drone screening not yet available" until the stakeholder's Earth Engine run and the drone model exist. The script says so on stage.
+- The demo cascade panel shows placeholder satellite data and "Drone screening not yet available" until the satellite pipeline runs on real Sentinel-2 imagery and the drone model exists. The script says so on stage.

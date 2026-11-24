@@ -5,13 +5,14 @@
 ## Changelog
 | Date | Version | Change | Trigger |
 |---|---|---|---|
+| 2026-11-24 | v3 | Presentation Audit 1 fixes X-01…X-13: ingestion = Event Grid MQTT broker with certificate registration, no IoT Hub/DPS, Southeast Asia = Azure ML, ledger, OpenAI only (D57); citation keys and table numbers matched to REPORT rev 2 (Microsoft n.d.a/b/c, 2026a/b; MPOCC 2023a/b; Tables 5 and 6); report-form counterfactual on scene 4; Functions/App Service, Power BI/Teams, 7–13-day baselines, governance review in scenes 6–7; SawitSCAN contrast, validation + learning-loop chip, mills and sector-wide benchmark in scenes 9–10; restart/hotspot/camera fallbacks (S modal shows the commands); demo de-risking (parallel probe swaps, merge beats, skip harvester at 9:40); Q&A additions and cross-training drill | Audit 1, D57 |
 | 2026-11-24 | v2 | Talk cut to **12:30** (Q&A inside the 15 min). **Platform-comparison scene dropped**; Azure appears as the chosen platform with one line in the architecture scene. Its time is redistributed: [Member 4] also takes the extension scene, and [Member 3] narrates the harvest and cascade panels in the demo. **Palm-plantation theme** (estate greens, FFB orange/red, soil browns, frond motif), plus a daylight variant. Dashboard embedded with a one-key new-tab fallback. **No pre-recorded video and no V key**: fallbacks are F (laptop backend), O (new tab) and S (simulator). No Bahasa Malaysia line. No lime beat. **Harvester-allocation and screening-cascade panels added to the demo**, honestly labelled. Placeholders kept. Residency wording per D50. No ripeness-model accuracy figure anywhere (D51). Cascade animation moved out of the novelty scene because the demo now shows the real panel | D48, D50, D51 |
 | 2026-11-23 | v1 | First storyboard (11 scenes, 14:30, platform matrix scene, video fallback) | Brief Step 1 |
 
 ## 0. Ground rules
 - 15-minute slot, **talk 12:30, Q&A 2:30**, all 5 members speak (assignment p.2; D48).
 - Story order follows the report: hook → case → problems (D19: P1 labour & harvest losses > P2 *Ganoderma* > P3 MSPO & fertiliser) → cognitive capability → SawitSense → architecture → integration, roadmap, risks → **live demo** → novelty → extension → close.
-- **Azure-native framing (D20/D23):** Azure is presented as the chosen platform, with no comparison matrix and no justification on the slides (D48). Residency (D50): personal data stays in **Malaysia West** (Event Grid MQTT, Event Hubs, Storage, App Service). **Azure ML, IoT Hub/DPS, confidential ledger and Azure OpenAI run in Southeast Asia** and receive only non-personal or hashed data. We never claim IoT Hub or Azure ML run in Malaysia West.
+- **Azure-native framing (D20/D23):** Azure is presented as the chosen platform, with no comparison matrix and no justification on the slides (D48). Residency (D57): everything touching personal data stays in **Malaysia West** (Event Grid MQTT broker with certificate-based registration, Event Hubs, Functions, App Service, Storage). **Only Azure ML, the confidential ledger and Azure OpenAI run in Southeast Asia**, on non-personal or hashed data. No IoT Hub/DPS anywhere.
 - **Hardware appears only in the demo.** No Kaggle, student, credit or price talk.
 - **No ripeness-model accuracy figure** in the slides, script or Q&A (D51). The demo shows the live grade, its confidence and the heat-map only. The only accuracy number shown is the *literature* range for early *Ganoderma* detection (64–84 %, Kwang et al., 2025), used to justify "screening, not diagnosis".
 - Every number on screen carries a short Harvard citation (D11). RM2.2 bn is labelled "authors' calculation".
@@ -45,9 +46,9 @@
    - P2: soil X-ray showing root infection spreading in block B2; invisible until 60–70 %, −43 % in 6 months.
    - P3: a live EUDR countdown to 30 Dec 2026, fertiliser ≈30 % of cost, and MS 2530 clause stamps.
    - Then the Table 1 ranking overlay with the interaction line.
-4. **Why cognitive.** Three cards flip from conventional to cognitive (P1, P2, P3). P3 shows the counterfactual "Lime now: pH 3.8 < 4.0; at pH ≥ 4.2, fertilise".
+4. **Why cognitive.** Three cards flip from conventional to cognitive (P1, P2, P3). P3 shows the report's counterfactual "Lime first: soil is more acidic than the knowledge base allows; inside the optimal band, fertilise".
 5. **SawitSense.** Name meaning, functions F1–F5 with their problem and outcome, then the user strip.
-6. **Architecture.** Five layers build bottom-up, one per key press. Clicking a layer shows "why this technology". The cross-cutting band follows, with data particles flowing upward. The last step shows "Built on **Microsoft Azure**, our chosen platform" and two region pins with the D50 residency split.
+6. **Architecture.** Five layers build bottom-up, one per key press. Clicking a layer shows "why this technology". The cross-cutting band follows, with data particles flowing upward. The last step shows "Built on **Microsoft Azure**, our chosen platform" and two region pins with the D57 residency split.
 7. **Integration, roadmap and risks.**
    - Integration hub: SAP ERP, mill grading, MSPO reporting, field data.
    - Short/medium/long timeline (Table 4).
@@ -71,7 +72,7 @@
 | 1:15 | M5 | Probes → NUTRIENT cup, press send | Recommendation: SKIP FERTILISER |
 | 1:35 | M5 + M3 | FFB print under the ESP32-CAM; M3 clicks Capture | Camera: label + confidence + heat-map (**no accuracy figure**, D51) |
 | 1:55 | M3 | Change crew 30 → 20 | Harvester allocation (**SIMULATED estate** badge) |
-| 2:15 | M3 | — | Screening cascade: satellite stage flags B2 and C1 (**placeholder until the Earth Engine run**); drone stage "**not yet available**"; so the ground list is empty |
+| 2:15 | M3 | — | Screening cascade: satellite stage flags B2 and C1 (**placeholder until the satellite pipeline runs on real Sentinel-2 imagery**); drone stage "**not yet available**"; so the ground list is empty |
 | 2:30 | M5 | M3 clicks Verify chain, then opens the MSPO audit pack | Evidence: VERIFIED + audit pack |
 
 **Fallbacks (operator calls it, presenter keeps talking):**
