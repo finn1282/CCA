@@ -32,22 +32,35 @@ Deliverables: Markdown report (Parts 1–3 + progress report), interactive prese
 
 If using Claude Code: start a session in this repo and say *"You are the project lead. Read 00_lead/HANDOFF.md and continue from the current phase."*
 
-## 4. Current state (2026-11-24)
-Decisions through **D51**. INTERFACES **v0.2.6**.
-| Member | Status | Next on resume |
+## 4. Current state (2026-11-24) — ALL TEAM WORK COMPLETE; waiting on stakeholder
+Decisions through **D58**; INTERFACES **v0.2.6**; no members running.
+| Deliverable | Status | Location |
 |---|---|---|
-| Research | Waves 1–4 done (119 sources; `10_audit_wave.md` = AWS rescoring, ERP, MSPO Part 3-2) | On demand only |
-| Hardware | ✅ All verification fixes through pass 2 (345ec07); fw 0.2.6. Compile = stakeholder build step (D43) | Only if HW verif pass 3 finds issues |
-| Software | 🔄 D50 residency/platform edits to docs 02–04, then S-16…S-25 fixes (D51) | Resume `briefs/software.md` with D50 + D51 lists |
-| HW Verification | ✅ Pass 2 (30/32; fixes since landed) | Pass 3 after stakeholder compile + bench tests |
-| SW Verification | ✅ Pass 2 (156/164, 0 fail; S-16…S-19 major) | Pass 3 after S-16…S-25 fixes |
-| Technical summary | ✅ `04_technical/TECHNICAL_SUMMARY.md` | Refresh after D50/D51 changes |
-| Report | 🔄 Revision: audit fixes C-01…C-23 + D49/D50/D51 (OUTLINE v4 → REPORT.md) | Resume `briefs/report.md` with `07_verification/compliance/REPORT_AUDIT_1.md` |
-| Presentation | 🔄 Step 2 build (storyboard approved D48; D50 residency, D51 no accuracy figures) | Resume `briefs/presentation.md` Step 2 |
-| Compliance | ✅ Report audit 1 (24.5 → ~28/30) | Re-audit report after revision; audit presentation after build |
+| Report | ✅ Content final (~4,560 words, 34 refs, est. ~27–28/30; audits 1–2) | `05_report/REPORT.md` |
+| Presentation | ✅ Built + audit fixes (12:30 talk, 5 speakers, Q&A bank, drills) | `06_presentation/` (index.html, SCRIPT.md, REHEARSAL.md) |
+| Technical summary | ✅ Current to D57 | `04_technical/TECHNICAL_SUMMARY.md` |
+| Software | ✅ 35/35 tests; SW verification pass 3 clean | `03_software/` |
+| Hardware | ✅ fw 0.2.6; HW verification pass 2 fixes landed (D-13…D-18 await retest after compile) | `02_hardware/` |
+| Research | ✅ 119 sources | `01_research/` |
 
-**Stakeholder to-dos:** regenerate the Kaggle token, then run RUN_ON_KAGGLE; Earth Engine run; Azure deploy (after S-18/S-19 fixes) or laptop fallback; buy demo items; bench tests B-01… (B-01 first); fill the placeholders.
-**Relaunch:** subagents don't survive sessions. Relaunch from `00_lead/briefs/` with the resume preamble.
+**Stakeholder to-dos (in order):**
+1. **Report:** fill Appendix A contributions; add the cover page, TOC and declaration forms; export Figure 1 (Mermaid) as an image; format (TNR 12, 1.5 spacing, justified).
+2. **Presentation:**
+   - Open `06_presentation` via `python -m http.server 8080` and run the visual checklist in REHEARSAL.md §5.
+   - Set `config.js` (DASHBOARD_URL, RESTART_CMD, CAMERA_CMD).
+   - Prepare the FFB photo.
+   - Fill the contribution lines; run the Q&A cross-training drill (§6).
+3. **Software:**
+   - Regenerate the Kaggle token, then follow `03_software/training/RUN_ON_KAGGLE.md`.
+   - Run `gee/RUN_EARTH_ENGINE.md`.
+   - Deploy with `deploy/DEPLOY_AZURE.md`, or use the laptop as primary (D39).
+4. **Hardware:**
+   - Buy the demo items.
+   - First compile per `02_hardware/06_assembly_guide_beginner.md` §3.1.
+   - Run bench tests B-01… (B-01 pH voltage first).
+5. **Verification (after steps 3–4):** HW verification pass 3 (compile logs + bench results), SW verification pass 4 (Kaggle model, Azure URL, satellite.json). Relaunch from `00_lead/briefs/`.
+
+**Relaunch:** subagents don't survive sessions; relaunch from `00_lead/briefs/` with the resume preamble.
 
 ## 5. Phase log
 | Date | Event |

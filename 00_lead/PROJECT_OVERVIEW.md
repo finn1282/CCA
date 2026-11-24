@@ -1,7 +1,7 @@
 # Project Overview — Stakeholder Status Page
 
 **Project:** Cognitive Smart Palm Oil Plantation Management (ITS69404 Group Assignment, Case #4)
-**Deadline:** 15 Dec 2026 00:00 · **Last updated:** 2026-11-24
+**Deadline:** 15 Dec 2026 00:00 · **Last updated:** 2026-11-24 — ✅ all team work complete; waiting on stakeholder steps (see HANDOFF §4)
 
 ## Status at a glance
 | Phase | Owner | Target | Status | Gate result |
