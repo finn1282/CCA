@@ -21,5 +21,6 @@ subagents belong to the session that started them and cannot be resumed from ano
 | `technical_summary.md` | Technical summary author | After HW + SW Step 2 |
 | `presentation.md` | Presentation (storyboard → approval → build) | After report draft |
 | `compliance.md` | Compliance & rubric audit | After report draft; again after presentation |
+| `educator.md` | Project educator / tutor for the stakeholder (keeps `00_lead/learning_log.md`) | Any time the stakeholder wants to learn |
 
 Shared rules for every member live in `00_lead/PROJECT_PLAN.md` (working rules, citations, git, PLAN.md/proposals).
