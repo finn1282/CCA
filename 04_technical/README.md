@@ -1,10 +1,10 @@
 # 04_technical — README
 
 ## Status
-**The technical summary is written (23 Nov 2026).** It is an internal document (D20) that covers both the target design and the actual build, with each section labelled [TARGET], [BUILD] or [BOTH].
+**The technical summary is written (23 Nov 2026), accepted (D45), and refreshed for D46–D57 on 24 Nov 2026** with targeted edits: platform AWS 89 / Azure 85 with Azure on case fit (D50); Event Grid MQTT ingestion, with only Azure ML, the ledger and OpenAI in Southeast Asia (D57); MS 2530-3-2 and 4-1; INTERFACES v0.2.6; firmware 0.2.6; 35/35 tests; SW pass 3 clean; HW pass 2 fixes landed; provisional M1 0.91 (n = 81) marked internal only (D51); model in the zip and SQLite DELETE mode; GEE grid DEMO-A1…C3; D53 browser rule. It is an internal document (D20) that covers both the target design and the actual build, with each section labelled [TARGET], [BUILD] or [BOTH].
 - **Length:** ≈ 2,750 words of prose, plus tables and 3 Mermaid diagrams (≈ 4,250 words in total).
 - **Citations:** every key cited resolves in `01_research/sources.md`.
-- **Checks re-run for this summary:** owner tests, 32/32 pass.
+- **Checks re-run for this summary:** owner tests, 35/35 pass (24 Nov 2026).
 
 ## Outputs
 | File | Content |
@@ -13,17 +13,18 @@
 | `README.md` | This file |
 
 ## Inputs used
-- **00_lead:** SPEC, DECISIONS (D1–D44), INTERFACES v0.2.4, PROJECT_PLAN.
+- **00_lead:** SPEC, DECISIONS (D1–D57), INTERFACES v0.2.6, PROJECT_PLAN.
 - **01_research:** README, `00_baseline_brief.md`, `03_datasets.md` (D4 facts), `sources.md`.
 - **02_hardware:** README, docs 01–06, both `.ino` files and `secrets.h.example`.
 - **03_software:** README, docs 01–07, `models/README.md` + metrics, `metrics_m6.json`, `estate_blocks.json`, the RUN_ON_KAGGLE, DEPLOY_AZURE, ALTERNATIVES and RUN_EARTH_ENGINE guides, and the `main.py` route list.
 - **07_verification:** hardware and software READMEs, TEST_PLANs (B-01…B-16, §H R-01…R-14).
 
 ## Assumptions
-- Defects that owners report as fixed (D-01…D-12, S-01…S-15) are shown as "fixed, not independently retested". Pass 2 is deferred (D42), and there has been no compile (D43).
+- HW pass-2 defects D-13…D-18 are shown as "fixed by Hardware, retest pending". SW defects S-01…S-26 are closed (D56, 9242795). The firmware has never been compiled (D43).
 - The M1 final metrics, the Azure URL and the GEE export are shown as pending, because they are stakeholder steps (D31).
 
 ## Inconsistencies found (for the Lead)
+**Status 24 Nov 2026:** ruled in D45. Items 1, 2, 4, 5, 6, 7, 8 and 9 are **resolved** (calibration GET every 5 min in INTERFACES v0.2.5+, version labels at v0.2.6, the [ESP32-DS]/[AZ-CA] keys confirmed present (D46), the REFERENCE cup used everywhere, F1–F6 accepted, scores superseded again by D50, and MSPO clauses aligned with S-26). Item 3 is **resolved for software** (pass 3 clean, D56); the hardware README still lists D-13…D-18 as open, pending retest. No new inconsistencies were found in this refresh.
 | # | Where | Inconsistency | Suggested fix |
 |---|---|---|---|
 | 1 | Calibration fetch interval | INTERFACES §5 and `03_software/05_api_spec.md` §2.2 / `06_…` §5 say the soil node fetches its TDS baseline **hourly**. The firmware (`CAL_FETCH_MS = 300000`) and `02_hardware/02_system_design.md` §2 use **every 5 min** | Harmless, but align the text: either INTERFACES says "boot + periodically (firmware: 5 min)", or the firmware changes to 1 h |

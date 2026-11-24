@@ -1,7 +1,7 @@
 # SawitSense — Technical Summary (whole system)
 
 > **Audience:** the team, presenters, and anyone taking over the build. **Internal document (D20):** it covers **both layers of truth**: the **target (enterprise) design**, which the report and presentation describe, and the **actual build** in this repo. Every section is labelled **[TARGET]**, **[BUILD]** or **[BOTH]**.
-> Status as of 23 Nov 2026 (after D44). Sources: `00_lead/` (SPEC, DECISIONS D1–D44, INTERFACES v0.2.4), `01_research/`, `02_hardware/`, `03_software/`, `07_verification/`. Citation keys in brackets refer to `01_research/sources.md` (Harvard list).
+> Status as of 24 Nov 2026 (refreshed for D46–D57). Report and presentation are final pending stakeholder items (D54, D55). Sources: `00_lead/` (SPEC, DECISIONS D1–D57, INTERFACES v0.2.6), `01_research/`, `02_hardware/`, `03_software/`, `07_verification/`. Citation keys in brackets refer to `01_research/sources.md` (Harvard list).
 > **Rule for reuse:** do not copy [BUILD] content (Kaggle, Azure for Students, App Service, laptop fallback, hardware detail, simulated numbers) into report-facing material (D20, D23, D40).
 
 ---
@@ -16,7 +16,7 @@
 |---|---|---|---|
 | **P1** Labour shortage & harvest losses | Harvesting is not mechanised [EDGE-SDG2025]; rounds stretch to 20–25 days against a recommended 7–13 [AHMAD2020]; under-ripe harvesting loses oil [MA-POEB] | **O1** predict ripe-FFB harvest windows | **F1** ripeness grading + harvest window · **F2** harvester allocation |
 | **P2** Declining stand productivity: Ganoderma BSR (primary) + ageing | BSR on 9.2 % of surveyed smallholdings [IBRAHIM2020]; asymptomatic until 60–70 % infected [KHOO2023]; published early detection only 64–84 % [KWANG2025] [AHMADI2023] | **O2** detect Ganoderma early | **F3** satellite → drone → ground screening cascade (**screening, not diagnosis**, D32e) |
-| **P3** MSPO sustainability & fertiliser compliance | MS 2530:2022 requires fertiliser/soil SOP records, traceability and a GHG criterion [MPOCC-P31]; fertiliser ≈ 30 % of cost [STAR-FERT2026]; EUDR applies from 30 Dec 2026 [HL-EUDR2026] | **O3** optimise fertiliser · **O4** yield + MSPO | **F4** explained fertiliser/lime/irrigation advice · **F5** explain-to-audit evidence log · F6 productivity & compliance analytics |
+| **P3** MSPO sustainability & fertiliser compliance | MS 2530:2022 requires fertiliser/soil SOP records, traceability and a GHG criterion (MS 2530-3-2:2022 estates >500 ha, MS 2530-4-1:2022 mills; D50) [MPOCC-P32] [MPOCC-P41]; fertiliser ≈ 30 % of cost [STAR-FERT2026]; EUDR applies from 30 Dec 2026 [HL-EUDR2026] | **O3** optimise fertiliser · **O4** yield + MSPO | **F4** explained fertiliser/lime/irrigation advice · **F5** explain-to-audit evidence log · F6 productivity & compliance analytics |
 
 ```mermaid
 flowchart LR
@@ -54,7 +54,7 @@ flowchart LR
 
 ## 2. Target (enterprise) architecture [TARGET]
 
-Summarises `03_software/02_architecture.md`, `03_ai_models.md` and `04_cloud_design.md`. The platform is **Microsoft Azure** (D15). The capability-only matrix gives Azure 88, AWS 79, Google 67, IBM 49 (D32d; `01_research/08_…`). Azure is the only one of the four that combines an in-country region (Malaysia West, 3 AZs) [AZ-REGIONS], a live first-party IoT platform with an offline-capable edge [AZ-IOTHUB-SCALE] [AZ-IOTOPS], and native SAP integration [AZ-SAP]. Google Cloud IoT Core and IBM Watson IoT are both retired [GCP-IOTCORE] [REG-WIOT].
+Summarises `03_software/02_architecture.md`, `03_ai_models.md` and `04_cloud_design.md`. The platform is **Microsoft Azure, chosen on case fit** (D50). The rescored capability matrix is shown honestly: **AWS 89 / Azure 85 / Google 67 / IBM 49** (supersedes D15/D32d). Azure is recommended because it best meets the case-critical constraints: SAP-run estates (Logic Apps SAP connector over IDoc/BAPI/RFC [AZ-SAP], vs AppFlow OData-only [AWS-APPFLOW-SAP]); weeks-offline operation under canopy (IoT Operations, 45 days validated [AZ-IOTOPS]); and MSPO-audit-ready counterfactual explanations [AZ-RAI]. AWS is the strong runner-up (image explainability via Clarify [AWS-CLARIFY]). Never say "uniquely". Google Cloud IoT Core and IBM Watson IoT are retired [GCP-IOTCORE] [REG-WIOT].
 
 ```mermaid
 flowchart TB
@@ -62,14 +62,14 @@ flowchart TB
     A1[Sentinel-2 L2A] --- A2[UAV surveys] --- A3[LoRaWAN soil nodes] --- A4[Field camera / phone] --- A5[ERP · weather · MSPO texts]
   end
   subgraph L2["2 · Ingestion & big data"]
-    B1["IoT Operations edge (offline)"] --> B2["IoT Hub Standard + DPS"]
+    B1["IoT Operations edge (offline)"] --> B2["Event Grid MQTT broker<br/>(X.509 client registration, Malaysia West)"]
     B3["Event Hubs"] --- B4[("ADLS Gen2 bronze/silver/gold")] --- B5["Planetary Computer STAC"]
   end
   subgraph L3["3 · Cognitive services"]
     C1["Azure ML models M1, M3/M4, M5, M6"] --- C2["Knowledge base M7 (MPOB thresholds, MS 2530)"] --- C3["Reasoners: M2, cascade, allocation, counterfactuals"] --- C4["Azure OpenAI (SEA, non-personal) multilingual text"]
   end
   subgraph L4["4 · Cloud & deployment"]
-    D1["Azure ML endpoints (blue/green)"] --- D2["Container Apps API + Functions"] --- D3["Model monitoring → Event Grid → retrain"]
+    D1["Azure ML endpoints (blue/green)"] --- D2["App Service / AKS API + Functions"] --- D3["Model monitoring → Event Grid → retrain"]
   end
   subgraph L5["5 · Application"]
     E1[Manager dashboard / Power BI] --- E2[Harvester app] --- E3[Agronomist review queue] --- E4[MSPO audit pack] --- E5[SAP work orders via Logic Apps]
@@ -78,12 +78,13 @@ flowchart TB
   X["Cross-cutting: PDPA residency split · Entra ID · Key Vault · Purview · confidential ledger (digests, SEA) · human-in-the-loop"]
 ```
 
-**Data residency split (D32a, mandatory in report-facing docs).**
+**Data residency split (D32a as corrected by D50/D57; availability phrased "per Microsoft products-by-region at deployment" [AZ-PRICES-API]).**
 - Personal or identifiable data (worker and smallholder identities, plot locations linked to individuals) stays in **Malaysia West**.
-- **Azure OpenAI** is not offered in Malaysia West [AZ-AOAI-MODELS], so it runs in **Southeast Asia** and receives only block IDs, readings and rule text.
-- **Azure confidential ledger** always replicates to a paired region, and Malaysia West has none [AZ-ACL-RES]. It therefore runs in Southeast Asia and stores **SHA-256 digests only** [AZ-ACL].
-- **DPS** uses the Southeast Asia single-region option with a private endpoint [AZ-DPS].
-- Azure ML, IoT Hub and Event Hubs run in "Malaysia West where offered, otherwise Southeast Asia", with PDPA s129 safeguards (2024 amendment: a Transfer Impact Assessment and transfer records) [MAYER-PDPA2025].
+- **In-country (Malaysia West):** Event Grid MQTT broker (the only ingestion path; **no IoT Hub or DPS**, D57), Event Hubs, Functions, App Service/AKS, Storage/Data Lake, Data Explorer/Fabric, Logic Apps; IoT Operations at the estate edge.
+- **Southeast Asia hosts only three services**, each receiving non-personal or hashed data under PDPA s129 safeguards (TIA and transfer records) [MAYER-PDPA2025]:
+  - **Azure ML** (training and endpoints on de-identified images/readings);
+  - **Azure confidential ledger**, **SHA-256 digests only** [AZ-ACL] [AZ-ACL-RES];
+  - **Azure OpenAI**: block IDs, readings and rule text only [AZ-AOAI-MODELS].
 
 **Models (target).** M1 ripeness CNN, M2 harvest-window rule, M3/M4 YOLO drone Ganoderma screening and palm count, M5 Sentinel-2 NDVI z-score anomaly, M6 rules + tabular tree for fertiliser/lime/irrigation, M7 MSPO compliance knowledge base, plus an NLP layer that rewords explanations but **never decides** (D28).
 
@@ -108,14 +109,14 @@ Summarises `03_software/07_actual_build_vs_target.md`. The demo is a **scaled-do
 | Backend / API | **FastAPI** (`03_software/src/app/`): `main.py` endpoints, `rules.py`, `recommender.py` (rules + M6), `evidence.py`, `compliance.py` (M7), `inference.py` (M1 ONNX + CAM, M2), `analytics.py` (allocation, cascade), SQLite `db.py` | Container Apps + API Management; Cosmos DB + ADLS |
 | Dashboard | Static page served by the API (`src/static/`: vanilla JS, Chart.js vendored under the MIT licence), `/harvester` mobile page; Approve/Override, Verify chain, MSPO audit pack, TDS calibration card, Capture button | Web app + Power BI + native harvester app |
 | Simulator | `src/simulator.py` (stdlib): scenarios such as dry, wet, acidic, low_nutrient, over_fertilised, plus `cycle`; optional camera image | — (stand-in for the soil node) |
-| Device link | HTTPS POST with `X-Device-Id`/`X-Device-Key`; the recommendation comes back synchronously; the camera polls for commands | IoT Hub + DPS X.509; C2D/twins |
+| Device link | HTTPS POST with `X-Device-Id`/`X-Device-Key`; the recommendation comes back synchronously; the camera polls for commands | Event Grid MQTT broker, X.509 client registration, per-device topics (D57) |
 | Evidence log | SHA-256 hash chain in SQLite; `/evidence/verify`; audit pack prints the chain head hash as an external anchor (S-10) | Confidential-ledger anchoring (SEA, digests) |
 | NLP | Template text from rule IDs (English) | Azure OpenAI, multilingual |
 | Auth | Device keys from `SAWIT_DEVICE_KEYS`; admin token; **cloud mode fails closed** (demo keys off, token mandatory, reads protected) | Entra ID RBAC |
 
 **Models in the build:**
 - **M1 ripeness.** EfficientNet-B0, served as ONNX on CPU with an exact CAM heat-map.
-  - The **provisional** model (`m1-effb0-0.1-provisional`) was trained locally on CPU on D2 only. It is a sanity check and **not reportable** (D38, D42).
+  - The **provisional** model (`m1-effb0-0.1-provisional`) was trained locally on CPU on D2 only (train/test deduped, S-17). Serving-path accuracy 0.91 on n = 81 (S-16). **Internal only: never quote any M1 figure in the report or presentation** (D51).
   - The **final** model is D1 (Indonesia) → D2 (Malaysia) from the **stakeholder's Kaggle GPU run** (`training/RUN_ON_KAGGLE.md`, D31). Its output files are `m1_ripeness.onnx`, `.json` and `m1_metrics.json`.
 - **M2 harvest window.** A rule in `inference.harvest_advice`; the round interval defaults to 10 days [AHMAD2020] [MPOB-NEWS2020]. Ripening runs 19–24 weeks after anthesis [RAMLI2026].
 - **M6 fertiliser.** The rule engine is authoritative. A depth-7 JSON decision tree, trained on **SIMULATED** data (`training/fertiliser/train_m6.py`), tempers confidence. Below 0.6 confidence, or when the tree disagrees with the rules, the case goes to review.
@@ -125,7 +126,7 @@ Summarises `03_software/07_actual_build_vs_target.md`. The demo is a **scaled-do
 - **Crew allocation.** A greedy allocator over a **SIMULATED** 8-block estate with a crew of 30 (`static/precomputed/estate_blocks.json`). Productivity by palm height follows [AHMAD2020].
 
 **Deployment options (D29, D39):**
-1. **Azure App Service B1 (Linux) + Blob Storage** for the model, in Malaysia West, else Southeast Asia (`deploy/DEPLOY_AZURE.md`, stakeholder-run).
+1. **Azure App Service B1 (Linux)**, in Malaysia West, else Southeast Asia (`deploy/DEPLOY_AZURE.md`, stakeholder-run). The **model ships inside the deploy zip** (S-18), and SQLite on `/home/data` uses **journal_mode=DELETE** in cloud mode (S-19; rehearsal R-03b).
 2. **Laptop-local backend** (uvicorn): first-class and already tested (`deploy/ALTERNATIVES.md`, which also covers a hotspot, an HTTPS tunnel and other free hosts).
 3. **One backend at a time (D39).** The cloud and the laptop keep separate databases and command queues. At rehearsal, pick a primary (cloud if it is deployed and stable, else the laptop). Point `API_BASE` and the dashboard at the primary; `API_BASE_LOCAL` (the laptop) is used only if the primary fails. **Both backends use the same `SAWIT_DEVICE_KEYS`** (S-02).
 
@@ -136,8 +137,8 @@ Summarises `03_software/07_actual_build_vs_target.md`. The demo is a **scaled-do
 Summarises `02_hardware/` (README, docs 01–06, firmware). The hardware is a **small live demo of the IoT soil-sensor layer only** (SPEC §4). It never goes into the report (D23).
 
 **Nodes.**
-- **Soil node:** NodeMCU ESP32 running firmware 0.2.3, on a potted plant that stands in for a block. It carries capacitive moisture, pH E-201-C with a PH-4502C board, TDS, DS18B20, DHT22, an OLED, 3 LEDs and a button. It runs on a power bank (D26).
-- **ESP32-CAM** (AI-Thinker, firmware 0.2.2): captures and uploads only, with no on-device inference. It is powered from the laptop USB.
+- **Soil node:** NodeMCU ESP32 running firmware 0.2.6, on a potted plant that stands in for a block. It carries capacitive moisture, pH E-201-C with a PH-4502C board, TDS, DS18B20, DHT22, an OLED, 3 LEDs and a button. It runs on a power bank (D26).
+- **ESP32-CAM** (AI-Thinker, firmware 0.2.6): captures and uploads only, with no on-device inference. It is powered from the laptop USB.
 
 **Pin map (soil node)**, from `02_system_design.md` §3:
 
@@ -160,16 +161,16 @@ All analog inputs are on **ADC1**, because ADC2 fails while Wi-Fi is on. No stra
 1. Every 10 s, or on a button press, the node reads moisture, then pH with TDS off, then TDS, temperatures and RH.
 2. It **replays up to 5 buffered readings first**, then posts the fresh one (v0.2.2).
 3. The backend answers synchronously with `action`, `oled[]`, `led` and `evidence_id`.
-4. The node fetches its TDS baseline (`GET /devices/{id}/calibration`) at boot and periodically.
+4. The node fetches its TDS baseline (`GET /devices/{id}/calibration`) at boot and every 5 min (v0.2.5).
 5. The camera polls `GET /devices/cam-01/commands` every 2.5 s. On `capture` it POSTs a raw JPEG to `/infer/ripeness`, and the dashboard shows the label and heat-map.
 
-**Network modes (INTERFACES §2, v0.2.2–0.2.3).** The result shown on the node is tagged by who answered:
+**Network modes (INTERFACES §2, v0.2.2–0.2.6).** The result is tagged by the scheme of the base that answered (https = CLOUD, http = LAN; D-14):
 - **CLOUD:** `API_BASE` answered.
 - **LAN:** `API_BASE_LOCAL`, the laptop, answered. While on LAN, the node retries the cloud every 5 min.
 - **LOCAL:** neither answered. The node applies the on-device rules and buffers the reading in a 30-entry ring buffer.
 
 In every mode:
-- A buffered reading that gets a 4xx response is dropped and does not block the queue.
+- A reading is dropped only on 400/413/422 (invalid payload); any other 4xx/5xx or transport error keeps it buffered for retry (v0.2.6, D-13). Drops never block the queue.
 - If all soil sensors are null, the node shows amber **NO DATA**, never green.
 - LOCAL and CLOUD compare the same 1-decimal rounded values.
 - TLS pins DigiCert Global Root G2, with Microsoft RSA Root CA 2017 as backup [AZ-CA].
@@ -199,11 +200,11 @@ In every mode:
 - The pH bands come from the literature [KANANG2026] [AAR-SOIL].
 - The moisture thresholds are demo calibration values, motivated by the yield loss from water deficit [CARR2011].
 
-**Demo script.** About 2:30 (`05_demo_plan.md`): dry pot → IRRIGATE; water → OK; PLAIN cup → FERTILISE (simulated); NUTRIENT cup → SKIP; FFB print under the CAM → ripeness + heat-map. Optional: acidic cup → LIME. Fallbacks run CLOUD → LAN → LOCAL, then the camera's local `/capture` page, then the recorded video.
+**Demo script.** About 2:30 (`05_demo_plan.md`): dry pot → IRRIGATE; water → OK; PLAIN cup → FERTILISE (simulated); NUTRIENT cup → SKIP; FFB print under the CAM → ripeness + heat-map. The presentation drops the lime beat and the recorded-video fallback (D48); fallbacks are laptop backend, a new tab, then the simulator. REFERENCE cup = pot leachate with pH checked at rehearsal (D-15).
 
 ---
 
-## 5. Interfaces (INTERFACES v0.2.4) [BUILD]
+## 5. Interfaces (INTERFACES v0.2.6) [BUILD]
 
 Base path `/api/v1`. Full spec: `03_software/05_api_spec.md`.
 
@@ -214,7 +215,7 @@ Base path `/api/v1`. Full spec: `03_software/05_api_spec.md`.
 | `GET` / `POST /devices/{id}/calibration` | Device (GET) / admin (POST) | Per-device `{tds_baseline_ppm, tds_margin, updated_at}` (v0.2.1, D30) |
 | `POST` / `GET /devices/{id}/commands` | Admin (POST) / camera poll (GET) | `{"cmd":"capture"}` / `{"cmd":"none"}`; coalesced, 60 s expiry, cleared on delivery |
 | `POST /infer/ripeness` | Camera (raw `image/jpeg`) | M1 label, probs, harvest advice, CAM heat-map URL, evidence ID (503 if no model) |
-| `GET /latest` | Dashboard (2 s poll) | Latest **non-buffered** reading per device (highest seq), last ripeness, devices |
+| `GET /latest` | Dashboard (2 s poll) | **Most recently captured** non-buffered reading per device (robust to seq reset, v0.2.6), last ripeness, devices |
 | `GET /evidence`, `GET /evidence/{id}` | Dashboard | Evidence log / one record + reviews |
 | `POST /evidence/{id}/review` | Admin | Approve/override, appended as a new record; overrides flagged `retraining_candidate` |
 | `GET /evidence/verify` | Dashboard | Recompute the SHA-256 chain → `ok`, `head`, or `first_bad` |
@@ -227,7 +228,7 @@ Base path `/api/v1`. Full spec: `03_software/05_api_spec.md`.
 
 In cloud mode (`SAWIT_MODE=cloud`), every read except `/health` needs the admin token (header or `?token=`); image and heat-map paths stay open (S-08).
 
-**Soil payload (v0.2.4):**
+**Soil payload (v0.2.6; `age_s` = seconds since capture):**
 - **Fields:** `device_id`, `seq`, `ts` (ISO-8601 UTC or null), `age_s`, `buffered`, `block_id`, `soil_moisture_pct`, `soil_ph`, `tds_ppm`, `ec_us_cm`, `soil_temp_c`, `air_temp_c`, `air_rh_pct`, `rssi_dbm`, `cal_id`, `fw_version`.
 - **Rules:**
   - A failed sensor is sent as `null`, never as a fabricated value.
@@ -245,12 +246,12 @@ In cloud mode (`SAWIT_MODE=cloud`), every read except `/health` needs the admin 
 
 | Model | Data | Licence | Status | Metrics |
 |---|---|---|---|---|
-| M1 ripeness (EfficientNet-B0 + CAM) | D1 Kamal et al., 4,728 images, Indonesia, train [D1-KAMAL2024]; D2 Rosbi, 466 images, Malaysia (Johor, N. Sembilan, Perak), cross-country test [D2-ROSBI2024] [OMAR2024] | CC BY 4.0 (both) | **Provisional** model (D2-only, CPU) is loaded locally. **Final** model = stakeholder Kaggle run, **pending** | Provisional, **not reportable**: D2 test n = 89, accuracy 0.93, macro-F1 0.94, recall unripe 0.82 / ripe 1.00 / overripe 1.00. Same-country test, and D2 has no *underripe* class. Final D1-test / D2 cross-country numbers: **pending** |
+| M1 ripeness (EfficientNet-B0 + CAM) | D1 Kamal et al., 4,728 images, Indonesia, train [D1-KAMAL2024]; D2 Rosbi, 466 images, Malaysia (Johor, N. Sembilan, Perak), cross-country test [D2-ROSBI2024] [OMAR2024] | CC BY 4.0 (both) | **Provisional** model (D2-only, CPU) is loaded locally. **Final** model = stakeholder Kaggle run, **pending** | **Internal only (D51):** serving-path accuracy 0.91, macro-F1 0.92 on deduped D2 test n = 81 (recall unripe 0.78 / ripe 1.00). Same-country, no *underripe* class. Final D1→D2 numbers: **pending**, and not quoted in the report either (D40, D51) |
 | M2 harvest window | Rule from ripening physiology and round intervals [RAMLI2026] [AHMAD2020] | — | **Rule-based** (no public timing data) | n/a |
 | M3/M4 drone Ganoderma + palm count (YOLO) | D4 Mimboro et al. v2: 1,352 UAV tiles, 9,400 crowns (722 BSR), geographically disjoint split, 1.12 GB [D4-MIMBORO2026] | CC BY 4.0 | **Not trained** (stretch SW-P6); cascade stage 2 is a placeholder | Planned: Ganoderma recall, mAP@0.5 on the disjoint test blocks |
-| M5 NDVI anomaly | Sentinel-2 L2A + global oil-palm mask, via Earth Engine [GEE-S2] [GEE-OILPALM] | Copernicus notice [COPERNICUS-LEGAL]; mask CC BY 4.0; GEE noncommercial [GEE-NONCOM] | Script ready; **SIMULATED placeholder** until the stakeholder runs it | Flagged blocks (z ≤ −1.5) |
+| M5 NDVI anomaly | Sentinel-2 L2A + global oil-palm mask, via Earth Engine [GEE-S2] [GEE-OILPALM] | Copernicus notice [COPERNICUS-LEGAL]; mask CC BY 4.0; GEE noncommercial [GEE-NONCOM] | Script ready, 3 × 3 grid with block IDs DEMO-A1…C3 matching the demo estate (S-24); **SIMULATED placeholder** until the stakeholder runs it | Flagged blocks (z ≤ −1.5) |
 | M6 fertiliser/lime/irrigation | **SIMULATED** sensor dataset generated from literature thresholds [KANANG2026] [AAR-SOIL] [CARR2011] | own | Trained (`m6_tree.json`); rules authoritative | Simulated hold-out n = 4,000: accuracy **0.88** vs noisy labels (irrigate F1 0.94, drain 0.92, lime 0.88, fertilise 0.82, watch 0.58) — **simulated** |
-| M7 MSPO compliance | MS 2530:2022 clauses (4.1.3 incl. .1/.4/.5, 4.2.2, 4.5.4, 4.5.5) [MPOCC-P31] [MPOCC-P21] | — | Built (`compliance.py`) | Coverage per block/period |
+| M7 MSPO compliance | MS 2530-3-2:2022 / 4-1:2022 clauses (4.1.3 incl. .1/.4/.5, 4.2.2, 4.5.4, 4.5.5; labels fixed in S-26) [MPOCC-P32] [MPOCC-P41] | — | Built (`compliance.py`) | Coverage per block/period |
 | Allocation | **SIMULATED** 8-block estate, crew 30; productivity by palm height [AHMAD2020] | own | Built | n/a |
 
 There is no public data for harvest timing, oil-palm soil sensors or multispectral BSR (`01_research/03_datasets.md`). Every output that relies on simulated data carries `simulated: true` in the API and a SIMULATED badge in the UI.
@@ -260,15 +261,12 @@ There is no public data for harvest timing, oil-palm soil sensors or multispectr
 ## 7. Verification status [BUILD]
 
 **Passing now:**
-- Owner suite **32/32 pytest** (re-run for this summary on 23 Nov 2026).
-- The asserted smoke test passes (`src/tests/smoke_output.txt`).
-- SW verification pass 1: 22/22 owner tests; 132/154 independent checks passed; 0 blockers (D39).
-- HW verification pass 1: 2 major, 10 minor, 0 blockers (D33).
+- Owner suite **35/35 pytest** (re-run 24 Nov 2026); asserted smoke test passes.
+- **SW verification pass 3 clean (D56):** S-01…S-25 closed; 156/164 independent checks, 0 fail; serving-path M1 metric reproduced; deploy zip run in cloud mode locally; dashboard checked visually in the browser under D53. The last minor, S-26 (MSPO part labels), is fixed (9242795).
+- **HW verification pass 2 (D46):** 11/12 pass-1 defects closed + 1 accepted; integration 30/32. Fixes D-13…D-18 have landed (firmware 0.2.6, 345ec07); an independent retest of them is pending.
 
 **Defects:**
-- All HW defects (D-01…D-12) and SW defects (S-01…S-15) are **reported fixed by their owners** (Software 9bd2e04, Hardware firmware 0.2.3).
-- They have **not yet been independently retested**: SW verification pass 2 is deferred (D42), and the HW pass 2 trigger (a compile) has not happened (D43).
-- The `07_verification/*/README.md` files therefore still list them as open.
+- No open SW defects. HW pass-2 defects D-13…D-18 are fixed by Hardware but await retest; `07_verification/hardware/README.md` still lists them as open.
 
 **Still to verify on real hardware and accounts:**
 - **Firmware compile:** not done (D43); run `arduino-cli compile` on the builder's machine.
@@ -279,7 +277,7 @@ There is no public data for harvest timing, oil-palm soil sensors or multispectr
   - B-11 null on sensor failure; B-12/13 power bank auto-off and 60 min run; B-14 CAM brownout.
   - B-15 boot with full wiring; B-16 button.
 - **M1 final metrics** after the Kaggle run; model checks RI-05…09 in SW pass 2.
-- **Azure deployment** (health shows `mode: cloud`); **GEE satellite export**; the TLS root pin against the real `*.azurewebsites.net` URL.
+- **Azure deployment** (health shows `mode: cloud`, R-03/R-03b); **GEE satellite export**; the TLS root pin against the real `*.azurewebsites.net` URL.
 
 **Presentation-day rehearsal:**
 - Run `07_verification/software/TEST_PLAN.md` §H, **R-01…R-14** (fresh tests, cloud settings, matching keys, one backend, demo beats, kill-backend fallback, chain verify, clean DB, no secrets committed).
@@ -289,7 +287,7 @@ There is no public data for harvest timing, oil-palm soil sensors or multispectr
 
 ## 8. Build & run order for the team [BUILD]
 
-**D43:** heavy downloads and installs (ESP32 core, full datasets, training environments) happen **on the builder's (stakeholder's) machine**, never on the shared dev machine. **D31:** account-bound steps (Kaggle, Azure, Earth Engine) are run by the stakeholder; secrets live only in env vars, App Service settings or git-ignored `secrets.h`.
+**D53:** browser use is allowed only for visually testing our own localhost pages (one tab, no other sites or logins; close afterwards). **D43:** heavy downloads and installs (ESP32 core, full datasets, training environments) happen **on the builder's (stakeholder's) machine**, never on the shared dev machine. **D31:** account-bound steps (Kaggle, Azure, Earth Engine) are run by the stakeholder; secrets live only in env vars, App Service settings or git-ignored `secrets.h`.
 
 1. **Get the code:** `git pull`. Read this summary, then `00_lead/INTERFACES.md`.
 2. **Software locally (no hardware).** Follow `03_software/06_implementation_guide_beginner.md` §1–3:
@@ -338,7 +336,8 @@ There is no public data for harvest timing, oil-palm soil sensors or multispectr
 2. Hardware compile + B-01…B-16 on the builder's machine.
 3. Azure deployment + TLS check, or confirm the laptop as primary.
 4. GEE export.
-5. Independent verification pass 2 (SW and HW retests of the fixed defects, model checks).
+5. HW retest of D-13…D-18; model checks on the final M1.
+5a. Stakeholder items for the report/presentation (D54): Appendix A contributions, cover/TOC/forms, Figure 1 export, formatting.
 6. Full rehearsal R-01…R-14.
 7. Stretch: train M3/M4 on D4 on a GPU with the disjoint split kept.
 8. Target roadmap (report): estate-trained M6, a learned time-to-ripe model for M2, yield forecasting, multispectral BSR detection, SAP write-back and ledger anchoring [AZ-SAP] [AZ-ACL].
